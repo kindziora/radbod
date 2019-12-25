@@ -1,3 +1,5 @@
+import * as jsonpatch from 'fast-json-patch';
+
 class datastore {
     private _mounted: Object = {};
     public alias: Object = {};

@@ -1,14 +1,13 @@
-namespace dom{
+import {dom} from "dom/element";
 
-    export class input{
- 
-          
-         public getValue(){  
-            return this.value;
-         }
- 
- 
- 
-     }
- }
- 
+export class input extends dom.kelement {
+
+
+    public getValue() {
+        return this.value;
+    }
+
+
+
+}
+

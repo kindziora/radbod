@@ -4,7 +4,12 @@
             "es2015",
             "dom"
         ],
+       //"module" :  "es2015",
+      // "moduleResolution" : "node",
         "strict": true,
-        "target": "es2015"
+        "strictPropertyInitialization": false,
+        "target": "es2015",
+       // "outDir" : "./build"
+       "outFile" : "./build/kjs.dev.js"
     }
 }
