@@ -2,9 +2,15 @@
   "name": "kjs",
   "version": "1.0.0",
   "description": "framework for next gen ui ",
-  "main": "app.js",
+  "main": "./build/app.js",
+  "type": "module",
   "directories": {
     "test": "test"
+  },
+  "ava": {
+    "require": [
+      "./test/_setup-browser-env.js"
+    ]
   },
   "scripts": {
     "test": "ava"
@@ -26,8 +32,8 @@
   },
   "homepage": "https://github.com/kindziora/kjs#readme",
   "devDependencies": {
-    "ava": "^2.4.0",
+    "browser-env": "^3.3.0",
     "fast-json-patch": "^3.0.0-1",
-    "nyc": "^15.0.0"
+    "systemjs": "^6.1.7"
   }
 }

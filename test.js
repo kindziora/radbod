@@ -1,11 +1,11 @@
-import test from 'ava';
-import {app} from 'build/kjs.dev';
 
-test('foo', t => {
-	t.pass();
-});
 
-test('bar', async t => {
-	const bar = Promise.resolve('bar');
-	t.is(await bar, 'bar');
-});
+import browserEnv from 'browser-env';
+browserEnv();
+
+
+import {testDomHandler} from './test/domHandler.js';
+
+new testDomHandler();
+
+
