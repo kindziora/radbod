@@ -1,1 +1,14 @@
-"use strict";
+import { input } from "../input.js";
+export class checkbox extends input {
+    /**
+     *
+     * @param single
+     */
+    getValue(single = false) {
+        if (single)
+            return super.getValue();
+        return Array
+            .from(this.$scope.querySelectorAll(':scope input[data-name="' + this.getName() + '"]:checked'))
+            .map((checkbox) => checkbox.value);
+    }
+}

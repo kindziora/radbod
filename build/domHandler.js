@@ -1,11 +1,21 @@
+import { kelement } from "./dom/element.js";
 import { input } from './dom/element/input.js';
+import { radio } from './dom/element/input/radio.js';
+import { checkbox } from './dom/element/input/checkbox.js';
+import { text } from './dom/element/input/text.js';
+import { range } from './dom/element/input/range.js';
+import { file } from './dom/element/input/file.js';
+import { button } from './dom/element/button.js';
+import { list } from './dom/list.js';
+import { select } from './dom/element/select.js';
+import { textarea } from './dom/element/textarea.js';
 export class domHandler {
     constructor(area) {
         this._area = {};
         this._identifier = '[data-name]';
         this.element = {};
         this.elementByName = {};
-        this.elementTypes = { input };
+        this.elementTypes = { input, text, radio, checkbox, range, file, button, list, select, textarea, kelement };
         this.counter = 0;
         this.id = "component-0";
         this._area = area;
@@ -18,13 +28,43 @@ export class domHandler {
         this._area.setAttribute("data-id", id);
         this.id = id;
     }
+    /**
+     *
+     * @param name
+     * @param $el
+     */
+    mapField(name, $element) {
+        switch (name) {
+            case "input":
+                if ($element.getAttribute('type'))
+                    name = $element.getAttribute('type');
+        }
+        if (typeof this.elementTypes[name] === "undefined") { //unknown field type, back to default
+            name = "kelement";
+        }
+        return name;
+    }
+    /**
+     *
+     * @param $el
+     * @param currentIndex
+     */
+    createElement($el, currentIndex) {
+        let fieldTypeName = this.mapField($el.tagName.toLowerCase(), $el);
+        return new this.elementTypes[fieldTypeName]($el, this._area, currentIndex); //decorate and extend dom element
+    }
     loadElements() {
         let element = this._area.querySelectorAll(this._identifier);
-        element.forEach(($el, currentIndex) => {
-            let t_el = new this.elementTypes[$el.tagName.toLowerCase()]($el, this._area, currentIndex); //decorate and extend dom element
-            this.addElement(t_el);
-            this.addElementByName(t_el);
-        });
+        try {
+            element.forEach(($el, currentIndex) => {
+                let t_el = this.createElement($el, currentIndex); //decorate and extend dom element
+                this.addElement(t_el);
+                this.addElementByName(t_el);
+            });
+        }
+        catch (e) {
+            console.log(e);
+        }
     }
     addElement(el) {
         this.element[el.id] = el;

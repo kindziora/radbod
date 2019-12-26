@@ -5,6 +5,7 @@ export class kelement {
         this.setId(this.$scope.getAttribute('data-id') || undefined, counter);
     }
     getValue() {
+        return this.$el.value;
     }
     getName() {
         return this.$el.getAttribute('data-name');

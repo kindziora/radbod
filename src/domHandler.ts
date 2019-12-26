@@ -1,5 +1,15 @@
 import {kelement} from "./dom/element.js";
 import {input} from './dom/element/input.js';
+import {radio} from './dom/element/input/radio.js';
+import {checkbox} from './dom/element/input/checkbox.js';
+import {text} from './dom/element/input/text.js';
+import {range} from './dom/element/input/range.js';
+import {file} from './dom/element/input/file.js';
+
+import {button} from './dom/element/button.js';
+import {list} from './dom/list.js';
+import {select} from './dom/element/select.js';
+import {textarea} from './dom/element/textarea.js';
 
 export class domHandler {
     private _area: HTMLElement = {} as HTMLElement;
@@ -8,7 +18,7 @@ export class domHandler {
     public element:{[index:string]:kelement} = {};
     public elementByName: {[index:string]:Array<kelement>} = {};
     
-    public elementTypes : {[index:string]:any} = {input};
+    public elementTypes : {[index:string]:any} = {input, text, radio, checkbox, range, file, button, list, select, textarea, kelement};
 
     public counter: number = 0;
     public id: string = "component-0";
@@ -37,6 +47,11 @@ export class domHandler {
                 if($element.getAttribute('type'))
                     name=<string>$element.getAttribute('type');
         }
+
+        if(typeof this.elementTypes[name] ==="undefined"){ //unknown field type, back to default
+            name = "kelement";
+        }
+
         return name;
     }
 
@@ -51,19 +66,19 @@ export class domHandler {
     }
 
     loadElements() {
-
         let element: NodeListOf<Element> = this._area.querySelectorAll(this._identifier) as NodeListOf<Element>;
-
-        element.forEach(($el: Element, currentIndex: number) => {
-
-            let t_el: kelement = this.createElement($el, currentIndex); //decorate and extend dom element
-
-            this.addElement(t_el);
-            this.addElementByName(t_el);
-            
+        try{
+            element.forEach(($el: Element, currentIndex: number) => {
+                let t_el: kelement = this.createElement($el, currentIndex); //decorate and extend dom element
+    
+                this.addElement(t_el);
+                this.addElementByName(t_el);
+            }
+            ); 
+        }catch(e){
+            console.log(e);
         }
-        ); 
-
+    
     }
 
     addElement(el: kelement) {

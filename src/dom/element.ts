@@ -1,6 +1,6 @@
 export class kelement {
 
-        public id: string;
+        public id: String;
         public $el: HTMLElement;
         public $scope: HTMLElement;
 
