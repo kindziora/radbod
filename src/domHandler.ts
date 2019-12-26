@@ -28,16 +28,25 @@ export class domHandler {
 
     /**
      * 
+     * @param name 
+     * @param $el 
+     */
+    private mapField(name:string, $element:Element):string{
+        switch (name) {
+            case "input":
+                if($element.getAttribute('type'))
+                    name=<string>$element.getAttribute('type');
+        }
+        return name;
+    }
+
+    /**
+     * 
      * @param $el 
      * @param currentIndex 
      */
     private createElement($el: Element, currentIndex: number): kelement{
-        let fieldTypeName: string = <string>$el.tagName.toLowerCase();
-
-
-
-
-
+        let fieldTypeName: string = this.mapField(<string>$el.tagName.toLowerCase(), $el);
         return new this.elementTypes[fieldTypeName]($el, this._area, currentIndex); //decorate and extend dom element
     }
 
@@ -53,7 +62,7 @@ export class domHandler {
             this.addElementByName(t_el);
             
         }
-        );
+        ); 
 
     }
 

@@ -11,14 +11,14 @@ export class kelement {
         }
 
         public getValue() {
-
-        }
+            return this.$el.value;
+        }    
 
         public getName(){
             return this.$el.getAttribute('data-name');
         }
 
-        private setId(namesp: string = "", counter:number) {
+        setId(namesp: string = "", counter:number) {
             let id: string = namesp+ "-" + counter;
             this.$el.setAttribute("data-id", id);
             this.id = id;
