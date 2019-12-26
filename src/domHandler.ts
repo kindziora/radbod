@@ -1,7 +1,6 @@
 import {kelement} from "./dom/element.js";
 import {input} from './dom/element/input.js';
 
-
 export class domHandler {
     private _area: HTMLElement = {} as HTMLElement;
     private _identifier: string = '[data-name]';
@@ -9,7 +8,7 @@ export class domHandler {
     public element:{[index:string]:kelement} = {};
     public elementByName: {[index:string]:Array<kelement>} = {};
     
-    public elementTypes = {input};
+    public elementTypes : {[index:string]:any} = {input};
 
     public counter: number = 0;
     public id: string = "component-0";
@@ -27,15 +26,28 @@ export class domHandler {
         this.id = id;
     }
 
+    /**
+     * 
+     * @param $el 
+     * @param currentIndex 
+     */
+    private createElement($el: Element, currentIndex: number): kelement{
+        let fieldTypeName: string = <string>$el.tagName.toLowerCase();
+
+
+
+
+
+        return new this.elementTypes[fieldTypeName]($el, this._area, currentIndex); //decorate and extend dom element
+    }
+
     loadElements() {
 
         let element: NodeListOf<Element> = this._area.querySelectorAll(this._identifier) as NodeListOf<Element>;
 
-        console.log(element.length);
-
         element.forEach(($el: Element, currentIndex: number) => {
 
-            let t_el: kelement = new this.elementTypes[$el.tagName.toLowerCase()]($el, this._area, currentIndex); //decorate and extend dom element
+            let t_el: kelement = this.createElement($el, currentIndex); //decorate and extend dom element
 
             this.addElement(t_el);
             this.addElementByName(t_el);
@@ -45,11 +57,11 @@ export class domHandler {
 
     }
 
-    addElement(el: dom.kelement) {
+    addElement(el: kelement) {
         this.element[<string>el.id] = el;
     }
 
-    addElementByName(el: dom.kelement) {
+    addElementByName(el: kelement) {
         if (typeof this.elementByName[<string>el.getName()] === "undefined") {
             this.elementByName[<string>el.getName()] = [];
         }

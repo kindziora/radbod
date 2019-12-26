@@ -20,7 +20,6 @@ export class domHandler {
     }
     loadElements() {
         let element = this._area.querySelectorAll(this._identifier);
-        console.log(element.length);
         element.forEach(($el, currentIndex) => {
             let t_el = new this.elementTypes[$el.tagName.toLowerCase()]($el, this._area, currentIndex); //decorate and extend dom element
             this.addElement(t_el);

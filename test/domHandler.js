@@ -24,7 +24,7 @@ export class testDomHandler{
 
         this.domHandler = new domHandler(this.maindiv);
 
-        console.log(this.domHandler.elements);
+        console.log(this.domHandler);
 
     }
 
