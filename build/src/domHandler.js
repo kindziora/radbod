@@ -75,4 +75,18 @@ export class domHandler {
         }
         this.elementByName[el.getName()].push(el);
     }
+    /**
+     *
+     * @param path
+     */
+    getBestMatchingElement(path) {
+        if (typeof this.elementByName[path] !== "undefined") {
+            return this.elementByName[path];
+        }
+        else {
+            let parentPath = path.split("/");
+            parentPath.pop();
+            return this.getBestMatchingElement(parentPath.join('/'));
+        }
+    }
 }

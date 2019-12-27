@@ -1,14 +1,24 @@
 import {datastore, op} from "../datastore";
+import { domHandler } from "../domHandler.js";
 
 export class kelement {
 
     public id: String;
     public $el: HTMLElement;
     public $scope: HTMLElement;
+    public dom: domHandler;
 
-    constructor(el: HTMLElement, $scope: HTMLElement, counter: number = 1) {
+    /**
+     * 
+     * @param el 
+     * @param $scope 
+     * @param counter 
+     * @param dom 
+     */
+    constructor(el: HTMLElement, $scope: HTMLElement, counter: number = 1, dom:domHandler) {
         this.$el = el;
         this.$scope = $scope;
+        this.dom = dom;
         this.setId(this.$scope.getAttribute('data-id') || undefined, counter);
     }
 
@@ -25,7 +35,6 @@ export class kelement {
         this.$el.setAttribute("data-id", id);
         this.id = id;
     }
-
 
     update(changes: Array<op>) {
 

@@ -1,7 +1,15 @@
 export class kelement {
-    constructor(el, $scope, counter = 1) {
+    /**
+     *
+     * @param el
+     * @param $scope
+     * @param counter
+     * @param dom
+     */
+    constructor(el, $scope, counter = 1, dom) {
         this.$el = el;
         this.$scope = $scope;
+        this.dom = dom;
         this.setId(this.$scope.getAttribute('data-id') || undefined, counter);
     }
     getValue() {
