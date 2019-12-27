@@ -22,16 +22,21 @@ export class list {
         this.id = id;
     }
 
-    public addElement(path : String ){
-
+    replace(value: any) {
+        this.$el.value = value;
     }
 
-    public removeElement(){
-
+    add(value: any) {
+        this.$el.value = value;
     }
 
-    public replaceElement(){
-        
+    remove() {
+        this.$el.value = "";
+    }
+    
+    render(value: any){
+
+        return value;
     }
     
 }

@@ -12,10 +12,16 @@ export class list {
         this.$el.setAttribute("data-id", id);
         this.id = id;
     }
-    addElement(path) {
+    replace(value) {
+        this.$el.value = value;
     }
-    removeElement() {
+    add(value) {
+        this.$el.value = value;
     }
-    replaceElement() {
+    remove() {
+        this.$el.value = "";
+    }
+    render(value) {
+        return value;
     }
 }

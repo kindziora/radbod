@@ -28,15 +28,27 @@ export class component {
 
         for (let i: number = 0; i < changes.length; i++) {
             let change: op = changes[i];
-            if(typeof this.dom.elementByName[change.path] !=="undefined"){
-                for(let i in this.dom.elementByName[change.path]){
-                    let el:kelement = this.dom.elementByName[change.path][i];
-                    el.update([change]);
-                }
-            }
-             
+            this.updateUntilParent(change, change.path);
         }
 
+    }
+
+    /**
+     * 
+     * @param change 
+     * @param path 
+     */
+    updateUntilParent(change: op, path: string){
+        if(typeof this.dom.elementByName[change.path] !=="undefined"){
+            for(let i in this.dom.elementByName[change.path]){
+                let el:kelement = this.dom.elementByName[change.path][i];
+                el.update([change]);
+            }
+        }else{
+            let parentPath = path.split("/");
+            parentPath.pop();
+            this.updateUntilParent(change, parentPath.join('/'));
+        }
     }
 
 }

@@ -20,21 +20,6 @@ export class checkbox extends input {
             .from(this.$scope.querySelectorAll(':scope input[data-name="' + this.getName() + '"]'));
     }
     
-    replace(value: any) {
-        this.$el.value = value;
-    }
-
-    add(value: any) {
-        this.$el.value = value;
-    }
-
-    remove() {
-        this.$el.value = "";
-    }
-    
-    render(value: any){
-
-        return value;
-    }
+   
 
 }
