@@ -22,7 +22,7 @@ export class list {
         this.id = id;
     }
 
-    public addElement(element : kelement ){
+    public addElement(path : String ){
 
     }
 

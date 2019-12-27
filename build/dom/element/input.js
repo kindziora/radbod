@@ -6,4 +6,21 @@ export class input extends kelement {
         this.$scope = $scope;
         this.setId(this.$scope.getAttribute('data-id') || undefined, counter);
     }
+    update(changes) {
+        for (let i = 0; i < changes.length; i++) {
+            let change = changes[i];
+            if (typeof this[change.op] !== "undefined") {
+                this[change.op](change.value);
+            }
+        }
+    }
+    replace(value) {
+        this.$el.value = value;
+    }
+    add(value) {
+        this.$el.value = value;
+    }
+    remove() {
+        this.$el.value = "";
+    }
 }

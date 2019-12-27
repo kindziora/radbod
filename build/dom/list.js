@@ -12,7 +12,7 @@ export class list {
         this.$el.setAttribute("data-id", id);
         this.id = id;
     }
-    addElement(element) {
+    addElement(path) {
     }
     removeElement() {
     }

@@ -1,3 +1,6 @@
+
+export interface op{ op:string, path: string, value: any };
+
 export class kelement {
 
         public id: String;
@@ -23,5 +26,30 @@ export class kelement {
             this.$el.setAttribute("data-id", id);
             this.id = id;
         }
+
+       
+    update(changes: Array<op>){
+
+        for(let i:number = 0; i < changes.length; i++){
+            let change:op = changes[i];
+             if(typeof this[change.op] !=="undefined"){
+                 this[change.op](change.value);
+             }
+        }
+             
+     }
+ 
+     replace(value:any){
+         this.$el.value = value;
+     }
+ 
+     add(value:any){
+         this.$el.value = value;
+     }
+ 
+     remove(){
+         this.$el.value = "";
+     }
+ 
 
     }
