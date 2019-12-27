@@ -13,28 +13,7 @@ export class input extends kelement {
     }
     
 
-    update(changes: Array<op>){
-
-       for(let i:number = 0; i < changes.length; i++){
-           let change:op = changes[i];
-            if(typeof this[change.op] !=="undefined"){
-                this[change.op](change.value);
-            }
-       }
-            
-    }
-
-    replace(value:any){
-        this.$el.value = value;
-    }
-
-    add(value:any){
-        this.$el.value = value;
-    }
-
-    remove(){
-        this.$el.value = "";
-    }
+   
 
 }
 

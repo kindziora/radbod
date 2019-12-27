@@ -1,6 +1,7 @@
-import * as jsonpatch from 'fast-json-patch';
+export * from '../node_modules/fast-json-patch/index.js';
+export interface op { op: string, path: string, value: any };
 
-class datastore {
+export class datastore {
     private _mounted: Object = {};
     public alias: Object = {};
     private _changes: Object = {};
@@ -20,24 +21,24 @@ class datastore {
     /**
      * 
      * @param id 
-     * @param itfc 
+     * @param _component 
      * @param subscriber 
      */
-    public addInterface(id: string, itfc: Object) {
-        this._mounted[id] = { itfc, subscriber: [] };
+    public addInterface(id: string, _component: Object) {
+        this._mounted[id] = { _component, subscriber: [] };
         this._changes[id] = [];
-        if (itfc.parameters && itfc.parameters.mapTo) {
+        if (_component.parameters && _component.parameters.mapTo) {
 
-            if (typeof this.alias[itfc.parameters.mapTo] === "undefined") {
-                this.alias[itfc.parameters.mapTo] = [];
+            if (typeof this.alias[_component.parameters.mapTo] === "undefined") {
+                this.alias[_component.parameters.mapTo] = [];
             }
-            this.data[itfc.parameters.mapTo] = itfc.model.field;
+            this.data[_component.parameters.mapTo] = _component.model.field;
             for(let a in this.data[id])
                 this.getStore(a, this.clone(this.data[id][a]));
 
-            this.alias[itfc.parameters.mapTo].push(id);
+            this.alias[_component.parameters.mapTo].push(id);
         }
-        this.data[id] = itfc.model.field;
+        this.data[id] = _component.model.field;
         
         for(let a in this.data[id]){
             if(this.data[id][a])
@@ -82,13 +83,13 @@ class datastore {
 
     /**
      * 
-     * @param itfc 
+     * @param _component 
      * @param changes 
      * @param idFrom 
      * @param idTo 
      * @param reverse 
      */
-    private notify(itfc: Object, changes: Object, idFrom: string, idTo: string, reverse: boolean = false) {
+    private notify(_component: Object, changes: Object, idFrom: string, idTo: string, reverse: boolean = false) {
         let changeOrders = [];
         let idOrg = idTo;
         for (let c in changes.all) {
@@ -97,15 +98,15 @@ class datastore {
             //let pre = changes.all[c][2];
             let after = changes.all[c][3];
             let alias = false;
-            let clear = itfc.dom.normalizeChangeResponse(notation);
+            let clear = _component.dom.normalizeChangeResponse(notation);
 
-            if (itfc.parameters && itfc.parameters.mapTo) {
-                alias = itfc.parameters.mapTo;
+            if (_component.parameters && _component.parameters.mapTo) {
+                alias = _component.parameters.mapTo;
             }
 
             if (reverse) {
-                if (this._mounted[idFrom] && this._mounted[idFrom].itfc.parameters && this._mounted[idFrom].itfc.parameters.mapTo) {
-                    alias = this._mounted[idFrom].itfc.parameters.mapTo;
+                if (this._mounted[idFrom] && this._mounted[idFrom]._component.parameters && this._mounted[idFrom]._component.parameters.mapTo) {
+                    alias = this._mounted[idFrom]._component.parameters.mapTo;
                 }
 
                 if (alias) {
@@ -114,7 +115,7 @@ class datastore {
                 clear = `${idFrom}.${clear}`;
 
                 changeOrders.push([idFrom, idTo, clear, after]);
-                itfc.set(clear, after);
+                _component.set(clear, after);
 
             } else {
 
@@ -124,10 +125,10 @@ class datastore {
 
                 if (clear.indexOf(idTo) !== -1) {
 
-                    let clearC = itfc.dom.normalizeChangeResponse(clear.replace(idTo + ".", ""));
+                    let clearC = _component.dom.normalizeChangeResponse(clear.replace(idTo + ".", ""));
 
                     changeOrders.push([idFrom, idTo, clear, after]);
-                    itfc.set(clearC, after);
+                    _component.set(clearC, after);
                 }
             }
 
@@ -147,13 +148,13 @@ class datastore {
             //   if(other === id)continue;
             let subscriber = this._mounted[other].subscriber.indexOf(id);
             if (subscriber !== -1) {
-                this.notify(this._mounted[other].itfc, changes, id, other, true);
+                this.notify(this._mounted[other]._component, changes, id, other, true);
             }
         }
 
         for (let i in this._mounted[id].subscriber) {
-            let ItfcsToCall = this._mounted[this._mounted[id].subscriber[i]].itfc;
-            this.notify(ItfcsToCall, changes, id, this._mounted[id].subscriber[i], false);
+            let _componentsToCall = this._mounted[this._mounted[id].subscriber[i]]._component;
+            this.notify(_componentsToCall, changes, id, this._mounted[id].subscriber[i], false);
         }
 
     }

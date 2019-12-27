@@ -1,4 +1,8 @@
-class datastore {
+export * from as;
+jsonpatch;
+from;
+'../node_modules/fast-json-patch/index.js';
+export class datastore {
     constructor() {
         this._mounted = {};
         this.alias = {};
