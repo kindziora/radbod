@@ -7,6 +7,7 @@ export class kelement {
      * @param dom
      */
     constructor(el, $scope, counter = 1, dom) {
+        this._isListItem = false;
         this.$el = el;
         this.$scope = $scope;
         this.dom = dom;
@@ -31,17 +32,32 @@ export class kelement {
             }
         }
     }
-    render(value) {
-        return value;
+    render(change) {
+        return change.value;
     }
-    replace(value) {
-        this.$el.value = this.render(value);
+    replace(change) {
+        this.$el.value = this.render(change.value);
     }
-    add(value) {
-        this.$el.value = this.render(value);
+    add(change) {
+        this.$el.value = this.render(change.value);
     }
-    remove() {
+    remove(change) {
+        var _a;
         //if parent exists notify parent and remove el, otherwise tell domHandler to remove el
-        this.$el.value = this.render("");
+        if (this.isListItem()) {
+            (_a = this.getListContainer()) === null || _a === void 0 ? void 0 : _a.remove(change);
+        }
+        else {
+            this.$el.value = this.render("");
+        }
+    }
+    isListItem() {
+        return this._isListItem;
+    }
+    setIsListItem(value) {
+        this._isListItem = value;
+    }
+    getListContainer() {
+        return this._listContainer;
     }
 }

@@ -7,6 +7,8 @@ export class kelement {
     public $el: HTMLElement;
     public $scope: HTMLElement;
     public dom: domHandler;
+    private _isListItem: boolean = false;
+    private _listContainer: kelement | null;
 
     /**
      * 
@@ -47,23 +49,38 @@ export class kelement {
 
     }
 
-    render(value: any){
+    render(change: op){
 
-        return value;
+        return change.value;
     }
 
-    replace(value: any) {
-        this.$el.value = this.render(value);
+    replace(change: op) {
+        this.$el.value = this.render(change.value);
     }
 
-    add(value: any) {
-        this.$el.value = this.render(value);
+    add(change: op) {
+        this.$el.value = this.render(change.value);
     }
 
-    remove() {
+    remove(change: op) {
         //if parent exists notify parent and remove el, otherwise tell domHandler to remove el
+        if(this.isListItem()){
+            this.getListContainer()?.remove(change);
+        }else{
+            this.$el.value = this.render("");
+        }
+    }
 
-        this.$el.value = this.render("");
+    isListItem():boolean{
+        return this._isListItem;
+    }
+
+    setIsListItem(value: boolean){
+        this._isListItem = value;
+    }
+
+    getListContainer(){
+        return this._listContainer;
     }
 
 }

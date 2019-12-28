@@ -57,11 +57,27 @@ export class domHandler {
         let fieldTypeName = this.mapField($el.tagName.toLowerCase(), $el);
         return new this.elementTypes[fieldTypeName]($el, this._area, currentIndex); //decorate and extend dom element
     }
+    /**
+     *
+     * @param t_el
+     */
+    detectType(t_el) {
+        var _a, _b, _c;
+        let last = (_b = (_a = t_el.getName()) === null || _a === void 0 ? void 0 : _a.split("/")) === null || _b === void 0 ? void 0 : _b.pop();
+        if (!isNaN(last)) {
+            t_el.setIsListItem(true);
+        }
+        //next detect if its a listContainer just by dom
+        if (((_c = t_el.$el) === null || _c === void 0 ? void 0 : _c.getAttribute('data-type')) == "list") {
+            t_el.setIsListItem(true);
+        }
+    }
     loadElements() {
         let element = this._area.querySelectorAll(this._identifier);
         try {
             element.forEach(($el, currentIndex) => {
                 let t_el = this.createElement($el, currentIndex); //decorate and extend dom element
+                this.detectType(t_el);
                 this.addElement(t_el);
                 this.addElementByName(t_el);
             });

@@ -68,6 +68,24 @@ export class domHandler {
         let fieldTypeName: string = this.mapField(<string>$el.tagName.toLowerCase(), $el);
         return new this.elementTypes[fieldTypeName]($el, this._area, currentIndex); //decorate and extend dom element
     }
+    /**
+     * 
+     * @param t_el 
+     */
+    detectType(t_el: kelement){
+        let last = t_el.getName()?.split("/")?.pop();
+
+        if(!isNaN(last) ){
+            t_el.setIsListItem(true);
+        }
+
+        //next detect if its a listContainer just by dom
+
+        if(t_el.$el?.getAttribute('data-type') == "list"){ 
+            t_el.setIsListItem(true);
+        }
+
+    }
 
     loadElements() {
         let element: NodeListOf<Element> = this._area.querySelectorAll(this._identifier) as NodeListOf<Element>;
@@ -75,6 +93,7 @@ export class domHandler {
             element.forEach(($el: Element, currentIndex: number) => {
                 let t_el: kelement = this.createElement($el, currentIndex); //decorate and extend dom element
 
+                this.detectType(t_el);
                 this.addElement(t_el);
                 this.addElementByName(t_el);
             }
