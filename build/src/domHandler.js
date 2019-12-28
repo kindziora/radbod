@@ -38,6 +38,13 @@ export class domHandler {
             case "input":
                 if ($element.getAttribute('type'))
                     name = $element.getAttribute('type');
+                break;
+            case "ul":
+                name = "list";
+                break;
+        }
+        if (name === "ul") {
+            name = "list";
         }
         if (typeof this.elementTypes[name] === "undefined") { //unknown field type, back to default
             name = "kelement";
@@ -75,18 +82,23 @@ export class domHandler {
         }
         this.elementByName[el.getName()].push(el);
     }
+    // patch  == [
+    //   { op: "replace", path: "/firstName", value: "Albert"},
+    //   { op: "replace", path: "/contactDetails/phoneNumbers/0/number", value: "123" },
+    //   { op: "add", path: "/contactDetails/phoneNumbers/1", value: {number:"456"}}
+    // ];
     /**
      *
      * @param path
      */
-    getBestMatchingElement(path) {
+    getBestMatchingElements(path) {
         if (typeof this.elementByName[path] !== "undefined") {
             return this.elementByName[path];
         }
         else {
             let parentPath = path.split("/");
             parentPath.pop();
-            return this.getBestMatchingElement(parentPath.join('/'));
+            return this.getBestMatchingElements(parentPath.join('/'));
         }
     }
 }
