@@ -9,12 +9,11 @@ export class checkbox extends list {
     public getValue(single:Boolean = false) {
 
         return this.getFields()
-            .map((checkbox) => { return {"value": checkbox.value, "checked" : checkbox.checked}});
+            .map((kcheckbox) => { return {"value": kcheckbox.$el.value, "checked" : kcheckbox.$el.checked}});
     }
 
     getFields(){
-        return Array
-            .from(this.$el.querySelectorAll(':scope input[type=checkbox]'));
+        return this.dom.getBestMatchingElements(<string>this.getName());
     }
     
     replace(value: any) {

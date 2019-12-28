@@ -47,13 +47,9 @@ export class domHandler {
             case "input":
                 if ($element.getAttribute('type'))
                     name = <string>$element.getAttribute('type');
-break;
+                break;
             case "ul": name = "list";
-            break;
-        }
-
-        if(name ==="ul"){
-            name = "list";
+                break;
         }
 
         if (typeof this.elementTypes[name] === "undefined") { //unknown field type, back to default
@@ -99,17 +95,17 @@ break;
         }
         this.elementByName[<string>el.getName()].push(el);
     }
-
+    
     // patch  == [
-//   { op: "replace", path: "/firstName", value: "Albert"},
-//   { op: "replace", path: "/contactDetails/phoneNumbers/0/number", value: "123" },
-//   { op: "add", path: "/contactDetails/phoneNumbers/1", value: {number:"456"}}
-// ];
+    //   { op: "replace", path: "/firstName", value: "Albert"},
+    //   { op: "replace", path: "/contactDetails/phoneNumbers/0/number", value: "123" },
+    //   { op: "add", path: "/contactDetails/phoneNumbers/1", value: {number:"456"}}
+    // ];
     /**
      * 
      * @param path 
      */
-    getBestMatchingElements(path: string):Array<kelement> | null {
+    getBestMatchingElements(path: string): Array<kelement> | [] {
 
         if (typeof this.elementByName[path] !== "undefined") {
             return this.elementByName[path];

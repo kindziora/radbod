@@ -43,9 +43,6 @@ export class domHandler {
                 name = "list";
                 break;
         }
-        if (name === "ul") {
-            name = "list";
-        }
         if (typeof this.elementTypes[name] === "undefined") { //unknown field type, back to default
             name = "kelement";
         }
