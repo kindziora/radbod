@@ -95,7 +95,7 @@ export class domHandler {
         }
         this.elementByName[<string>el.getName()].push(el);
     }
-    
+
     // patch  == [
     //   { op: "replace", path: "/firstName", value: "Albert"},
     //   { op: "replace", path: "/contactDetails/phoneNumbers/0/number", value: "123" },
@@ -106,15 +106,17 @@ export class domHandler {
      * @param path 
      */
     getBestMatchingElements(path: string): Array<kelement> | [] {
-
+        let elements: Array<kelement> = [];
         if (typeof this.elementByName[path] !== "undefined") {
-            return this.elementByName[path];
+            elements = this.elementByName[path];
         } else {
             let parentPath = path.split("/");
-            parentPath.pop();
-            return this.getBestMatchingElements(parentPath.join('/'));
+            if (parentPath.length > 0) {
+                parentPath.pop();
+                elements = this.getBestMatchingElements(parentPath.join('/'));
+            }
         }
-
+        return elements;
     }
 
 

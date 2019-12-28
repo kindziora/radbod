@@ -41,6 +41,7 @@ export class kelement {
         this.$el.value = this.render(value);
     }
     remove() {
+        //if parent exists notify parent and remove el, otherwise tell domHandler to remove el
         this.$el.value = this.render("");
     }
 }

@@ -89,13 +89,17 @@ export class domHandler {
      * @param path
      */
     getBestMatchingElements(path) {
+        let elements = [];
         if (typeof this.elementByName[path] !== "undefined") {
-            return this.elementByName[path];
+            elements = this.elementByName[path];
         }
         else {
             let parentPath = path.split("/");
-            parentPath.pop();
-            return this.getBestMatchingElements(parentPath.join('/'));
+            if (parentPath.length > 0) {
+                parentPath.pop();
+                elements = this.getBestMatchingElements(parentPath.join('/'));
+            }
         }
+        return elements;
     }
 }
