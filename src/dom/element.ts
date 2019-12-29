@@ -83,4 +83,7 @@ export class kelement {
         return this._listContainer;
     }
 
+    setListContainer(value: kelement){
+        this._listContainer = value;
+    }
 }

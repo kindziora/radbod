@@ -34,6 +34,7 @@ export class domHandler {
      * @param $el
      */
     mapField(name, $element) {
+        var _a, _b;
         switch (name) {
             case "input":
                 if ($element.getAttribute('type'))
@@ -41,10 +42,14 @@ export class domHandler {
                 break;
             case "ul":
                 name = "list";
+                (_a = $element) === null || _a === void 0 ? void 0 : _a.setAttribute('data-type', "list");
                 break;
         }
         if (typeof this.elementTypes[name] === "undefined") { //unknown field type, back to default
             name = "kelement";
+        }
+        if (((_b = $element) === null || _b === void 0 ? void 0 : _b.getAttribute('data-type')) == "list") {
+            name = "list";
         }
         return name;
     }
@@ -62,25 +67,30 @@ export class domHandler {
      * @param t_el
      */
     detectType(t_el) {
-        var _a, _b, _c;
+        var _a, _b, _c, _d, _e;
         let last = (_b = (_a = t_el.getName()) === null || _a === void 0 ? void 0 : _a.split("/")) === null || _b === void 0 ? void 0 : _b.pop();
-        if (!isNaN(last)) {
+        if (!isNaN(last) || ((_c = t_el.$el) === null || _c === void 0 ? void 0 : _c.getAttribute('data-type')) == "list-item") {
             t_el.setIsListItem(true);
+            let id = (_e = (_d = t_el.$el) === null || _d === void 0 ? void 0 : _d.parentElement) === null || _e === void 0 ? void 0 : _e.getAttribute("data-id");
+            if (id) {
+                if (this.element[id]) {
+                    t_el.setListContainer(this.element[id]);
+                }
+            }
         }
-        //next detect if its a listContainer just by dom
-        if (((_c = t_el.$el) === null || _c === void 0 ? void 0 : _c.getAttribute('data-type')) == "list") {
-            t_el.setIsListItem(true);
-        }
+    }
+    loadElement($el, currentIndex) {
+        this.counter++;
+        let t_el = this.createElement($el, currentIndex || this.counter); //decorate and extend dom element
+        this.detectType(t_el);
+        this.addElement(t_el);
+        this.addElementByName(t_el);
+        return t_el;
     }
     loadElements() {
         let element = this._area.querySelectorAll(this._identifier);
         try {
-            element.forEach(($el, currentIndex) => {
-                let t_el = this.createElement($el, currentIndex); //decorate and extend dom element
-                this.detectType(t_el);
-                this.addElement(t_el);
-                this.addElementByName(t_el);
-            });
+            element.forEach(($el, currentIndex) => this.loadElement($el, currentIndex));
         }
         catch (e) {
             console.log(e);

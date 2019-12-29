@@ -60,4 +60,7 @@ export class kelement {
     getListContainer() {
         return this._listContainer;
     }
+    setListContainer(value) {
+        this._listContainer = value;
+    }
 }
