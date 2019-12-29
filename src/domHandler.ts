@@ -97,7 +97,7 @@ export class domHandler {
 
     }
 
-    loadElement($el: Element, currentIndex?: number){
+    loadElement($el: Element, currentIndex?: number): kelement{
         this.counter++;
 
         let t_el: kelement = this.createElement($el, currentIndex || this.counter); //decorate and extend dom element

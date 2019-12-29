@@ -3,6 +3,7 @@ export class list extends kelement {
     constructor() {
         super(...arguments);
         this._listItems = {};
+        this._listItemsByName = {};
     }
     getNativeListItems() {
         var _a;
@@ -20,19 +21,20 @@ export class list extends kelement {
             if (id in this.dom.element) {
                 mappedItems[id] = this.dom.element[id];
                 this._listItems[id] = this.dom.element[id];
+                this._listItemsByName[this.dom.element[id].getName()] = this.dom.element[id];
             }
             else {
                 let nelement = this.dom.loadElement(items[e]);
                 if (nelement) {
                     mappedItems[nelement.id] = nelement;
                     this._listItems[nelement.id] = nelement;
+                    this._listItemsByName[nelement.getName()] = nelement;
                 }
             }
         }
         return mappedItems;
     }
     replace(change) {
-        this.$el.value = value;
     }
     add(change) {
         var _a, _b, _c;
@@ -51,16 +53,28 @@ export class list extends kelement {
             }
             //inserted in between
             if (pos > 0 && pos < Object.keys(items).length - 1) {
-                let el = (_c = change.path) === null || _c === void 0 ? void 0 : _c.split("/");
-                el.pop();
-                el.push(pos + 1);
+                let tname = (_c = change.path) === null || _c === void 0 ? void 0 : _c.split("/");
+                tname.pop();
+                tname.push(pos - 1);
+                let name = tname.join("/");
                 where = "afterend";
-                this.dom.insertElementByElement(this, where, this.renderItem(change));
+                if (this._listItemsByName[name]) {
+                    this.dom.insertElementByElement(this._listItemsByName[name], where, this.renderItem(change));
+                }
+                else {
+                    console.log("failed to find point to insert list-item", name);
+                }
             }
         }
         else {
-            console.log("fail pointer from path", change.path);
+            console.log("failed pointer from path", change.path);
         }
+        let addedEl = this.$scope.querySelector(`:scope data-name="${change.path}"`);
+        let resultEL = null;
+        if (addedEl) {
+            resultEL = this.dom.loadElement(addedEl);
+        }
+        return resultEL;
     }
     remove(change) {
         var _a;
@@ -71,6 +85,6 @@ export class list extends kelement {
     }
     renderItem(value) {
         var _a, _b;
-        return `<div data-type="list-item" data-name="${value.path}">${(_b = (_a = value) === null || _a === void 0 ? void 0 : _a.html) === null || _b === void 0 ? void 0 : _b.trim()}</div>`;
+        return `<div data-type="list-item" data-index="${value.index}" data-name="${value.path}">${(_b = (_a = value) === null || _a === void 0 ? void 0 : _a.html) === null || _b === void 0 ? void 0 : _b.trim()}</div>`;
     }
 }

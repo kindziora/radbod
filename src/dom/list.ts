@@ -5,6 +5,7 @@ import { datastore, op } from '../datastore';
 export class list extends kelement{
 
     private _listItems: { [index: string]: kelement } = {};
+    private _listItemsByName: { [index: string]: kelement } = {};
 
     getNativeListItems(): HTMLCollection{
         return this.$el?.children as HTMLCollection;
@@ -23,11 +24,14 @@ export class list extends kelement{
             if(id in this.dom.element){
                 mappedItems[id] = this.dom.element[id];
                 this._listItems[id] = this.dom.element[id];
+                this._listItemsByName[this.dom.element[id].getName()] = this.dom.element[id];
+
             }else{
                 let nelement = this.dom.loadElement(items[e]);
                 if(nelement){
                     mappedItems[nelement.id] = nelement; 
                     this._listItems[nelement.id] = nelement;
+                    this._listItemsByName[nelement.getName()] = nelement;
                 }
             }
         }
@@ -35,10 +39,9 @@ export class list extends kelement{
     }
 
     replace(change: op) {
-        this.$el.value = value;
     }
-
-    add(change: op) {
+    
+    add(change: op) : kelement | null {
         let where: InsertPosition = "afterbegin";
         let pointer = change.path?.split("/")?.pop();
 
@@ -58,21 +61,28 @@ export class list extends kelement{
 
             //inserted in between
             if(pos > 0 && pos < Object.keys(items).length - 1){
-                let el = change.path?.split("/");
-                el.pop();
-                el.push(pos + 1);
+                let tname = change.path?.split("/");
+                tname.pop();
+                tname.push(pos - 1);
+                let name = tname.join("/");
                 where = "afterend";
-                this.dom.insertElementByElement(this, where, this.renderItem(change));
+                if(this._listItemsByName[name]){
+                    this.dom.insertElementByElement(this._listItemsByName[name], where, this.renderItem(change));
+                }else{
+                    console.log("failed to find point to insert list-item", name);
+                }
             }
 
-           
-
-
-            
-        
         }else{
-            console.log("fail pointer from path" , change.path);
+            console.log("failed pointer from path" , change.path);
         }
+        let addedEl = this.$scope.querySelector(`:scope data-name="${change.path}"`);
+        let resultEL: kelement | null = null;
+        if(addedEl){
+            resultEL = this.dom.loadElement(addedEl);
+        }
+        
+        return resultEL;
     }
 
     remove(change: op) {
@@ -82,7 +92,7 @@ export class list extends kelement{
     }
     
     renderItem(value: any): string {
-        return `<div data-type="list-item" data-name="${value.path}">${value?.html?.trim()}</div>`;
+        return `<div data-type="list-item" data-index="${value.index}" data-name="${value.path}">${value?.html?.trim()}</div>`;
     }
     
 }

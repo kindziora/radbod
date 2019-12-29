@@ -42,8 +42,9 @@ export class kelement {
 
         for (let i: number = 0; i < changes.length; i++) {
             let change: op = changes[i];
+            console.log(change.op, change.value);
             if (typeof this[change.op] !== "undefined") {
-                this[change.op](change.value);
+                this[change.op](change.value); 
             }
         }
 

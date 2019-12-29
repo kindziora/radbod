@@ -27,6 +27,7 @@ export class kelement {
     update(changes) {
         for (let i = 0; i < changes.length; i++) {
             let change = changes[i];
+            console.log(change.op, change.value);
             if (typeof this[change.op] !== "undefined") {
                 this[change.op](change.value);
             }
