@@ -53,6 +53,10 @@ export class domHandler {
         }
         return name;
     }
+    insertElementByElement(el, where = 'beforeend', html) {
+        var _a;
+        (_a = el.$el) === null || _a === void 0 ? void 0 : _a.insertAdjacentHTML(where, html);
+    }
     /**
      *
      * @param $el
@@ -95,6 +99,10 @@ export class domHandler {
         catch (e) {
             console.log(e);
         }
+    }
+    removeElement(el) {
+        el.$el.remove();
+        delete this.element[el.id];
     }
     addElement(el) {
         this.element[el.id] = el;

@@ -63,6 +63,10 @@ export class domHandler {
         return name;
     }
 
+    public insertElementByElement(el: kelement, where : InsertPosition = 'beforeend', html: string){
+        el.$el?.insertAdjacentHTML(where, html);
+    }
+
     /**
      * 
      * @param $el 
@@ -101,7 +105,7 @@ export class domHandler {
         this.detectType(t_el);
         this.addElement(t_el);
         this.addElementByName(t_el);
-        
+
         return t_el;
     }
 
@@ -113,6 +117,11 @@ export class domHandler {
             console.log(e);
         }
 
+    }
+
+    removeElement(el: kelement){
+        el.$el.remove();
+        delete this.element[<string>el.id];
     }
 
     addElement(el: kelement) {
