@@ -39,6 +39,7 @@ export class list extends kelement{
     }
 
     replace(change: op) {
+
     }
     
     add(change: op) : kelement | null {
@@ -91,6 +92,10 @@ export class list extends kelement{
        if(el)this.dom.removeElement(el);
     }
     
+    /**
+     * 
+     * @param value 
+     */
     renderItem(value: any): string {
         return `<div data-type="list-item" data-index="${value.index}" data-name="${value.path}">${value?.html?.trim()}</div>`;
     }

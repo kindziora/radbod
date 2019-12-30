@@ -47,11 +47,10 @@ export class kelement {
                 this[change.op](change.value); 
             }
         }
-
+        
     }
 
     render(change: op){
-
         return change.value;
     }
 

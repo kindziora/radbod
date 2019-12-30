@@ -83,6 +83,10 @@ export class list extends kelement {
         if (el)
             this.dom.removeElement(el);
     }
+    /**
+     *
+     * @param value
+     */
     renderItem(value) {
         var _a, _b;
         return `<div data-type="list-item" data-index="${value.index}" data-name="${value.path}">${(_b = (_a = value) === null || _a === void 0 ? void 0 : _a.html) === null || _b === void 0 ? void 0 : _b.trim()}</div>`;
