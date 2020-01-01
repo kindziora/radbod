@@ -39,7 +39,7 @@ export class list extends kelement{
     }
 
     replace(change: op) {
-
+        console.log("replace hole list");
     }
     
     add(change: op) : kelement | null {
@@ -55,7 +55,7 @@ export class list extends kelement{
             }
 
             //appendend to end
-            if(pos > 0 && pos > Object.keys(items).length - 1){ 
+            if(pos > Object.keys(items).length - 1){ 
                 where = "beforeend";
                 this.dom.insertElementByElement(this, where, this.renderItem(change));
             }
