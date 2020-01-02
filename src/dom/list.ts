@@ -39,7 +39,7 @@ export class list extends kelement{
     }
 
     replace(change: op) {
-        console.log("replace hole list");
+        console.log("replace whole list");
     }
     
     add(change: op) : kelement | null {
@@ -92,6 +92,10 @@ export class list extends kelement{
        if(el)this.dom.removeElement(el);
     }
     
+render(){
+    
+}
+
     /**
      * 
      * @param value 
