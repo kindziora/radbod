@@ -35,6 +35,7 @@ export class list extends kelement {
         return mappedItems;
     }
     replace(change) {
+        console.log("replace whole list");
     }
     add(change) {
         var _a, _b, _c;
@@ -47,7 +48,7 @@ export class list extends kelement {
                 this.dom.insertElementByElement(this, where, this.renderItem(change));
             }
             //appendend to end
-            if (pos > 0 && pos > Object.keys(items).length - 1) {
+            if (pos > Object.keys(items).length - 1) {
                 where = "beforeend";
                 this.dom.insertElementByElement(this, where, this.renderItem(change));
             }
@@ -82,6 +83,8 @@ export class list extends kelement {
         let el = (_a = this.dom.getBestMatchingElements(change.path)) === null || _a === void 0 ? void 0 : _a.pop();
         if (el)
             this.dom.removeElement(el);
+    }
+    render() {
     }
     /**
      *

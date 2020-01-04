@@ -4,8 +4,8 @@ export class input extends kelement {
 
     public $el: HTMLInputElement;
     
-    constructor(el: HTMLInputElement, $scope: HTMLElement, counter:number = 1) {
-        super(el, $scope, counter);
+    constructor(el: HTMLInputElement, $scope: HTMLElement, counter:number = 1, dom:domHandler) {
+        super(el, $scope, counter, dom);
 
         this.$el = el;
         this.$scope = $scope;

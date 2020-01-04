@@ -19,8 +19,8 @@ export class kelement {
     getName() {
         return this.$el.getAttribute('data-name');
     }
-    setId(namesp = "", counter) {
-        let id = namesp + "-" + counter;
+    setId(namesp = "element", counter) {
+        let id = "element" + "-" + counter;
         this.$el.setAttribute("data-id", id);
         this.id = id;
     }

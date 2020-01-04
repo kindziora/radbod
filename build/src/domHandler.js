@@ -64,7 +64,7 @@ export class domHandler {
      */
     createElement($el, currentIndex) {
         let fieldTypeName = this.mapField($el.tagName.toLowerCase(), $el);
-        return new this.elementTypes[fieldTypeName]($el, this._area, currentIndex); //decorate and extend dom element
+        return new this.elementTypes[fieldTypeName]($el, this._area, currentIndex, this); //decorate and extend dom element        
     }
     /**
      *

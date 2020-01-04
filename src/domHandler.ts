@@ -74,7 +74,7 @@ export class domHandler {
      */
     private createElement($el: Element, currentIndex: number): kelement {
         let fieldTypeName: string = this.mapField(<string>$el.tagName.toLowerCase(), $el);
-        return new this.elementTypes[fieldTypeName]($el, this._area, currentIndex); //decorate and extend dom element
+        return new this.elementTypes[fieldTypeName]($el, this._area, currentIndex, this); //decorate and extend dom element        
     }
     /**
      * 
