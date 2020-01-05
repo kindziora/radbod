@@ -1,7 +1,8 @@
 export * from './dataHandler.js';
+import * as fjp from 'fast-json-patch';
 export class store {
     constructor(eventH, dataH) {
-        this.data = {};
+        this._data = {};
         this.pxy = {};
         this.events = eventH;
         this.dataH = dataH;
@@ -19,10 +20,11 @@ export class store {
             },
             set: (oTarget, sKey, vValue) => {
                 oTarget[sKey] = vValue;
-                console.log(oTarget, sKey, vValue);
+                console.log("set", oTarget, sKey, vValue);
                 return true;
             },
             deleteProperty: (oTarget, sKey) => {
+                console.log("delete", oTarget[sKey]);
                 delete oTarget[sKey];
                 return true;
             },
@@ -33,7 +35,10 @@ export class store {
                 return oTarget;
             }
         };
-        this.data = new Proxy(deepClone(data), handler);
+        this._data = new Proxy(fjp.default.deepClone(data), handler);
+    }
+    get data() {
+        return this._data;
     }
     changeStore(changes) {
     }

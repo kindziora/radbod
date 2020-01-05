@@ -1,4 +1,4 @@
-export * from '../node_modules/fast-json-patch/index.js';
+import * as fjp from 'fast-json-patch';
 ;
 export class dataHandler {
     constructor(eventH) {
@@ -6,7 +6,7 @@ export class dataHandler {
         this.events = eventH;
     }
     createStore(component, data) {
-        this.store[component] = deepClone(data);
+        this.store[component] = fjp.deepClone(data);
     }
     changeStore(changes) {
     }

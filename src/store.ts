@@ -1,10 +1,11 @@
 export * from './dataHandler.js';
 import { eventHandler } from './eventHandler.js';
 import { dataHandler } from './dataHandler.js';
+import * as fjp from 'fast-json-patch';
 
 export class store {
 
-    public data: { [index: string]: Object } = {};
+    private _data: { [index: string]: Object } = {};
     private events: eventHandler | undefined;
     private dataH: dataHandler| undefined;
     private pxy: { [index: string]: ProxyConstructor } = {};
@@ -28,21 +29,26 @@ export class store {
              },
             set: (oTarget, sKey, vValue) => {
                 oTarget[sKey] = vValue;
-                console.log(oTarget, sKey, vValue);
+                console.log("set", oTarget, sKey, vValue);
                 return true;
             },
             deleteProperty: (oTarget, sKey) => {
-                 delete oTarget[sKey];
-                 return true;
+                console.log("delete", oTarget[sKey]);
+                delete oTarget[sKey];
+                return true;
             },
             defineProperty: (oTarget, sKey, oDesc) => {
                 if (oDesc && "value" in oDesc) { oTarget[sKey] = oDesc.value }
                 return oTarget;
             }
         };
-        
-        this.data = new Proxy(deepClone(data), handler);
+       
+        this._data = new Proxy(fjp.default.deepClone(data), handler);
 
+    }
+
+    get data(){
+        return this._data;
     }
 
     changeStore(changes: Array<op>) {

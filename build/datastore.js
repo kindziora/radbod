@@ -1,4 +1,3 @@
-export * from '../node_modules/fast-json-patch/index.js';
 ;
 export class datastore {
     constructor() {

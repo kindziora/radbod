@@ -1,4 +1,4 @@
-import {domHandler} from "domHandler";
+import {domHandler} from "./domHandler";
 
 export class app {
 

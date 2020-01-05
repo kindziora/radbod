@@ -1,7 +1,5 @@
 import fastJsonPatch from 'fast-json-patch';
 
-export * from '../node_modules/fast-json-patch/index.mjs';
-
 
 let jsonOne = {
     "glossary": {

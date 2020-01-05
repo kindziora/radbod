@@ -1,5 +1,4 @@
-export * from '../node_modules/fast-json-patch/index.js';
-export interface op { op: string, path: string, value: any };
+ export interface op { op: string, path: string, value: any };
 
 export class datastore {
     private _mounted: Object = {};
