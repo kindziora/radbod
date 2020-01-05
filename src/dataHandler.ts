@@ -1,6 +1,6 @@
-export * from '../node_modules/fast-json-patch/index';
+export * from '../node_modules/fast-json-patch/index.js';
 export interface op { op: string, path: string, value: any };
-import { eventHandler } from './eventHandler.ts';
+import { eventHandler } from './eventHandler.js';
 
 export class dataHandler {
 
@@ -12,10 +12,14 @@ export class dataHandler {
     }
 
     createStore(component: string, data: Object) {
-
         this.store[component] = deepClone(data);
+    }
 
+    changeStore(changes: Array<op>){
+
+    }
+
+    getStore(){
         
-
     }
 }
