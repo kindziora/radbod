@@ -30,6 +30,9 @@ export class store {
             set: (oTarget, sKey, vValue) => {
                 oTarget[sKey] = vValue;
                 console.log("set", oTarget, sKey, vValue);
+
+                
+
                 return true;
             },
             deleteProperty: (oTarget, sKey) => {
