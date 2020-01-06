@@ -6,7 +6,7 @@ import { eventHandler } from './eventHandler.js';
 
 export class dataHandler {
 
-    public store: { [index: string]: Object } = {};
+    public store: { [index: string]: store } = {};
     private events: eventHandler;
     public relations: { [index: string]: Object } = {};
 
@@ -15,14 +15,20 @@ export class dataHandler {
     } 
 
     createStore(component: string, data: Object) {
-        this.store[component] = new store(this.events, this);
+        this.store[component]: store = new store(this.events, this);
         this.relations[component] = {};
         
     }
 
     addStoreRelations(component: string){
-        for(let e in this.store[component].data){
-            this.store[component].data
+        for(let e in this.store){
+            if(e === component)continue;
+            let other = this.store[e].getPaths();
+            for(let eo of other){
+                if(eo.indexOf("$" + component) > -1){
+                    this.addRelation(component, e, eo);
+                }
+            }
         }
     }
 

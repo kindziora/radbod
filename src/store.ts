@@ -3,11 +3,24 @@ import { eventHandler } from './eventHandler.js';
 import { dataHandler } from './dataHandler.js';
 import * as fjp from 'fast-json-patch';
 
+export const step = (sub, pre = "", paths) => {
+    if (pre !== "")
+        paths.push(pre);
+    for (let i in sub) {
+        if (typeof sub[i] === "object") {
+            step(sub[i], pre + "/" + i, paths);
+        } else {
+            paths.push(pre + "/" + i);
+        }
+    }
+    return paths;
+};
+
 export class store {
 
     private _data: { [index: string]: Object } = {};
     private events: eventHandler | undefined;
-    private dataH: dataHandler| undefined;
+    private dataH: dataHandler | undefined;
     private pxy: { [index: string]: ProxyConstructor } = {};
 
 
@@ -17,16 +30,16 @@ export class store {
     }
 
     createStore(component: string, data: Object) {
-        
+
         const handler = {
-            get: (oTarget, key):any => {
+            get: (oTarget, key): any => {
                 if (typeof oTarget[key] === 'object' && oTarget[key] !== null) {
                     this.pxy[key] = this.pxy[key] || new Proxy(oTarget[key], handler);
                     return this.pxy[key];
-                  } else {
+                } else {
                     return oTarget[key];
-                  }
-             },
+                }
+            },
             set: (oTarget, sKey, vValue) => {
                 oTarget[sKey] = vValue;
                 console.log("set", oTarget, sKey, vValue);
@@ -45,12 +58,12 @@ export class store {
                 return oTarget;
             }
         };
-       
+
         this._data = new Proxy(fjp.default.deepClone(data), handler);
 
     }
 
-    get data(){
+    get data() {
         return this._data;
     }
 
@@ -58,12 +71,7 @@ export class store {
 
     }
 
-    getPaths(){
-        let wander = (o, list) => {
-            return Object.keys(o)
-            .forEach( (i, k) => list.push("/" + i + "/" + (typeof o[i] ==="object" ? wander(o[i], list) : i)));
-        };
-
-
+    getPaths() {
+        return step(this._data, "", []);
     }
 }

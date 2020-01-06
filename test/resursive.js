@@ -1,18 +1,16 @@
- 
-  
-  function step(sub, ref){ 
-    let path = []; 
-    console.log(ref);
-    for(let i in sub){ 
-      path.push(i);
-      if(typeof sub[i] === "object"){ 
-        path.push(...step(sub[i],JSON.parse(JSON.stringify(path))));
-      }
-    }
-    return path;
-  }
 
- 
+function step(sub, pre, paths){ 
+  if(pre !=="")
+    paths.push(pre);
+  for(let i in sub){
+    if(typeof sub[i] === "object"){
+       step(sub[i], pre + "/" + i, paths);
+    }else{
+      paths.push(pre + "/" + i);
+    }
+  } 
+  return paths;
+}
 
 let jsonTwo = {
 "glossary": {
@@ -46,8 +44,7 @@ let jsonTwo = {
 }
 };
 let all = [];
-
-let ii = step(jsonTwo,[]);
+let ii = step(jsonTwo, "", []);
 console.log(ii);
 
 
