@@ -31,7 +31,7 @@ export class store {
                 oTarget[sKey] = vValue;
                 console.log("set", oTarget, sKey, vValue);
 
-                
+
 
                 return true;
             },
@@ -55,6 +55,15 @@ export class store {
     }
 
     changeStore(changes: Array<op>) {
+
+    }
+
+    getPaths(){
+        let wander = (o, list) => {
+            return Object.keys(o)
+            .forEach( (i, k) => list.push("/" + i + "/" + (typeof o[i] ==="object" ? wander(o[i], list) : i)));
+        };
+
 
     }
 }

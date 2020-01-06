@@ -4,14 +4,6 @@ import {store} from './store';
 export interface op { op: string, path: string, value: any };
 import { eventHandler } from './eventHandler.js';
 
-const json_getAllKeys = data => (
-    data.reduce((keys, obj) => (
-      keys.concat(Object.keys(obj).filter(key => (
-        keys.indexOf(key) === -1))
-      )
-    ), [])
-  )
-
 export class dataHandler {
 
     public store: { [index: string]: Object } = {};
