@@ -9,6 +9,8 @@ export class dataHandler {
     public store: { [index: string]: store } = {};
     private events: eventHandler;
     public relations: { [index: string]: Object } = {};
+    public pxy: { [index: string]: ProxyConstructor } = {};
+
 
     constructor(eventH: eventHandler) {
         this.events = eventH;
@@ -24,6 +26,11 @@ export class dataHandler {
         this.relations[component] = {};
         this.addStoreRelations(component);
     }
+
+    getStore(component: string) : store{
+        return this.store[component];
+    }
+
     /**
      * 
      * @param component 
@@ -67,19 +74,23 @@ export class dataHandler {
     }
 
     /**
-     * 
+     * collect all changes then bubble event after ...what is important?
      * @param component 
      * @param changes 
      */
-    changeStore(component: string, changes: Array<op>){
-        
+    changeStores(component: string, change: fjp.Operation){
+        console.log(component, change);
+ 
+       /* for(let i in this.relations[component]){
+            console.log(i, this.store[i].data, this.relations[component][i]);
+            //fjp.default.applyPatch(this.store[i].data, change);
+
+        }
+        */
     }
 
     notifyStores(component: string, changes: Array<op>){
         
     }
-
-    getStore(component: string){
-        return this.store[component];
-    }
+ 
 }

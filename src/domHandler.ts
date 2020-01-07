@@ -24,6 +24,8 @@ export class domHandler {
     public counter: number = 0;
     public id: string = "component-0";
 
+    public name: string = "component-x";
+
     constructor(area: HTMLElement) {
         this._area = area as HTMLElement;
         this.counter++;

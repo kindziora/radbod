@@ -18,6 +18,7 @@ export class domHandler {
         this.elementTypes = { input, text, radio, checkbox, range, file, button, list, select, textarea, kelement };
         this.counter = 0;
         this.id = "component-0";
+        this.name = "component-x";
         this._area = area;
         this.counter++;
         this.setId();

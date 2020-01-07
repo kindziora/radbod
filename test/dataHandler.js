@@ -2,14 +2,7 @@ import { dataHandler } from '../build/dataHandler.js';
 
 let glossary = {
   "title": "example glossary",
-  "$widget": {
-    "window": {
-      "title": "Sample Konfabulator Widget",
-      "name": "main_window",
-      "width": 500,
-      "height": 500
-    }
-  },
+  "$widget": {},
   "GlossDiv": {
     "title": "S",
     "GlossList": {
@@ -45,7 +38,10 @@ let widget = {
     "title": "Sample Konfabulator Widget",
     "name": "main_window",
     "width": 500,
-    "height": 500
+    "height": 500,
+    "range" : {
+      w: 20
+    }
   },
   "image": {
     "src": "Images/Sun.png",
@@ -73,5 +69,9 @@ let dataH = new dataHandler();
 
 dataH.createStore("widget", widget);
 dataH.createStore("glossary", glossary);
-dataH.store.widget.data.window.title ="hello";
+dataH.store.widget.data.window.range.w = "hello";
+dataH.store.widget.data.window.range.y = "ffx";
+
+dataH.store.widget.data.window.o = {xx: "ffx"}; // does not spread
+
 console.log(dataH.store.glossary.data.$widget);

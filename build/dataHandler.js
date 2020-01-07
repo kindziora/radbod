@@ -4,6 +4,7 @@ export class dataHandler {
     constructor(eventH) {
         this.store = {};
         this.relations = {};
+        this.pxy = {};
         this.events = eventH;
     }
     /**
@@ -15,6 +16,9 @@ export class dataHandler {
         this.store[component] = new store(this.events, this, component, data);
         this.relations[component] = {};
         this.addStoreRelations(component);
+    }
+    getStore(component) {
+        return this.store[component];
     }
     /**
      *
@@ -57,15 +61,19 @@ export class dataHandler {
         this.relations[fromComponent][component][(_c = (_b = (_a = FullPath) === null || _a === void 0 ? void 0 : _a.split("/$")) === null || _b === void 0 ? void 0 : _b[1]) === null || _c === void 0 ? void 0 : _c.replace(fromComponent, "")] = FullPath;
     }
     /**
-     *
+     * collect all changes then bubble event after ...what is important?
      * @param component
      * @param changes
      */
-    changeStore(component, changes) {
+    changeStores(component, change) {
+        console.log(component, change);
+        /* for(let i in this.relations[component]){
+             console.log(i, this.store[i].data, this.relations[component][i]);
+             //fjp.default.applyPatch(this.store[i].data, change);
+ 
+         }
+         */
     }
     notifyStores(component, changes) {
-    }
-    getStore(component) {
-        return this.store[component];
     }
 }

@@ -1,19 +1,20 @@
 import { domHandler } from './domHandler';
-import { datastore, op } from './datastore';
+import { store, op } from './store.js';
 import { kelement } from './dom/element';
 
 export class component {
     public dom: domHandler;
-    public store: datastore;
+    public store: store;
 
     /**
      * 
      * @param dom 
      * @param store 
      */
-    constructor(dom: domHandler, store: datastore){
+    constructor(dom: domHandler, store: store){
         this.dom = dom;
         this.store = store;
+        this.store.events?.addEvent(this.dom.name, this.dom.name, "change", this.update);
     }
 
     set(path:string, value:any){
