@@ -65,7 +65,7 @@ let jsonTwo = {
 
 let model = new store();
 
-model.createStore("gloss", jsonOne);
+model.createStore(null, null, "gloss", jsonOne);
 console.log(model.data);
 model.data.cc = "d";
 //model.data = jsonTwo;

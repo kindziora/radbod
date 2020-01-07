@@ -22,11 +22,13 @@ export class store {
     private events: eventHandler | undefined;
     private dataH: dataHandler | undefined;
     private pxy: { [index: string]: ProxyConstructor } = {};
+    public component : string;
 
-
-    constructor(eventH?: eventHandler, dataH?: dataHandler) {
+    constructor(eventH: eventHandler, dataH: dataHandler, component: string, data: Object) {
         this.events = eventH;
         this.dataH = dataH;
+        this.component = component;
+        this.createStore(component, data);
     }
 
     createStore(component: string, data: Object) {
@@ -40,12 +42,12 @@ export class store {
                     return oTarget[key];
                 }
             },
-            set: (oTarget, sKey, vValue) => {
+            set: (oTarget, sKey, vValue) => { 
+                let pre = fjp.default.deepClone(this._data)
                 oTarget[sKey] = vValue;
-                console.log("set", oTarget, sKey, vValue);
-
-
-
+                console.log("set", this.component, oTarget, sKey, vValue);
+                let diff = fjp.compare(fjp.default.deepClone(this._data), pre);
+                this.dataH?.changeStore(component, diff);
                 return true;
             },
             deleteProperty: (oTarget, sKey) => {

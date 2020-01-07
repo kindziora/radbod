@@ -1,11 +1,26 @@
 export * from './dataHandler.js';
 import * as fjp from 'fast-json-patch';
+export const step = (sub, pre = "", paths) => {
+    if (pre !== "")
+        paths.push(pre);
+    for (let i in sub) {
+        if (typeof sub[i] === "object") {
+            step(sub[i], pre + "/" + i, paths);
+        }
+        else {
+            paths.push(pre + "/" + i);
+        }
+    }
+    return paths;
+};
 export class store {
-    constructor(eventH, dataH) {
+    constructor(eventH, dataH, component, data) {
         this._data = {};
         this.pxy = {};
         this.events = eventH;
         this.dataH = dataH;
+        this.component = component;
+        this.createStore(component, data);
     }
     createStore(component, data) {
         const handler = {
@@ -19,8 +34,12 @@ export class store {
                 }
             },
             set: (oTarget, sKey, vValue) => {
+                var _a;
+                let pre = fjp.default.deepClone(this._data);
                 oTarget[sKey] = vValue;
-                console.log("set", oTarget, sKey, vValue);
+                console.log("set", this.component, oTarget, sKey, vValue);
+                let diff = fjp.compare(fjp.default.deepClone(this._data), pre);
+                (_a = this.dataH) === null || _a === void 0 ? void 0 : _a.changeStore(component, diff);
                 return true;
             },
             deleteProperty: (oTarget, sKey) => {
@@ -41,5 +60,8 @@ export class store {
         return this._data;
     }
     changeStore(changes) {
+    }
+    getPaths() {
+        return step(this._data, "", []);
     }
 }

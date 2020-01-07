@@ -1,16 +1,4 @@
-
-function step(sub, pre, paths){ 
-  if(pre !=="")
-    paths.push(pre);
-  for(let i in sub){
-    if(typeof sub[i] === "object"){
-       step(sub[i], pre + "/" + i, paths);
-    }else{
-      paths.push(pre + "/" + i);
-    }
-  } 
-  return paths;
-}
+import { store, step } from '../build/store.js';
 
 let jsonTwo = {
 "glossary": {
