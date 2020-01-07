@@ -38,7 +38,7 @@ export class store {
                 let pre = fjp.default.deepClone(this._data);
                 oTarget[sKey] = vValue;
                 console.log("set", this.component, oTarget, sKey, vValue);
-                let diff = fjp.compare(fjp.default.deepClone(this._data), pre);
+                let diff = fjp.default.compare(fjp.default.deepClone(this._data), pre);
                 (_a = this.dataH) === null || _a === void 0 ? void 0 : _a.changeStore(component, diff);
                 return true;
             },

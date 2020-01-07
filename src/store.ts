@@ -46,7 +46,7 @@ export class store {
                 let pre = fjp.default.deepClone(this._data)
                 oTarget[sKey] = vValue;
                 console.log("set", this.component, oTarget, sKey, vValue);
-                let diff = fjp.compare(fjp.default.deepClone(this._data), pre);
+                let diff = fjp.default.compare(fjp.default.deepClone(this._data), pre);
                 this.dataH?.changeStore(component, diff);
                 return true;
             },
