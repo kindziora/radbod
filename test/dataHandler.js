@@ -1,4 +1,5 @@
 import { dataHandler } from '../build/dataHandler.js';
+import { eventHandler } from '../build/eventHandler.js';
 
 let glossary = {
   "title": "example glossary",
@@ -65,10 +66,17 @@ let widget = {
   }
 };
 
-let dataH = new dataHandler();
+
+
+let dataH = new dataHandler(new eventHandler());
+
+dataH.events.addEvent("widget", "widget", "change", function(a) {
+  console.log(this, arguments);
+});
 
 dataH.createStore("widget", widget);
 dataH.createStore("glossary", glossary);
+
 dataH.store.widget.data.window.range.w = "hello";
 dataH.store.widget.data.window.range.y = "ffx";
 

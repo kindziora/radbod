@@ -26,7 +26,7 @@ export class dataHandler {
      * @param changes
      */
     changeStores(component, change) {
-        console.log(component, change);
+        console.log("change store", component, change);
         /* for(let i in this.relations[component]){
              console.log(i, this.store[i].data, this.relations[component][i]);
              //fjp.default.applyPatch(this.store[i].data, change);

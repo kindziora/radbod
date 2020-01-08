@@ -34,7 +34,9 @@ export class eventHandler{
 
         this.eventById[id] = ((meta, eventHdlr) => function(){
             console.log("pre event", meta);
+
             cb.apply(eventHdlr, arguments);
+            
             console.log("post event", meta);
         })(meta, this);
 
@@ -84,7 +86,7 @@ export class eventHandler{
         if (this.event[component]?.[id]?.[name]) {
             for(let i in this.event[component][id][name]){
                 let callbackID = this.event[component][id][name][i];
-                if(false === this.getFunction(callbackID)?.apply(this, args)){
+                if(false === this.getFunction(callbackID)?.call(this, args, {component, id, name })){
                     break;
                 }
             }

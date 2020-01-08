@@ -77,7 +77,7 @@ export class store {
      * @param changes 
      */
     changeStore(component: string, change: fjp.Operation){
-        console.log(component, change);
+        console.log("store ", component, change);
 
         this.patchQueue.push(change);
 

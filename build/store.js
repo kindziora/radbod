@@ -61,7 +61,7 @@ export class store {
      */
     changeStore(component, change) {
         var _a, _b;
-        console.log(component, change);
+        console.log("store ", component, change);
         this.patchQueue.push(change);
         /*
        this.events.addEvent(component, change.path, change.op, function(change){

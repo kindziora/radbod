@@ -68,7 +68,7 @@ export class eventHandler {
         if ((_b = (_a = this.event[component]) === null || _a === void 0 ? void 0 : _a[id]) === null || _b === void 0 ? void 0 : _b[name]) {
             for (let i in this.event[component][id][name]) {
                 let callbackID = this.event[component][id][name][i];
-                if (false === ((_c = this.getFunction(callbackID)) === null || _c === void 0 ? void 0 : _c.apply(this, args))) {
+                if (false === ((_c = this.getFunction(callbackID)) === null || _c === void 0 ? void 0 : _c.call(this, args, { component, id, name }))) {
                     break;
                 }
             }
