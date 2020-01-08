@@ -1,18 +1,5 @@
 export * from './dataHandler.js';
 import * as fjp from 'fast-json-patch';
-export const step = (sub, pre = "", paths) => {
-    if (pre !== "")
-        paths.push(pre);
-    for (let i in sub) {
-        if (typeof sub[i] === "object") {
-            step(sub[i], pre + "/" + i, paths);
-        }
-        else {
-            paths.push(pre + "/" + i);
-        }
-    }
-    return paths;
-};
 export class store {
     constructor(eventH, dataH, component, data) {
         this._data = {};
@@ -88,8 +75,5 @@ export class store {
         return this._data;
     }
     set(path, value) {
-    }
-    getPaths() {
-        return step(this._data, "", []);
     }
 }

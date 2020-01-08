@@ -3,19 +3,6 @@ import { eventHandler } from './eventHandler.js';
 import { dataHandler } from './dataHandler.js';
 import * as fjp from 'fast-json-patch';
 
-export const step = (sub, pre = "", paths) => {
-    if (pre !== "")
-        paths.push(pre);
-    for (let i in sub) {
-        if (typeof sub[i] === "object") {
-            step(sub[i], pre + "/" + i, paths);
-        } else {
-            paths.push(pre + "/" + i);
-        }
-    }
-    return paths;
-};
-
 export class store {
 
     private _data: { [index: string]: Object } = {};
@@ -111,8 +98,5 @@ export class store {
     set(path:string, value:any){
 
     } 
-
-    getPaths() {
-        return step(this._data, "", []);
-    }
+ 
 }
