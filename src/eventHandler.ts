@@ -35,16 +35,8 @@ export class eventHandler{
         let id: number = cyrb53(cb.toString());
         
         this.eventById[id] = ((meta, eventHdlr) => (args:object = {}, returnValue = null) =>{
-           
-            let special =  meta.name.indexOf("pre_") > -1 || meta.name.indexOf("post_") > -1;
-    
-            if(!special)
-            returnValue = this.dispatchEvent(meta.component, meta.id, "pre_" + meta.name, args, returnValue);
-
+          
             returnValue = cb.apply(eventHdlr, [args, returnValue]);
-
-            if(!special)
-                returnValue = this.dispatchEvent(meta.component, meta.id, "post_" + meta.name, args, returnValue);
 
             return returnValue;
         })(meta, this);
@@ -93,18 +85,28 @@ export class eventHandler{
 
     dispatchEvent(component:string, id: string, name:string, args = null, returnValue = null) {
         if (this.event[component]?.[id]?.[name]) {
-            let ret = null;
+            let ret = null || returnValue;
+
+            let special = name.indexOf("pre_") > -1 || name.indexOf("post_") > -1;
+    
+            if(!special)
+                ret = this.dispatchEvent(component, id, "pre_" + name, args, ret);
+
             for(let i in this.event[component][id][name]){
                 let callbackID = this.event[component][id][name][i];
                
-                ret = this.getFunction(callbackID)?.call(this, args, returnValue || ret);
+                ret = this.getFunction(callbackID)?.call(this, args, ret || ret);
                 if(false === ret){
                     break;
                 }
-                 
+                
             }
+            if(!special)
+                ret = this.dispatchEvent(component,id, "post_" + name, args, ret);
+
+            return ret;
         }else{
-            console.log("no event listener for " , component, id, name);
+            throw { msg : "no event listener for " , component, id, name};
         }
     }
 

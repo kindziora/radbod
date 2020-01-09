@@ -39,17 +39,17 @@ export class store {
                 set: (oTarget, sKey, vValue) => {
                     let op: string = typeof oTarget[sKey] === "undefined" ? "add" : "replace";
                     let diff: fjp.Operation = { op, path: parentPath + "/" + sKey, value: vValue };
-                    oTarget[sKey] = vValue;
+
 
                     /**
                      * @todo set value and use this.pxy[px] for $ connected values 
                      */
 
+                    if (oTarget[sKey] !== vValue) {
+                        vValue = this.changeStore(component, diff);
+                    }
 
-                    /**
-                     * collect diffs inside handler and bubble later on
-                     */
-                    this.changeStore(component, diff);
+                    oTarget[sKey] = vValue;
 
                     return true;
                 },
@@ -79,11 +79,19 @@ export class store {
      */
     changeStore(component: string, change: fjp.Operation) {
         console.log("store ", component, change);
-
+        let ret = null;
         this.patchQueue.push(change);
 
-        this.events?.dispatchEvent(component, change.path, change.op, change);
-        this.events?.dispatchEvent(component, component, "change", change);
+        let retChange = this.events?.dispatchEvent(component, component, "change", change);
+        
+        try{
+            ret = this.events?.dispatchEvent(component, change.path, change.op, change, retChange);
+        }catch(e){
+            console.log(e);
+            ret = retChange;
+        }
+       
+        return ret;
     }
 
 

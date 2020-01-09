@@ -84,7 +84,7 @@ dataH.events.addEvent("widget", "widget", "change", function() {
 
 dataH.events.addEvent("widget", "widget", "change", function() {
   console.log("ACTION", arguments);
-  
+
   return "proccess 2";
 });
 
@@ -98,10 +98,12 @@ dataH.events.addEvent("widget", "widget", "post_change", function() {
 dataH.createStore("widget", widget);
 dataH.createStore("glossary", glossary);
 
-dataH.getStore('widget').data.window.range.w = "hello";
-dataH.store.widget.data.window.range.y = "ffx";
+dataH.store.widget.data.window.range.w = "hello";
 
-dataH.store.widget.data.window.o = {xx: "ffx"}; // does not spread
-dataH.store.widget.data.window.o = {xx: "fxxxxfx"}; // does not spread
+dataH.getStore('widget').data.window.range.w = "hello";
+//dataH.store.widget.data.window.range.y = "ffx";
+
+//dataH.store.widget.data.window.o = {xx: "ffx"}; // does not spread
+//dataH.store.widget.data.window.o = {xx: "fxxxxfx"}; // does not spread
 
 console.log(dataH.store.glossary.data.$widget);

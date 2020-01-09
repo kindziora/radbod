@@ -29,14 +29,13 @@ export class store {
                 set: (oTarget, sKey, vValue) => {
                     let op = typeof oTarget[sKey] === "undefined" ? "add" : "replace";
                     let diff = { op, path: parentPath + "/" + sKey, value: vValue };
-                    oTarget[sKey] = vValue;
                     /**
                      * @todo set value and use this.pxy[px] for $ connected values
                      */
-                    /**
-                     * collect diffs inside handler and bubble later on
-                     */
-                    this.changeStore(component, diff);
+                    if (oTarget[sKey] !== vValue) {
+                        vValue = this.changeStore(component, diff);
+                    }
+                    oTarget[sKey] = vValue;
                     return true;
                 },
                 deleteProperty: (oTarget, sKey) => {
@@ -64,9 +63,17 @@ export class store {
     changeStore(component, change) {
         var _a, _b;
         console.log("store ", component, change);
+        let ret = null;
         this.patchQueue.push(change);
-        (_a = this.events) === null || _a === void 0 ? void 0 : _a.dispatchEvent(component, change.path, change.op, change);
-        (_b = this.events) === null || _b === void 0 ? void 0 : _b.dispatchEvent(component, component, "change", change);
+        let retChange = (_a = this.events) === null || _a === void 0 ? void 0 : _a.dispatchEvent(component, component, "change", change);
+        try {
+            ret = (_b = this.events) === null || _b === void 0 ? void 0 : _b.dispatchEvent(component, change.path, change.op, change, retChange);
+        }
+        catch (e) {
+            console.log(e);
+            ret = retChange;
+        }
+        return ret;
     }
     get data() {
         return this._data;
