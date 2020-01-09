@@ -1,6 +1,6 @@
-import { domHandler } from './domHandler';
+import { domHandler } from './domHandler.js';
 import { store, op } from './store.js';
-import { kelement } from './dom/element';
+import { kelement } from './dom/element.js';
 
 export class component {
     public dom: domHandler;

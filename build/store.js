@@ -81,6 +81,4 @@ export class store {
     get data() {
         return this._data;
     }
-    set(path, value) {
-    }
 }

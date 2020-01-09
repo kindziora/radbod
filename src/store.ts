@@ -103,13 +103,8 @@ export class store {
         return ret;
     }
 
-
     get data() {
         return this._data;
     }
-
-    set(path: string, value: any) {
-
-    }
-
+    
 }
