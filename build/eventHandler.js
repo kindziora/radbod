@@ -28,7 +28,7 @@ export class eventHandler {
      */
     addFunction(cb, meta) {
         let id = cyrb53(cb.toString());
-        this.eventById[id] = ((meta, eventHdlr) => (args = {}, returnValue = {}) => {
+        this.eventById[id] = ((meta, eventHdlr) => (args = {}, returnValue = null) => {
             let special = meta.name.indexOf("pre_") > -1 || meta.name.indexOf("post_") > -1;
             if (!special)
                 returnValue = this.dispatchEvent(meta.component, meta.id, "pre_" + meta.name, args, returnValue);
@@ -71,13 +71,13 @@ export class eventHandler {
     dispatchEvent(component, id, name, args = null, returnValue = null) {
         var _a, _b, _c;
         if ((_b = (_a = this.event[component]) === null || _a === void 0 ? void 0 : _a[id]) === null || _b === void 0 ? void 0 : _b[name]) {
+            let ret = null;
             for (let i in this.event[component][id][name]) {
                 let callbackID = this.event[component][id][name][i];
-                let ret = (_c = this.getFunction(callbackID)) === null || _c === void 0 ? void 0 : _c.call(this, args, returnValue);
+                ret = (_c = this.getFunction(callbackID)) === null || _c === void 0 ? void 0 : _c.call(this, args, returnValue || ret);
                 if (false === ret) {
                     break;
                 }
-                return ret;
             }
         }
         else {

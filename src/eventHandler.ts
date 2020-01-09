@@ -34,7 +34,7 @@ export class eventHandler{
     addFunction(cb: Function, meta: meta): number{ 
         let id: number = cyrb53(cb.toString());
         
-        this.eventById[id] = ((meta, eventHdlr) => (args:object = {}, returnValue:object = {}) =>{
+        this.eventById[id] = ((meta, eventHdlr) => (args:object = {}, returnValue = null) =>{
            
             let special =  meta.name.indexOf("pre_") > -1 || meta.name.indexOf("post_") > -1;
     
@@ -93,13 +93,15 @@ export class eventHandler{
 
     dispatchEvent(component:string, id: string, name:string, args = null, returnValue = null) {
         if (this.event[component]?.[id]?.[name]) {
+            let ret = null;
             for(let i in this.event[component][id][name]){
                 let callbackID = this.event[component][id][name][i];
-                let ret = this.getFunction(callbackID)?.call(this, args, returnValue);
+               
+                ret = this.getFunction(callbackID)?.call(this, args, returnValue || ret);
                 if(false === ret){
                     break;
                 }
-                return ret;
+                 
             }
         }else{
             console.log("no event listener for " , component, id, name);

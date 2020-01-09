@@ -65,11 +65,6 @@ export class store {
         var _a, _b;
         console.log("store ", component, change);
         this.patchQueue.push(change);
-        /*
-       this.events.addEvent(component, change.path, change.op, function(change){
-         console.log("hallo welt");
-       });
- */
         (_a = this.events) === null || _a === void 0 ? void 0 : _a.dispatchEvent(component, change.path, change.op, change);
         (_b = this.events) === null || _b === void 0 ? void 0 : _b.dispatchEvent(component, component, "change", change);
     }

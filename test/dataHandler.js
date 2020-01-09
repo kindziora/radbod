@@ -73,21 +73,28 @@ dataH.events.addEvent("widget", "widget", "pre_change", function() {
 
   console.log("PRE", arguments);
 
-  return "test";
+  return "prepare value ";
 });
 
 dataH.events.addEvent("widget", "widget", "change", function() {
   console.log("ACTION", arguments);
 
-  return "test aa";
+  return "proccess 1";
+});
+
+dataH.events.addEvent("widget", "widget", "change", function() {
+  console.log("ACTION", arguments);
+  
+  return "proccess 2";
 });
 
 dataH.events.addEvent("widget", "widget", "post_change", function() {
   console.log("POST", arguments);
 
  
-  return "test";
+  return "after";
 });
+
 dataH.createStore("widget", widget);
 dataH.createStore("glossary", glossary);
 
