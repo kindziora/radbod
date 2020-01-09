@@ -14,6 +14,7 @@ export const cyrb53 = function (str, seed = 0) {
     h2 = Math.imul(h2 ^ h2 >>> 16, 2246822507) ^ Math.imul(h1 ^ h1 >>> 13, 3266489909);
     return 4294967296 * (2097151 & h2) + (h1 >>> 0);
 };
+;
 export class eventHandler {
     constructor() {
         this.event = {};
@@ -27,10 +28,14 @@ export class eventHandler {
      */
     addFunction(cb, meta) {
         let id = cyrb53(cb.toString());
-        this.eventById[id] = ((meta, eventHdlr) => function () {
-            console.log("pre event", meta);
-            cb.apply(eventHdlr, arguments);
-            console.log("post event", meta);
+        this.eventById[id] = ((meta, eventHdlr) => (args = {}, returnValue = {}) => {
+            let special = meta.name.indexOf("pre_") > -1 || meta.name.indexOf("post_") > -1;
+            if (!special)
+                returnValue = this.dispatchEvent(meta.component, meta.id, "pre_" + meta.name, args, returnValue);
+            returnValue = cb.apply(eventHdlr, [args, returnValue]);
+            if (!special)
+                returnValue = this.dispatchEvent(meta.component, meta.id, "post_" + meta.name, args, returnValue);
+            return returnValue;
         })(meta, this);
         return id;
     }
@@ -63,14 +68,16 @@ export class eventHandler {
             this.event[component][id][name].push(callbackId);
         return callbackId;
     }
-    dispatchEvent(component, id, name, args = null) {
+    dispatchEvent(component, id, name, args = null, returnValue = null) {
         var _a, _b, _c;
         if ((_b = (_a = this.event[component]) === null || _a === void 0 ? void 0 : _a[id]) === null || _b === void 0 ? void 0 : _b[name]) {
             for (let i in this.event[component][id][name]) {
                 let callbackID = this.event[component][id][name][i];
-                if (false === ((_c = this.getFunction(callbackID)) === null || _c === void 0 ? void 0 : _c.call(this, args, { component, id, name }))) {
+                let ret = (_c = this.getFunction(callbackID)) === null || _c === void 0 ? void 0 : _c.call(this, args, returnValue);
+                if (false === ret) {
                     break;
                 }
+                return ret;
             }
         }
         else {

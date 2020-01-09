@@ -16,6 +16,8 @@ export const cyrb53 = function(str : string, seed = 0) : number {
     return 4294967296 * (2097151 & h2) + (h1>>>0);
 };
 
+export interface meta { component: string, id: string, name: string };
+
 export class eventHandler{
 
     public event: Object = {};
@@ -29,15 +31,22 @@ export class eventHandler{
      * 
      * @param cb 
      */
-    addFunction(cb: Function, meta: object): number{ 
+    addFunction(cb: Function, meta: meta): number{ 
         let id: number = cyrb53(cb.toString());
+        
+        this.eventById[id] = ((meta, eventHdlr) => (args:object = {}, returnValue:object = {}) =>{
+           
+            let special =  meta.name.indexOf("pre_") > -1 || meta.name.indexOf("post_") > -1;
+    
+            if(!special)
+            returnValue = this.dispatchEvent(meta.component, meta.id, "pre_" + meta.name, args, returnValue);
 
-        this.eventById[id] = ((meta, eventHdlr) => function(){
-            console.log("pre event", meta);
+            returnValue = cb.apply(eventHdlr, [args, returnValue]);
 
-            cb.apply(eventHdlr, arguments);
-            
-            console.log("post event", meta);
+            if(!special)
+                returnValue = this.dispatchEvent(meta.component, meta.id, "post_" + meta.name, args, returnValue);
+
+            return returnValue;
         })(meta, this);
 
         return id;
@@ -82,13 +91,15 @@ export class eventHandler{
         return callbackId;
     }
 
-    dispatchEvent(component:string, id: string, name:string, args = null) {
+    dispatchEvent(component:string, id: string, name:string, args = null, returnValue = null) {
         if (this.event[component]?.[id]?.[name]) {
             for(let i in this.event[component][id][name]){
                 let callbackID = this.event[component][id][name][i];
-                if(false === this.getFunction(callbackID)?.call(this, args, {component, id, name })){
+                let ret = this.getFunction(callbackID)?.call(this, args, returnValue);
+                if(false === ret){
                     break;
                 }
+                return ret;
             }
         }else{
             console.log("no event listener for " , component, id, name);

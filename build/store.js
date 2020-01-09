@@ -13,10 +13,11 @@ export class store {
         let createProxy = (data, parentPath = "") => {
             const handler = {
                 get: (oTarget, key) => {
+                    var _a, _b, _c;
                     if (typeof oTarget[key] === 'object' && oTarget[key] !== null) {
                         let px = parentPath + "/" + key;
-                        this.dataH.pxy[px] = this.dataH.pxy[px] || createProxy(oTarget[key], px);
-                        return this.dataH.pxy[px];
+                        this.dataH.pxy[px] = ((_a = this.dataH) === null || _a === void 0 ? void 0 : _a.pxy[px]) || createProxy(oTarget[key], px);
+                        return (_c = (_b = this.dataH) === null || _b === void 0 ? void 0 : _b.pxy) === null || _c === void 0 ? void 0 : _c[px];
                     }
                     else {
                         return oTarget[key];
@@ -41,6 +42,7 @@ export class store {
                 deleteProperty: (oTarget, sKey) => {
                     console.log("delete", oTarget[sKey]);
                     delete oTarget[sKey];
+                    this.changeStore(component, { op: "remove", path: parentPath + "/" + sKey });
                     return true;
                 },
                 defineProperty: (oTarget, sKey, oDesc) => {

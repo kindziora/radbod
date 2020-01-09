@@ -25,8 +25,8 @@ export class store {
                 get: (oTarget, key): any => { 
                     if (typeof oTarget[key] === 'object' && oTarget[key] !== null) {
                         let px:string = parentPath + "/" + key;
-                        this.dataH.pxy[px] = this.dataH.pxy[px] || createProxy(oTarget[key], px);
-                        return this.dataH.pxy[px];
+                        this.dataH.pxy[px] = this.dataH?.pxy[px] || createProxy(oTarget[key], px);
+                        return this.dataH?.pxy?.[px];
                     } else {
                         return oTarget[key];
                     }
@@ -56,6 +56,7 @@ export class store {
                 deleteProperty: (oTarget, sKey) => {
                     console.log("delete", oTarget[sKey]);
                     delete oTarget[sKey];
+                    this.changeStore(component, { op : "remove", path :  parentPath + "/" + sKey});
                     return true;
                 },
                 defineProperty: (oTarget, sKey, oDesc) => {

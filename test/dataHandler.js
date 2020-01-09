@@ -69,17 +69,32 @@ let widget = {
 
 
 let dataH = new dataHandler(new eventHandler());
+dataH.events.addEvent("widget", "widget", "pre_change", function() {
 
-dataH.events.addEvent("widget", "widget", "change", function(a) {
-  console.log(this, arguments);
+  console.log("PRE", arguments);
+
+  return "test";
 });
 
+dataH.events.addEvent("widget", "widget", "change", function() {
+  console.log("ACTION", arguments);
+
+  return "test aa";
+});
+
+dataH.events.addEvent("widget", "widget", "post_change", function() {
+  console.log("POST", arguments);
+
+ 
+  return "test";
+});
 dataH.createStore("widget", widget);
 dataH.createStore("glossary", glossary);
 
-dataH.store.widget.data.window.range.w = "hello";
+dataH.getStore('widget').data.window.range.w = "hello";
 dataH.store.widget.data.window.range.y = "ffx";
 
 dataH.store.widget.data.window.o = {xx: "ffx"}; // does not spread
+dataH.store.widget.data.window.o = {xx: "fxxxxfx"}; // does not spread
 
 console.log(dataH.store.glossary.data.$widget);
