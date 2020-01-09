@@ -1,9 +1,10 @@
 import { dataHandler } from '../build/dataHandler.js';
 import { eventHandler } from '../build/eventHandler.js';
+import { store } from '../build/store.js';
 
 let glossary = {
   "title": "example glossary",
-  "$widget": {},
+  "$widget": store,
   "GlossDiv": {
     "title": "S",
     "GlossList": {
@@ -61,9 +62,7 @@ let widget = {
     "alignment": "center",
     "onMouseUp": "sun1.opacity = (sun1.opacity / 100) * 90;"
   },
-  "$glossary" : {
-    "title" : ""
-  }
+  "$glossary" : store
 };
 
 
@@ -71,25 +70,20 @@ let widget = {
 let dataH = new dataHandler(new eventHandler());
 dataH.events.addEvent("widget", "widget", "pre_change", function() {
 
-  console.log("PRE", arguments);
-
   return "prepare value ";
 });
 
 dataH.events.addEvent("widget", "widget", "change", function() {
-  console.log("ACTION", arguments);
 
   return "proccess 1";
 });
 
 dataH.events.addEvent("widget", "widget", "change", function() {
-  console.log("ACTION", arguments);
-
+  console.log(arguments);
   return "proccess 2";
 });
 
 dataH.events.addEvent("widget", "widget", "post_change", function() {
-  console.log("POST", arguments);
 
  
   return "after";
@@ -98,12 +92,15 @@ dataH.events.addEvent("widget", "widget", "post_change", function() {
 dataH.createStore("widget", widget);
 dataH.createStore("glossary", glossary);
 
-dataH.store.widget.data.window.range.w = "hello";
-
-dataH.getStore('widget').data.window.range.w = "hello";
+//console.log(dataH.store.widget.data.window);
+ 
+//dataH.getStore('widget').data.window.range.w = "hello";
 //dataH.store.widget.data.window.range.y = "ffx";
 
 //dataH.store.widget.data.window.o = {xx: "ffx"}; // does not spread
 //dataH.store.widget.data.window.o = {xx: "fxxxxfx"}; // does not spread
 
+
+console.log(dataH.store.widget.data.$glossary.toJSON());
+ 
 console.log(dataH.store.glossary.data.$widget);

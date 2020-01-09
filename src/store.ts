@@ -18,14 +18,37 @@ export class store {
         this.createStore(component, data);
     }
 
+    unmaskComponentName(component: string) {
+        return component.charAt(0) === "$" ? component.substr(1) : component;
+    }
+
     createStore(component: string, data: Object) {
 
-        let createProxy = (data: Object, parentPath: string = "") => {
+        let createProxy = (data: Object, parentPath: string = `/$${component}`) => {
             const handler = {
                 get: (oTarget, key): any => {
-                    if (typeof oTarget[key] === 'object' && oTarget[key] !== null) {
+
+                    if (typeof oTarget[key] === 'object' && oTarget[key] !== null || typeof oTarget[key] === 'function' ) {
+                        
                         let px: string = parentPath + "/" + key;
+                       
+                        if(key.charAt(0) === "$"){ //reference
+                            px = key;
+                        }
+ 
                         this.dataH.pxy[px] = this.dataH?.pxy[px] || createProxy(oTarget[key], px);
+                        
+                      
+
+                            Object.defineProperty(this.dataH.pxy[px], 'toJSON', {
+                                value: () => {
+                                    return fjp.default.deepClone(this.dataH.pxy[px]);
+                                },
+                                writable: false
+                              });
+                              
+                        
+
                         return this.dataH?.pxy?.[px];
                     } else {
                         return oTarget[key];
@@ -39,7 +62,6 @@ export class store {
                 set: (oTarget, sKey, vValue) => {
                     let op: string = typeof oTarget[sKey] === "undefined" ? "add" : "replace";
                     let diff: fjp.Operation = { op, path: parentPath + "/" + sKey, value: vValue };
-
 
                     /**
                      * @todo set value and use this.pxy[px] for $ connected values 
@@ -62,14 +84,14 @@ export class store {
                 defineProperty: (oTarget, sKey, oDesc) => {
                     if (oDesc && "value" in oDesc) { oTarget[sKey] = oDesc.value }
                     return oTarget;
-                }
+                },
+                
             };
 
             return new Proxy(data, handler);
         }
-
-        this._data = createProxy(fjp.default.deepClone(data));
-
+        this.dataH.pxy[`$${component}`] = this._data = createProxy(data); //fjp.default.deepClone(data);
+        
     }
 
     /**

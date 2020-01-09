@@ -13,12 +13,10 @@ export class dataHandler {
      */
     createStore(component, data) {
         this.store[component] = new store(this.events, this, component, data);
+        return this.store[component];
     }
     getStore(component) {
         return this.store[component];
-    }
-    unmaskComponentName(component) {
-        return component.charAt(0) === "$" ? component.substr(1) : component;
     }
     /**
      * collect all changes then bubble event after ...what is important?

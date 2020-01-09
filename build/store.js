@@ -9,14 +9,26 @@ export class store {
         this.component = component;
         this.createStore(component, data);
     }
+    unmaskComponentName(component) {
+        return component.charAt(0) === "$" ? component.substr(1) : component;
+    }
     createStore(component, data) {
-        let createProxy = (data, parentPath = "") => {
+        let createProxy = (data, parentPath = `/$${component}`) => {
             const handler = {
                 get: (oTarget, key) => {
                     var _a, _b, _c;
-                    if (typeof oTarget[key] === 'object' && oTarget[key] !== null) {
+                    if (typeof oTarget[key] === 'object' && oTarget[key] !== null || typeof oTarget[key] === 'function') {
                         let px = parentPath + "/" + key;
+                        if (key.charAt(0) === "$") { //reference
+                            px = key;
+                        }
                         this.dataH.pxy[px] = ((_a = this.dataH) === null || _a === void 0 ? void 0 : _a.pxy[px]) || createProxy(oTarget[key], px);
+                        Object.defineProperty(this.dataH.pxy[px], 'toJSON', {
+                            value: () => {
+                                return fjp.default.deepClone(this.dataH.pxy[px]);
+                            },
+                            writable: false
+                        });
                         return (_c = (_b = this.dataH) === null || _b === void 0 ? void 0 : _b.pxy) === null || _c === void 0 ? void 0 : _c[px];
                     }
                     else {
@@ -49,11 +61,11 @@ export class store {
                         oTarget[sKey] = oDesc.value;
                     }
                     return oTarget;
-                }
+                },
             };
             return new Proxy(data, handler);
         };
-        this._data = createProxy(fjp.default.deepClone(data));
+        this.dataH.pxy[`$${component}`] = this._data = createProxy(data); //fjp.default.deepClone(data);
     }
     /**
      * collect all changes then bubble event after ...what is important?
