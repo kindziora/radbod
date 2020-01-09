@@ -29,7 +29,7 @@ export class eventHandler {
     addFunction(cb, meta) {
         let id = cyrb53(cb.toString());
         this.eventById[id] = ((meta, eventHdlr) => (args = {}, returnValue = null) => {
-            returnValue = cb.apply(eventHdlr, [args, returnValue]);
+            returnValue = cb.apply(eventHdlr, [args, returnValue, meta]);
             return returnValue;
         })(meta, this);
         return id;
@@ -82,7 +82,8 @@ export class eventHandler {
             return ret;
         }
         else {
-            throw { msg: "no event listener for ", component, id, name };
+            console.log("no listener for ", component, id, name, args);
+            return returnValue;
         }
     }
 }

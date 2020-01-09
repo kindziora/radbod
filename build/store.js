@@ -1,5 +1,4 @@
 export * from './dataHandler.js';
-import * as fjp from 'fast-json-patch';
 export class store {
     constructor(eventH, dataH, component, data) {
         this._data = {};
@@ -23,12 +22,6 @@ export class store {
                             px = key;
                         }
                         this.dataH.pxy[px] = ((_a = this.dataH) === null || _a === void 0 ? void 0 : _a.pxy[px]) || createProxy(oTarget[key], px);
-                        Object.defineProperty(this.dataH.pxy[px], 'toJSON', {
-                            value: () => {
-                                return fjp.default.deepClone(this.dataH.pxy[px]);
-                            },
-                            writable: false
-                        });
                         return (_c = (_b = this.dataH) === null || _b === void 0 ? void 0 : _b.pxy) === null || _c === void 0 ? void 0 : _c[px];
                     }
                     else {
@@ -61,7 +54,7 @@ export class store {
                         oTarget[sKey] = oDesc.value;
                     }
                     return oTarget;
-                },
+                }
             };
             return new Proxy(data, handler);
         };
@@ -74,15 +67,13 @@ export class store {
      */
     changeStore(component, change) {
         var _a, _b;
-        console.log("store ", component, change);
         let ret = null;
         this.patchQueue.push(change);
         let retChange = (_a = this.events) === null || _a === void 0 ? void 0 : _a.dispatchEvent(component, component, "change", change);
         try {
-            ret = (_b = this.events) === null || _b === void 0 ? void 0 : _b.dispatchEvent(component, change.path, change.op, change, retChange);
+            ret = (_b = this.events) === null || _b === void 0 ? void 0 : _b.dispatchEvent(component, change.path, change.op, change, change.value);
         }
         catch (e) {
-            console.log(e);
             ret = retChange;
         }
         return ret;

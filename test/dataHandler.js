@@ -97,10 +97,12 @@ dataH.createStore("glossary", glossary);
 //dataH.getStore('widget').data.window.range.w = "hello";
 //dataH.store.widget.data.window.range.y = "ffx";
 
+console.log(dataH.store.glossary.data);
+dataH.store.glossary.data.title = "halli hallo";
+
+//console.log(dataH.store.glossary.data);
 //dataH.store.widget.data.window.o = {xx: "ffx"}; // does not spread
 //dataH.store.widget.data.window.o = {xx: "fxxxxfx"}; // does not spread
 
-
-console.log(dataH.store.widget.data.$glossary.toJSON());
- 
-console.log(dataH.store.glossary.data.$widget);
+//console.log(dataH.store.widget.data);
+//console.log(dataH.store.glossary.data);

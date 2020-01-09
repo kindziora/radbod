@@ -36,7 +36,7 @@ export class eventHandler{
         
         this.eventById[id] = ((meta, eventHdlr) => (args:object = {}, returnValue = null) =>{
           
-            returnValue = cb.apply(eventHdlr, [args, returnValue]);
+            returnValue = cb.apply(eventHdlr, [args, returnValue, meta]);
 
             return returnValue;
         })(meta, this);
@@ -84,6 +84,7 @@ export class eventHandler{
     }
 
     dispatchEvent(component:string, id: string, name:string, args = null, returnValue = null) {
+        
         if (this.event[component]?.[id]?.[name]) {
             let ret = null || returnValue;
 
@@ -106,7 +107,8 @@ export class eventHandler{
 
             return ret;
         }else{
-            throw { msg : "no event listener for " , component, id, name};
+            console.log("no listener for ", component, id, name, args);
+            return returnValue;
         }
     }
 

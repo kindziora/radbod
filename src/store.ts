@@ -38,17 +38,6 @@ export class store {
  
                         this.dataH.pxy[px] = this.dataH?.pxy[px] || createProxy(oTarget[key], px);
                         
-                      
-
-                            Object.defineProperty(this.dataH.pxy[px], 'toJSON', {
-                                value: () => {
-                                    return fjp.default.deepClone(this.dataH.pxy[px]);
-                                },
-                                writable: false
-                              });
-                              
-                        
-
                         return this.dataH?.pxy?.[px];
                     } else {
                         return oTarget[key];
@@ -70,7 +59,7 @@ export class store {
                     if (oTarget[sKey] !== vValue) {
                         vValue = this.changeStore(component, diff);
                     }
-
+                    
                     oTarget[sKey] = vValue;
 
                     return true;
@@ -84,7 +73,7 @@ export class store {
                 defineProperty: (oTarget, sKey, oDesc) => {
                     if (oDesc && "value" in oDesc) { oTarget[sKey] = oDesc.value }
                     return oTarget;
-                },
+                }
                 
             };
 
@@ -100,16 +89,14 @@ export class store {
      * @param changes 
      */
     changeStore(component: string, change: fjp.Operation) {
-        console.log("store ", component, change);
         let ret = null;
         this.patchQueue.push(change);
 
         let retChange = this.events?.dispatchEvent(component, component, "change", change);
         
         try{
-            ret = this.events?.dispatchEvent(component, change.path, change.op, change, retChange);
+            ret = this.events?.dispatchEvent(component, change.path, change.op, change, change.value);
         }catch(e){
-            console.log(e);
             ret = retChange;
         }
        
