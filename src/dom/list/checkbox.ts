@@ -28,9 +28,16 @@ export class checkbox extends list {
         this.$el.value = "";
     }
     
-    render(value: any){
+   
+    /**
+     * 
+     * @param change 
+     */
+    render(change: op) {
+        let items = this.getListItems();
 
-        return value;
+        this.$el.outerHTML = `<div data-type="list" data-name="${change.path}">${change.value.map(this.renderItem).join('')}</div>`;
+        return this.$el.outerHTML;
     }
     
 

@@ -2,6 +2,15 @@ import { input } from "../input.js";
 
 export class checkbox extends input {
 
+      /**
+     * 
+     * @param change 
+     */
+    render(change: op){
+        this.$el.outerHTML = `<input type="checkbox" data-name="${change.path}" value="${change.value}" />`;
+        return this.$el.outerHTML;
+    }
+
     /**
      * 
      * @param single 

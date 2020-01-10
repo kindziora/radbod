@@ -44,8 +44,4 @@ export class dataHandler {
          */
     }
 
-    notifyStores(component: string, changes: Array<op>) {
-
-    }
-
 }

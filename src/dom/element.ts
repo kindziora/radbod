@@ -50,16 +50,21 @@ export class kelement {
         
     }
 
+    /**
+     * 
+     * @param change 
+     */
     render(change: op){
-        return change.value;
+        this.$el.outerHTML = `<div data-name="${change.path}">${change.value}</div>`;
+        return this.$el.outerHTML;
     }
 
     replace(change: op) {
-        this.$el.value = this.render(change);
+        this.$el.value = change.value;
     }
 
     add(change: op) {
-        this.$el.value = this.render(change);
+        this.$el.value = change.value;
     }
 
     remove(change: op) {

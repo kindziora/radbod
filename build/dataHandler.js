@@ -32,6 +32,4 @@ export class dataHandler {
          }
          */
     }
-    notifyStores(component, changes) {
-    }
 }

@@ -12,8 +12,15 @@ export class input extends kelement {
         this.setId(this.$scope.getAttribute('data-id') || undefined, counter);
     }
     
+    /**
+     * 
+     * @param change 
+     */
+    render(change: op){
+        this.$el.outerHTML = `<input data-name="${change.path}" value="${change.value}" />`;
+        return this.$el.outerHTML;
+    }
 
-   
 
 }
 

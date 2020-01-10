@@ -1,7 +1,15 @@
 import { input } from "../input.js";
 
 export class radio extends input {
-    
+      /**
+     * 
+     * @param change 
+     */
+    render(change: op){
+        this.$el.outerHTML = `<input type="radio" data-name="${change.path}" value="${change.value}" />`;
+        return this.$el.outerHTML;
+    }
+
     /**
      * 
      * @param single 
