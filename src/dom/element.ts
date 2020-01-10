@@ -1,4 +1,4 @@
-import {datastore, op} from "../datastore";
+import { op } from "../store.js";
 import { domHandler } from "../domHandler.js";
 
 export class kelement {

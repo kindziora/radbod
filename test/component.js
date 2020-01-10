@@ -1,28 +1,31 @@
 import { dataHandler } from '../build/dataHandler.js';
 import { eventHandler } from '../build/eventHandler.js';
 import { store } from '../build/store.js';
-import {domHandler} from '../build/domHandler.js';
-import {component} from '../build/component.js';
+import { testDomHandler } from './domHandler.js';
+import { component } from '../build/component.js';
 
-let widget = {
-  "debug": "on",
-  "window": {
+let dataH = new dataHandler(new eventHandler());
+
+let user = {
+  "userdata": {
     "title": "Sample Konfabulator Widget",
-    "name": "main_window",
+    "usermail": "ak@sdsd.de",
+    "username": "alexander",
+    "password": "xyz",
     "width": 500,
     "height": 500,
-    "range" : {
+    "range": {
       w: 20
     }
   },
-  "image": {
+  "address": {
     "src": "Images/Sun.png",
     "name": "sun1",
     "hOffset": 250,
     "vOffset": 250,
     "alignment": "center"
   },
-  "text": {
+  "contracts": {
     "data": "Click Here",
     "size": 36,
     "style": "bold",
@@ -32,11 +35,32 @@ let widget = {
     "alignment": "center",
     "onMouseUp": "sun1.opacity = (sun1.opacity / 100) * 90;"
   },
-  "$glossary" : store
+  "$glossary": store
+};
+
+let actions = {
+  "userdata/username": {
+    click() {
+      console.log(arguments);
+    },
+    keyup() {
+
+    },
+    "keyup~element-3"() { //address specific element in dom
+
+    }
+  }
 };
 
 
-let dataH = new dataHandler(new eventHandler());
- 
-let widgetStore = dataH.createStore("widget", widget);
-  
+let userStore = dataH.createStore("user", user);
+
+let testDom = (new testDomHandler()).domHandler;
+
+let myComponent = new component(testDom, userStore, actions);
+
+let elements = testDom.getBestMatchingElements("userdata/username");
+
+elements[0].$el.click();
+
+console.log(myComponent.store.events.event);

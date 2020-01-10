@@ -1,12 +1,15 @@
-import {domHandler} from '../build/src/domHandler.js';
+import {domHandler} from '../build/domHandler.js';
+import browserEnv from 'browser-env';
+browserEnv();
 
 export class testDomHandler{
     
 
     constructor(){
         this.maindiv = document.createElement("div");
+        this.maindiv.setAttribute("data-name", "userform");
         this.maindiv.innerHTML = ` 
-            <form method="post">
+            <form method="post" >
                 <h1>Payment form</h1>
                 <p>Required fields are followed by <strong><abbr title="required">*</abbr></strong>.</p>
                 <section>
@@ -16,19 +19,19 @@ export class testDomHandler{
                       <ul>
                           <li>
                             <label for="title_2">
-                              <input type="radio" id="title_2" data-name="title" value="A">
+                              <input type="radio" id="title_2" data-name="userdata/title" value="A">
                               Ace
                             </label>
                           </li>
                           <li>
                             <label for="title_1">
-                              <input type="radio" id="title_1" data-name="title" value="K" >
+                              <input type="radio" id="title_1" data-name="userdata/title" value="K" >
                               King
                             </label>
                           </li>
                           <li>
                             <label for="title_2">
-                              <input type="radio" id="title_2" data-name="title" value="Q">
+                              <input type="radio" id="title_2" data-name="userdata/title" value="Q">
                               Queen
                             </label>
                           </li>
@@ -39,21 +42,21 @@ export class testDomHandler{
                         <span>Name: </span>
                         <strong><abbr title="required">*</abbr></strong>
                       </label>
-                      <input type="text" id="name" data-name="username">
+                      <input type="text" id="name" data-name="userdata/username">
                     </p>
                     <p>
                       <label for="mail">
                         <span>E-mail: </span>
                         <strong><abbr title="required">*</abbr></strong>
                       </label>
-                      <input type="email" id="mail" data-name="usermail">
+                      <input type="email" id="mail" data-name="userdata/usermail">
                     </p>
                     <p>
                       <label for="pwd">
                         <span>Password: </span>
                         <strong><abbr title="required">*</abbr></strong>
                       </label>
-                      <input type="password" id="pwd" data-name="password">
+                      <input type="password" id="pwd" data-name="userdata/password">
                     </p>
                 </section>
                 <section>
@@ -91,8 +94,6 @@ export class testDomHandler{
        `;
 
         this.domHandler = new domHandler(this.maindiv);
-
-        console.log(this.domHandler);
 
     }
 

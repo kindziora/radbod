@@ -30,6 +30,9 @@ export class domHandler {
         this._area = area as HTMLElement;
         this.counter++;
         this.setId();
+        if(area.hasAttribute('data-name')){
+            this.name = area.getAttribute('data-name') || this.name;
+        }
         this.loadElements();
     }
 
