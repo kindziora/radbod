@@ -44,7 +44,7 @@ export class kelement {
             let change: op = changes[i];
             console.log(change.op, change.value);
             if (typeof this[change.op] !== "undefined") {
-                this[change.op](change.value); 
+                this[change.op](change); 
             }
         }
         
@@ -55,11 +55,11 @@ export class kelement {
     }
 
     replace(change: op) {
-        this.$el.value = this.render(change.value);
+        this.$el.value = this.render(change);
     }
 
     add(change: op) {
-        this.$el.value = this.render(change.value);
+        this.$el.value = this.render(change);
     }
 
     remove(change: op) {
@@ -67,7 +67,7 @@ export class kelement {
         if(this.isListItem()){
             this.getListContainer()?.remove(change);
         }else{
-            this.$el.value = this.render("");
+            this.$el.value = "";
         }
     }
 

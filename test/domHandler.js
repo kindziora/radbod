@@ -19,19 +19,19 @@ export class testDomHandler{
                       <ul>
                           <li>
                             <label for="title_2">
-                              <input type="radio" id="title_2" data-name="userdata/title" value="A">
+                              <input type="radio" id="title_2" data-name="/$user/userdata/title" value="A">
                               Ace
                             </label>
                           </li>
                           <li>
                             <label for="title_1">
-                              <input type="radio" id="title_1" data-name="userdata/title" value="K" >
+                              <input type="radio" id="title_1" data-name="/$user/userdata/title" value="K" >
                               King
                             </label>
                           </li>
                           <li>
                             <label for="title_2">
-                              <input type="radio" id="title_2" data-name="userdata/title" value="Q">
+                              <input type="radio" id="title_2" data-name="/$user/userdata/title" value="Q">
                               Queen
                             </label>
                           </li>
@@ -42,21 +42,21 @@ export class testDomHandler{
                         <span>Name: </span>
                         <strong><abbr title="required">*</abbr></strong>
                       </label>
-                      <input type="text" id="name" data-name="userdata/username">
+                      <input type="text" id="name" data-name="/$user/userdata/username">
                     </p>
                     <p>
                       <label for="mail">
                         <span>E-mail: </span>
                         <strong><abbr title="required">*</abbr></strong>
                       </label>
-                      <input type="email" id="mail" data-name="userdata/usermail">
+                      <input type="email" id="mail" data-name="/$user/userdata/usermail">
                     </p>
                     <p>
                       <label for="pwd">
                         <span>Password: </span>
                         <strong><abbr title="required">*</abbr></strong>
                       </label>
-                      <input type="password" id="pwd" data-name="userdata/password">
+                      <input type="password" id="pwd" data-name="/$user/userdata/password">
                     </p>
                 </section>
                 <section>

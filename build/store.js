@@ -6,6 +6,7 @@ export class store {
         this.events = eventH;
         this.dataH = dataH;
         this.component = component;
+        this.name = component;
         this.createStore(component, data);
     }
     unmaskComponentName(component) {
@@ -69,9 +70,10 @@ export class store {
         var _a, _b;
         let ret = null;
         this.patchQueue.push(change);
-        let retChange = (_a = this.events) === null || _a === void 0 ? void 0 : _a.dispatchEvent(component, component, "change", change);
+        let retChange = (_a = this.events) === null || _a === void 0 ? void 0 : _a.dispatchEvent(component, "/", "change", [change]);
+        //console.log(component, "/", "change", change);
         try {
-            ret = (_b = this.events) === null || _b === void 0 ? void 0 : _b.dispatchEvent(component, change.path, change.op, change, change.value);
+            ret = (_b = this.events) === null || _b === void 0 ? void 0 : _b.dispatchEvent(component, change.path, change.op, [change], change.value);
         }
         catch (e) {
             ret = retChange;

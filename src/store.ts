@@ -9,12 +9,14 @@ export class store {
     public events: eventHandler | undefined;
     private dataH: dataHandler | undefined;
     public component: string;
+    public name: string;
     private patchQueue: Array<fjp.Operation> = [];
 
     constructor(eventH: eventHandler, dataH: dataHandler, component: string, data: Object) {
         this.events = eventH;
         this.dataH = dataH;
         this.component = component;
+        this.name = component;
         this.createStore(component, data);
     }
 
@@ -92,10 +94,12 @@ export class store {
         let ret = null;
         this.patchQueue.push(change);
 
-        let retChange = this.events?.dispatchEvent(component, component, "change", change);
+        let retChange = this.events?.dispatchEvent(component, "/", "change", [change]);
         
+        //console.log(component, "/", "change", change);
+
         try{
-            ret = this.events?.dispatchEvent(component, change.path, change.op, change, change.value);
+            ret = this.events?.dispatchEvent(component, change.path, change.op, [change], change.value);
         }catch(e){
             ret = retChange;
         }

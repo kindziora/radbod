@@ -29,7 +29,7 @@ export class kelement {
             let change = changes[i];
             console.log(change.op, change.value);
             if (typeof this[change.op] !== "undefined") {
-                this[change.op](change.value);
+                this[change.op](change);
             }
         }
     }
@@ -37,10 +37,10 @@ export class kelement {
         return change.value;
     }
     replace(change) {
-        this.$el.value = this.render(change.value);
+        this.$el.value = this.render(change);
     }
     add(change) {
-        this.$el.value = this.render(change.value);
+        this.$el.value = this.render(change);
     }
     remove(change) {
         var _a;
@@ -49,7 +49,7 @@ export class kelement {
             (_a = this.getListContainer()) === null || _a === void 0 ? void 0 : _a.remove(change);
         }
         else {
-            this.$el.value = this.render("");
+            this.$el.value = "";
         }
     }
     isListItem() {

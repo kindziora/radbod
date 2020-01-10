@@ -23,7 +23,8 @@ export class component {
     }
 
     bindEvents() {
-        this.store.events?.addEvent(this.name, "/", "change", this.update);
+        this.store.events?.addEvent(this.name, "/", "change", this.update.bind(this));
+        this.store.events?.addEvent(this.store.name, "/", "change", this.update.bind(this));
 
         for (let path in this.interactions) {
 
@@ -39,14 +40,14 @@ export class component {
                             this.store.events?.addEvent(this.name, path, mapEvent[0], this.interactions?.[path]?.[event]);
 
                             $el.addEventListener(mapEvent[0], (ev) => {
-                                this.store.events?.dispatchEvent(this.name, path, event, { $el, ev }, this.store.data);
+                                this.store.events?.dispatchEvent(this.name, path, event, { "field": this.dom.elementByName[path][field], ev }, this.store.data);
                             });
                         }
                     } else {
                         this.store.events?.addEvent(this.name, path, event, this.interactions?.[path]?.[event]);
 
                         $el.addEventListener(event, (ev) => {
-                            this.store.events?.dispatchEvent(this.name, path, event, { $el, ev }, this.store.data);
+                            this.store.events?.dispatchEvent(this.name, path, event, { "field": this.dom.elementByName[path][field], ev }, this.store.data);
                         });
                     }
 
@@ -65,11 +66,11 @@ export class component {
     }
 
     update(changes: Array<op>) {
-
+ 
         for (let i: number = 0; i < changes.length; i++) {
             let change: op = changes[i];
             this.dom.getBestMatchingElements(change.path)
-                .forEach((el) => el.update([change]));
+            .forEach((el) => el.update([change]));
         }
 
     }

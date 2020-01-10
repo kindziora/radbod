@@ -107,7 +107,7 @@ export class eventHandler{
 
             return ret;
         }else{
-            console.log("no listener for ", component, id, name, args);
+            console.log("no listener for ", component, id, name);
             return returnValue;
         }
     }

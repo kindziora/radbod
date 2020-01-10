@@ -6,6 +6,15 @@ import { component } from '../build/component.js';
 
 let dataH = new dataHandler(new eventHandler());
 
+let addressStore = dataH.createStore("address", {
+  "src": "Images/Sun.png",
+  "name": "sun1",
+  "hOffset": 250,
+  "vOffset": 250,
+  "alignment": "center",
+  "$user" : store
+});
+
 let user = {
   "userdata": {
     "title": "Sample Konfabulator Widget",
@@ -18,13 +27,6 @@ let user = {
       w: 20
     }
   },
-  "address": {
-    "src": "Images/Sun.png",
-    "name": "sun1",
-    "hOffset": 250,
-    "vOffset": 250,
-    "alignment": "center"
-  },
   "contracts": {
     "data": "Click Here",
     "size": 36,
@@ -35,13 +37,13 @@ let user = {
     "alignment": "center",
     "onMouseUp": "sun1.opacity = (sun1.opacity / 100) * 90;"
   },
-  "$glossary": store
+  "$address": addressStore
 };
 
 let actions = {
-  "userdata/username": {
-    click() {
-      console.log(arguments);
+  "/$user/userdata/username": {
+    click(sender, dataStore) {
+      dataStore.userdata.username = "halli hallo";
     },
     keyup() {
 
@@ -59,8 +61,10 @@ let testDom = (new testDomHandler()).domHandler;
 
 let myComponent = new component(testDom, userStore, actions);
 
-let elements = testDom.getBestMatchingElements("userdata/username");
+let elements = testDom.getBestMatchingElements("/$user/userdata/username");
+
+console.log("value", elements[0].$el.value);
 
 elements[0].$el.click();
 
-console.log(myComponent.store.events.event);
+console.log("value", elements[0].$el.value);

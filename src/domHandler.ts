@@ -155,7 +155,7 @@ export class domHandler {
             elements = this.elementByName[path];
         } else {
             let parentPath = path.split("/");
-            if (parentPath.length > 0) {
+            if (parentPath.length > 1) {
                 parentPath.pop();
                 elements = this.getBestMatchingElements(parentPath.join('/'));
             }
