@@ -92,9 +92,9 @@ export class list extends kelement{
        if(el)this.dom.removeElement(el);
     }
     
-render(){
-    
-}
+    render(){
+        
+    }
 
     /**
      * 

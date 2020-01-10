@@ -57,14 +57,6 @@ export class component {
 
     }
 
-    set(path: string, value: any) {
-
-    }
-
-    get(path: string): any {
-
-    }
-
     update(changes: Array<op>) {
  
         for (let i: number = 0; i < changes.length; i++) {

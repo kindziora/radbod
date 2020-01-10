@@ -43,10 +43,6 @@ export class component {
             }
         }
     }
-    set(path, value) {
-    }
-    get(path) {
-    }
     update(changes) {
         for (let i = 0; i < changes.length; i++) {
             let change = changes[i];
