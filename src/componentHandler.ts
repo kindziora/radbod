@@ -1,13 +1,13 @@
 
-import {domHandler} from "./dom";
+import {dom} from "./dom";
 
 export class componentHandler{
 
-    private _dom: domHandler;
+    private _dom: dom;
    // private _eventHandler: eventHandler;
 
     construct(area: HTMLElement){
-       this._dom = new domHandler(area);
+       this._dom = new dom(area);
       // this._eventHandler = new eventHandler();
     }
 

@@ -1,4 +1,4 @@
-export const loginHTML = (user) => html`<form method="post">
+export const loginHTML = (user) => `<form method="post">
     <h1>Payment form</h1>
     <p>Required fields are followed by <strong><abbr title="required">*</abbr></strong>.</p>
     <section>
@@ -8,7 +8,7 @@ export const loginHTML = (user) => html`<form method="post">
                 <span>Name: </span>
                 <strong><abbr title="required">*</abbr></strong>
             </label>
-            <input type="text" id="name" data-name="/$user/username">
+            <input type="text" id="name" data-name="/$user/username" value="${user.username}">
         </p>
         <p>
             <label for="mail">

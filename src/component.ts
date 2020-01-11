@@ -1,11 +1,9 @@
-import { domHandler } from './dom.js';
+import { dom } from './dom.js';
 import { store, op } from './store.js';
 import { actions } from './actions.js';
 
-import { kelement } from './dom/element.js';
-
 export class component {
-    public dom: domHandler;
+    public dom: dom;
     public store: store;
     public name: string = "";
     private interactions: actions = {};
@@ -14,7 +12,7 @@ export class component {
      * @param dom 
      * @param store 
      */
-    constructor(dom: domHandler, store: store, acts: actions) {
+    constructor(dom: dom, store: store, acts: actions) {
         this.dom = dom;
         this.store = store;
         this.interactions = acts;
@@ -25,7 +23,7 @@ export class component {
     bindEvents() {
         this.store.events?.addEvent(this.name, "/", "change", this.update.bind(this));
         this.store.events?.addEvent(this.store.name, "/", "change", this.update.bind(this));
-        
+
         this.store.events?.addEvent(this.name, "/", "change", this.interactions?.["/"]["change"].bind(this));
         this.store.events?.addEvent(this.store.name, "/", "change", this.interactions?.["/"]["change"].bind(this));
 

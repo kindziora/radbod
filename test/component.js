@@ -12,7 +12,7 @@ let addressStore = dataH.createStore("address", {
   "hOffset": 250,
   "vOffset": 250,
   "alignment": "center",
-  "$user" : store
+  "$user": store
 });
 
 let user = {
@@ -41,8 +41,8 @@ let user = {
 };
 
 let actions = {
-  "/" :{
-    change(){
+  "/": {
+    change() {
       console.log("CHANGEEEEEEEEEEEE", arguments);
     }
   },
@@ -51,8 +51,10 @@ let actions = {
 
     },
     "click#ersterUsername"(sender, dataStore) { //address specific element in dom
+
       console.log('CLICK', sender.field.getValue());
-       dataStore.userdata.username = sender.field.getValue() + "sd";
+
+      dataStore.userdata.username = sender.field.getValue() + "sd";
 
     }
   }

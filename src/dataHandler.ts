@@ -1,4 +1,3 @@
-import * as fjp from 'fast-json-patch';
 import { store } from './store.js';
 
 export interface op { op: string, path: string, value: any };
@@ -33,7 +32,7 @@ export class dataHandler {
      * @param component 
      * @param changes 
      */
-    changeStores(component: string, change: fjp.Operation) {
+    changeStores(component: string, change: op) {
         console.log(component, change);
 
         /* for(let i in this.relations[component]){

@@ -1,7 +1,6 @@
 export * from './dataHandler.js';
 import { eventHandler } from './eventHandler.js';
-import { dataHandler } from './dataHandler.js';
-import * as fjp from 'fast-json-patch';
+import { dataHandler, op } from './dataHandler.js';
 
 export class store {
 
@@ -10,7 +9,7 @@ export class store {
     private dataH: dataHandler | undefined;
     public component: string;
     public name: string;
-    private patchQueue: Array<fjp.Operation> = [];
+    private patchQueue: Array<op> = [];
 
     constructor(eventH: eventHandler, dataH: dataHandler, component: string, data: Object) {
         this.events = eventH;
@@ -90,7 +89,7 @@ export class store {
      * @param component 
      * @param changes 
      */
-    changeStore(component: string, change: fjp.Operation) {
+    changeStore(component: string, change: op) {
         let ret = null;
         this.patchQueue.push(change);
 
