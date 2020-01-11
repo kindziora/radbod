@@ -1,5 +1,5 @@
-import { list } from "../list.js";
-export class select extends list {
+import { elist } from "../list.js";
+export class select extends elist {
     /**
      *
      * @param value

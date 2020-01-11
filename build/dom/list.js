@@ -1,5 +1,5 @@
 import { kelement } from "./element.js";
-export class list extends kelement {
+export class elist extends kelement {
     constructor() {
         super(...arguments);
         this._listItems = {};

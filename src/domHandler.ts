@@ -8,8 +8,8 @@ import { range } from './dom/element/input/range.js';
 import { file } from './dom/element/input/file.js';
 
 import { button } from './dom/element/button.js';
-import { list } from './dom/list.js';
-import { select } from './dom/element/select.js';
+import { elist } from './dom/list.js';
+import { select } from './dom/list/select.js';
 import { textarea } from './dom/element/textarea.js';
 
 export class domHandler {
@@ -19,7 +19,7 @@ export class domHandler {
     public element: { [index: string]: kelement } = {};
     public elementByName: { [index: string]: Array<kelement> } = {};
 
-    public elementTypes: { [index: string]: any } = { input, text, radio, checkbox, range, file, button, list, select, textarea, kelement };
+    public elementTypes: { [index: string]: any } = { input, text, radio, checkbox, range, file, button, list : elist, select, textarea, kelement };
 
     public counter: number = 0;
     public id: string = "component-0";

@@ -1,8 +1,8 @@
 import {kelement} from "./element.js";
 import { domHandler } from "../domHandler.js";
-import { datastore, op } from '../datastore';
+import { op } from '../store.js';
 
-export class list extends kelement{
+export class elist extends kelement{
 
     private _listItems: { [index: string]: kelement } = {};
     private _listItemsByName: { [index: string]: kelement } = {};

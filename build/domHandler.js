@@ -6,8 +6,8 @@ import { text } from './dom/element/input/text.js';
 import { range } from './dom/element/input/range.js';
 import { file } from './dom/element/input/file.js';
 import { button } from './dom/element/button.js';
-import { list } from './dom/list.js';
-import { select } from './dom/element/select.js';
+import { elist } from './dom/list.js';
+import { select } from './dom/list/select.js';
 import { textarea } from './dom/element/textarea.js';
 export class domHandler {
     constructor(area) {
@@ -15,7 +15,7 @@ export class domHandler {
         this._identifier = '[data-name]';
         this.element = {};
         this.elementByName = {};
-        this.elementTypes = { input, text, radio, checkbox, range, file, button, list, select, textarea, kelement };
+        this.elementTypes = { input, text, radio, checkbox, range, file, button, list: elist, select, textarea, kelement };
         this.counter = 0;
         this.id = "component-0";
         this.name = "component-x";

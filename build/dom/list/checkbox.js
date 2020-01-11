@@ -1,5 +1,5 @@
-import { list } from "../list.js";
-export class checkbox extends list {
+import { elist } from "../list.js";
+export class checkbox extends elist {
     /**
      *
      * @param single

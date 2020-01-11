@@ -1,6 +1,6 @@
-import { list } from "../list.js";
+import { elist } from "../list.js";
 
-export class checkbox extends list {
+export class checkbox extends elist {
 
     /**
      * 
