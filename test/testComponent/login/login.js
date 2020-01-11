@@ -1,0 +1,44 @@
+import { component } from "../../../build/component.js";
+import {dom} from '../build/dom.js';
+import { eventHandler } from '../../../build/eventHandler.js';
+import { dataHandler } from '../../../build/dataHandler.js';
+
+
+import browserEnv from 'browser-env';
+browserEnv();
+
+//////THIS WOULD MANAGE THE APP////////////////
+let events = new eventHandler();
+let dataH = new dataHandler(events);
+
+let form = document.createElement("div");
+form.setAttribute("data-name", "userform");
+form.innerHTML = ``;
+
+let domHTML = new dom(form);
+///////////////////////////////////////////////
+
+////////CUSTOM EXTENSIONS OF DEFAULT COMPONENT COULD HAPPEN HERE////////////
+class login extends component { }
+////////////////////////////////////////////////////////////////////////////
+
+///////CREATE DATASTORE/////////////////////////////////////////////////////
+let userStore = dataH.createStore("user", { "username": "AlexKindziora", "age": 32, "mail": "kindziora@live.de" });
+////////////////////////////////////////////////////////////////////////////
+
+
+///////EXPORT USEABLE COMPONENT/////////////////////////////////////////////
+export const loginForm = new login(domHTML, userStore, {
+    "/": {
+        change() {
+            console.log("SYNC", arguments);
+        }
+    },
+    "/$user/username": {
+        keyup(sender, dataStore) {
+            console.log(sender);
+            dataStore.username = "halli hallo";
+        }
+    }
+});
+////////////////////////////////////////////////////////////////////////////
