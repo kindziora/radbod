@@ -1,5 +1,5 @@
 import { op } from "../store.js";
-import { domHandler } from "../domHandler.js";
+import { domHandler } from "../dom.js";
 
 export class kelement {
 
@@ -21,7 +21,7 @@ export class kelement {
         this.$el = el;
         this.$scope = $scope;
         this.dom = dom;
-        this.setId(this.$scope.getAttribute('data-id') || undefined, counter);
+        this.setId(this.$el.getAttribute('data-id') || null, counter);
     }
 
     public getValue() {
@@ -32,8 +32,8 @@ export class kelement {
         return this.$el.getAttribute('data-name');
     }
 
-    setId(namesp: string = "element", counter: number) {
-        let id: string = "element" + "-" + counter;
+    setId(namesp: string | null, counter: number) {
+        let id: string = namesp || "element" + "-" + counter;
         this.$el.setAttribute("data-id", id);
         this.id = id;
     }

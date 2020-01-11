@@ -1,4 +1,4 @@
-import {domHandler} from '../build/domHandler.js';
+import {dom} from '../build/dom.js';
 import browserEnv from 'browser-env';
 browserEnv();
 
@@ -42,7 +42,7 @@ export class testDomHandler{
                         <span>Name: </span>
                         <strong><abbr title="required">*</abbr></strong>
                       </label>
-                      <input type="text" id="name" data-name="/$user/userdata/username">
+                      <input type="text" id="name" data-id="ersterUsername" data-name="/$user/userdata/username">
                     </p>
                     <p>
                       <label for="mail">
@@ -93,7 +93,7 @@ export class testDomHandler{
             </form>
        `;
 
-        this.domHandler = new domHandler(this.maindiv);
+        this.domHandler = new dom(this.maindiv);
 
     }
 

@@ -1,4 +1,4 @@
-import { domHandler } from './domHandler.js';
+import { domHandler } from './dom.js';
 import { store, op } from './store.js';
 import { actions } from './actions.js';
 
@@ -25,6 +25,9 @@ export class component {
     bindEvents() {
         this.store.events?.addEvent(this.name, "/", "change", this.update.bind(this));
         this.store.events?.addEvent(this.store.name, "/", "change", this.update.bind(this));
+        
+        this.store.events?.addEvent(this.name, "/", "change", this.interactions?.["/"]["change"].bind(this));
+        this.store.events?.addEvent(this.store.name, "/", "change", this.interactions?.["/"]["change"].bind(this));
 
         for (let path in this.interactions) {
 
@@ -33,14 +36,14 @@ export class component {
                 for (let field in this.dom.elementByName[path]) {
                     let $el = this.dom.elementByName[path][field].$el;
                     let fieldID = this.dom.elementByName[path][field].id;
-                    let mapEvent = event.split('~');
+                    let mapEvent = event.split('#');
 
                     if (mapEvent.length > 1) {
-                        if (fieldID === mapEvent[0]) {
-                            this.store.events?.addEvent(this.name, path, mapEvent[0], this.interactions?.[path]?.[event]);
-
+                         if (fieldID === mapEvent[1]) {
+                            this.store.events?.addEvent(this.name, path, event, this.interactions?.[path]?.[event]);
+                           
                             $el.addEventListener(mapEvent[0], (ev) => {
-                                this.store.events?.dispatchEvent(this.name, path, event, { "field": this.dom.elementByName[path][field], ev }, this.store.data);
+                                 this.store.events?.dispatchEvent(this.name, path, event, { "field": this.dom.elementByName[path][field], ev }, this.store.data);
                             });
                         }
                     } else {

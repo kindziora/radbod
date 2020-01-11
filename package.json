@@ -33,10 +33,8 @@
   "homepage": "https://github.com/kindziora/kjs#readme",
   "devDependencies": {
     "browser-env": "^3.3.0",
-    "fast-json-patch": "^3.0.0-1",
-    "systemjs": "^6.1.7"
-  },
-  "dependencies": {
+    "systemjs": "^6.1.7",
     "typescript": "^3.7.4"
-  }
+  },
+  "dependencies": {}
 }

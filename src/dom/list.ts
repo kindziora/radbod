@@ -1,5 +1,5 @@
 import {kelement} from "./element.js";
-import { domHandler } from "../domHandler.js";
+import { domHandler } from "../dom.js";
 import { op } from '../store.js';
 
 export class elist extends kelement{

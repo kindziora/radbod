@@ -41,14 +41,18 @@ let user = {
 };
 
 let actions = {
+  "/" :{
+    change(){
+      console.log("CHANGEEEEEEEEEEEE", arguments);
+    }
+  },
   "/$user/userdata/username": {
-    click(sender, dataStore) {
-      dataStore.userdata.username = "halli hallo";
-    },
     keyup() {
 
     },
-    "keyup~element-3"() { //address specific element in dom
+    "click#ersterUsername"(sender, dataStore) { //address specific element in dom
+      console.log('CLICK', sender.field.getValue());
+       dataStore.userdata.username = sender.field.getValue() + "sd";
 
     }
   }
@@ -56,11 +60,8 @@ let actions = {
 
 
 let userStore = dataH.createStore("user", user);
-
 let testDom = (new testDomHandler()).domHandler;
-
 let myComponent = new component(testDom, userStore, actions);
-
 let elements = testDom.getBestMatchingElements("/$user/userdata/username");
 
 console.log("value", elements[0].$el.value);
@@ -68,3 +69,4 @@ console.log("value", elements[0].$el.value);
 elements[0].$el.click();
 
 console.log("value", elements[0].$el.value);
+console.log(userStore.events.event.userform);

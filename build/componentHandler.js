@@ -1,4 +1,4 @@
-import { domHandler } from "./domHandler";
+import { domHandler } from "./dom";
 export class componentHandler {
     // private _eventHandler: eventHandler;
     construct(area) {

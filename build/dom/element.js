@@ -11,7 +11,7 @@ export class kelement {
         this.$el = el;
         this.$scope = $scope;
         this.dom = dom;
-        this.setId(this.$scope.getAttribute('data-id') || undefined, counter);
+        this.setId(this.$el.getAttribute('data-id') || null, counter);
     }
     getValue() {
         return this.$el.value;
@@ -19,8 +19,8 @@ export class kelement {
     getName() {
         return this.$el.getAttribute('data-name');
     }
-    setId(namesp = "element", counter) {
-        let id = "element" + "-" + counter;
+    setId(namesp, counter) {
+        let id = namesp || "element" + "-" + counter;
         this.$el.setAttribute("data-id", id);
         this.id = id;
     }
