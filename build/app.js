@@ -1,7 +1,7 @@
 export class app {
     constructor() {
     }
-    createComponent(name) {
+    createComponent(name, html, store, actions) {
     }
     removeComponent() {
     }
