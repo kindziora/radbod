@@ -90,15 +90,11 @@ export class dom {
      * @param currentIndex 
      */
     private createElement($el: Element, currentIndex: number): kelement {
-        let fieldTypeName: string = this.mapField(<string>$el.tagName.toLowerCase(), $el);
-        let element; 
-        if(this.elementTypes[fieldTypeName].prototype instanceof component){
-            element = new this.elementTypes[fieldTypeName]($el, this._area, currentIndex, this); //decorate and extend dom element   
-        }else{
-            element = this.elementTypes[fieldTypeName]; //decorate and extend dom element   
-        }
-
-        return element; 
+        let fieldTypeName: string = this.mapField(<string>$el.tagName.toLowerCase(), $el);        
+        
+        return this.elementTypes[fieldTypeName].prototype instanceof component ?
+        this.elementTypes[fieldTypeName]:
+        new this.elementTypes[fieldTypeName]($el, this._area, currentIndex, this);
     }
     /**
      * 
@@ -117,7 +113,7 @@ export class dom {
                 }
             }
         }
-        
+
     }
 
     loadElement($el: Element, currentIndex?: number): kelement{

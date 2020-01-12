@@ -79,14 +79,9 @@ export class dom {
      */
     createElement($el, currentIndex) {
         let fieldTypeName = this.mapField($el.tagName.toLowerCase(), $el);
-        let element;
-        if (this.elementTypes[fieldTypeName].prototype instanceof component) {
-            element = new this.elementTypes[fieldTypeName]($el, this._area, currentIndex, this); //decorate and extend dom element   
-        }
-        else {
-            element = this.elementTypes[fieldTypeName]; //decorate and extend dom element   
-        }
-        return element;
+        return this.elementTypes[fieldTypeName].prototype instanceof component ?
+            this.elementTypes[fieldTypeName] :
+            new this.elementTypes[fieldTypeName]($el, this._area, currentIndex, this);
     }
     /**
      *
