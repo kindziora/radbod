@@ -26,12 +26,14 @@ export class eventHandler {
      *
      * @param cb
      */
-    addFunction(cb, meta) {
+    addFunction(cb, meta, context) {
         let id = cyrb53(cb.toString());
-        this.eventById[id] = ((meta, eventHdlr) => (args = {}, returnValue = null) => {
-            returnValue = cb.apply(eventHdlr, [args, returnValue, meta]);
-            return returnValue;
+        /*
+        this.eventById[id] = ((meta, eventHdlr) => (args:object = {}, returnValue = null) =>{
+            return cb(args, returnValue, meta);
         })(meta, this);
+*/
+        this.eventById[id] = cb.bind(context || this);
         return id;
     }
     getFunction(id) {
@@ -48,8 +50,8 @@ export class eventHandler {
      * @param name
      * @param cb
      */
-    addEvent(component, id, name, cb) {
-        let callbackId = this.addFunction(cb, { component, id, name });
+    addEvent(component, id, name, cb, context) {
+        let callbackId = this.addFunction(cb, { component, id, name }, context);
         if (typeof this.event[component] === "undefined") {
             this.event[component] = {};
         }
@@ -63,8 +65,8 @@ export class eventHandler {
             this.event[component][id][name].push(callbackId);
         return callbackId;
     }
-    dispatchEvent(component, id, name, args = null, returnValue = null) {
-        var _a, _b, _c;
+    dispatchEvent(component, id, name, args = null, returnValue = null, context) {
+        var _a, _b;
         if ((_b = (_a = this.event[component]) === null || _a === void 0 ? void 0 : _a[id]) === null || _b === void 0 ? void 0 : _b[name]) {
             let ret = null || returnValue;
             let special = name.indexOf("pre_") > -1 || name.indexOf("post_") > -1;
@@ -72,7 +74,10 @@ export class eventHandler {
                 ret = this.dispatchEvent(component, id, "pre_" + name, args, ret);
             for (let i in this.event[component][id][name]) {
                 let callbackID = this.event[component][id][name][i];
-                ret = (_c = this.getFunction(callbackID)) === null || _c === void 0 ? void 0 : _c.call(this, args, ret || ret);
+                let mep = this.getFunction(callbackID)(args, ret);
+                if (typeof mep !== "undefined") {
+                    ret = mep;
+                }
                 if (false === ret) {
                     break;
                 }

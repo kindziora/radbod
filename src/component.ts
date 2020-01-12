@@ -21,11 +21,13 @@ export class component {
     }
 
     bindEvents() {
-        this.store.events?.addEvent(this.name, "/", "change", this.update.bind(this));
-        this.store.events?.addEvent(this.store.name, "/", "change", this.update.bind(this));
+        //this.update.bind(this);
 
-        this.store.events?.addEvent(this.name, "/", "change", this.interactions?.["/"]["change"].bind(this));
-        this.store.events?.addEvent(this.store.name, "/", "change", this.interactions?.["/"]["change"].bind(this));
+        this.store.events?.addEvent(this.name, "/", "change", this.update, this);
+        this.store.events?.addEvent(this.store.name, "/", "change", this.update, this);
+
+        this.store.events?.addEvent(this.name, "/", "change", this.interactions?.["/"]["change"], this);
+        this.store.events?.addEvent(this.store.name, "/", "change", this.interactions?.["/"]["change"], this);
 
         for (let path in this.interactions) {
 
@@ -59,9 +61,9 @@ export class component {
     }
 
     update(changes: Array<op>) {
- 
         for (let i: number = 0; i < changes.length; i++) {
             let change: op = changes[i];
+            
             this.dom.getBestMatchingElements(change.path)
             .forEach((el) => el.update([change]));
         }

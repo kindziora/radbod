@@ -14,11 +14,12 @@ export class component {
         this.bindEvents();
     }
     bindEvents() {
+        //this.update.bind(this);
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
-        (_a = this.store.events) === null || _a === void 0 ? void 0 : _a.addEvent(this.name, "/", "change", this.update.bind(this));
-        (_b = this.store.events) === null || _b === void 0 ? void 0 : _b.addEvent(this.store.name, "/", "change", this.update.bind(this));
-        (_c = this.store.events) === null || _c === void 0 ? void 0 : _c.addEvent(this.name, "/", "change", (_d = this.interactions) === null || _d === void 0 ? void 0 : _d["/"]["change"].bind(this));
-        (_e = this.store.events) === null || _e === void 0 ? void 0 : _e.addEvent(this.store.name, "/", "change", (_f = this.interactions) === null || _f === void 0 ? void 0 : _f["/"]["change"].bind(this));
+        (_a = this.store.events) === null || _a === void 0 ? void 0 : _a.addEvent(this.name, "/", "change", this.update, this);
+        (_b = this.store.events) === null || _b === void 0 ? void 0 : _b.addEvent(this.store.name, "/", "change", this.update, this);
+        (_c = this.store.events) === null || _c === void 0 ? void 0 : _c.addEvent(this.name, "/", "change", (_d = this.interactions) === null || _d === void 0 ? void 0 : _d["/"]["change"], this);
+        (_e = this.store.events) === null || _e === void 0 ? void 0 : _e.addEvent(this.store.name, "/", "change", (_f = this.interactions) === null || _f === void 0 ? void 0 : _f["/"]["change"], this);
         for (let path in this.interactions) {
             for (let event in this.interactions[path]) {
                 for (let field in this.dom.elementByName[path]) {

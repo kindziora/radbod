@@ -92,13 +92,12 @@ export class store {
     changeStore(component: string, change: op) {
         let ret = null;
         this.patchQueue.push(change);
-
-        let retChange = this.events?.dispatchEvent(component, "/", "change", [change]);
         
+        let retChange = this.events?.dispatchEvent(component, "/", "change", [change], this.data);
         //console.log(component, "/", "change", change);
 
         try{
-            ret = this.events?.dispatchEvent(component, change.path, change.op, [change], change.value);
+            ret = this.events?.dispatchEvent(component, change.path, change.op, [change], this.data);
         }catch(e){
             ret = retChange;
         }

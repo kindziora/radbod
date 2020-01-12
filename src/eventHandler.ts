@@ -4,26 +4,26 @@
  * @param str 
  * @param seed 
  */
-export const cyrb53 = function(str : string, seed = 0) : number {
+export const cyrb53 = function (str: string, seed = 0): number {
     let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
     for (let i = 0, ch; i < str.length; i++) {
         ch = str.charCodeAt(i);
         h1 = Math.imul(h1 ^ ch, 2654435761);
         h2 = Math.imul(h2 ^ ch, 1597334677);
     }
-    h1 = Math.imul(h1 ^ h1>>>16, 2246822507) ^ Math.imul(h2 ^ h2>>>13, 3266489909);
-    h2 = Math.imul(h2 ^ h2>>>16, 2246822507) ^ Math.imul(h1 ^ h1>>>13, 3266489909);
-    return 4294967296 * (2097151 & h2) + (h1>>>0);
+    h1 = Math.imul(h1 ^ h1 >>> 16, 2246822507) ^ Math.imul(h2 ^ h2 >>> 13, 3266489909);
+    h2 = Math.imul(h2 ^ h2 >>> 16, 2246822507) ^ Math.imul(h1 ^ h1 >>> 13, 3266489909);
+    return 4294967296 * (2097151 & h2) + (h1 >>> 0);
 };
 
 export interface meta { component: string, id: string, name: string };
 
-export class eventHandler{
+export class eventHandler {
 
     public event: Object = {};
-    public eventById: { [index: number]: Function} = {};
+    public eventById: { [index: number]: Function } = {};
 
-    construct(){
+    construct() {
 
     }
 
@@ -31,24 +31,26 @@ export class eventHandler{
      * 
      * @param cb 
      */
-    addFunction(cb: Function, meta: meta): number{ 
+    addFunction(cb: Function, meta: meta, context): number {
+      
         let id: number = cyrb53(cb.toString());
-        
+        /*
         this.eventById[id] = ((meta, eventHdlr) => (args:object = {}, returnValue = null) =>{
-          
-            returnValue = cb.apply(eventHdlr, [args, returnValue, meta]);
-
-            return returnValue;
+            return cb(args, returnValue, meta);
         })(meta, this);
+*/
+        
+        this.eventById[id] = cb.bind(context||this);
+
 
         return id;
     }
 
-    getFunction( id: number){
+    getFunction(id: number) {
         return this.eventById[id];
     }
 
-    removeEvent(callbackId : number){
+    removeEvent(callbackId: number) {
         delete this.eventById[callbackId];
         //todo: cleanup named object
     }
@@ -61,56 +63,62 @@ export class eventHandler{
      * @param name 
      * @param cb 
      */
-    addEvent(component:string, id: string, name:string, cb: Function){
+    addEvent(component: string, id: string, name: string, cb: Function, context? : object) {
+    
+        let callbackId: number = this.addFunction(cb, { component, id, name }, context);
 
-        let callbackId : number = this.addFunction(cb, {component, id, name});
-
-        if(typeof this.event[component] === "undefined"){
+        if (typeof this.event[component] === "undefined") {
             this.event[component] = {};
         }
 
-        if(typeof this.event[component][id] === "undefined"){
+        if (typeof this.event[component][id] === "undefined") {
             this.event[component][id] = {};
         }
 
-        if(typeof this.event[component][id][name] === "undefined"){
+        if (typeof this.event[component][id][name] === "undefined") {
             this.event[component][id][name] = [];
         }
 
-        if(this.event[component][id][name].indexOf(callbackId) === -1)
+        if (this.event[component][id][name].indexOf(callbackId) === -1)
             this.event[component][id][name].push(callbackId);
 
         return callbackId;
     }
 
-    dispatchEvent(component:string, id: string, name:string, args = null, returnValue = null) {
-        
+    dispatchEvent(component: string, id: string, name: string, args = null, returnValue = null, context? : object) {
+
+
+
         if (this.event[component]?.[id]?.[name]) {
             let ret = null || returnValue;
 
             let special = name.indexOf("pre_") > -1 || name.indexOf("post_") > -1;
-    
-            if(!special)
+
+            if (!special)
                 ret = this.dispatchEvent(component, id, "pre_" + name, args, ret);
 
-            for(let i in this.event[component][id][name]){
+            for (let i in this.event[component][id][name]) {
                 let callbackID = this.event[component][id][name][i];
-               
-                ret = this.getFunction(callbackID)?.call(this, args, ret || ret);
-                if(false === ret){
+
+                let mep = this.getFunction(callbackID)(args, ret);
+
+                if(typeof mep !== "undefined"){
+                    ret = mep; 
+                }
+                if (false === ret) {
                     break;
                 }
-                
+
             }
-            if(!special)
-                ret = this.dispatchEvent(component,id, "post_" + name, args, ret);
+            if (!special)
+                ret = this.dispatchEvent(component, id, "post_" + name, args, ret);
 
             return ret;
-        }else{
+        } else {
             console.log("no listener for ", component, id, name);
             return returnValue;
         }
     }
 
-  
+
 }

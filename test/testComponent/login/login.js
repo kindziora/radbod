@@ -32,17 +32,25 @@ class login extends component { }
 ///////EXPORT USEABLE COMPONENT/////////////////////////////////////////////
 export const loginForm = new login(domHTML, userStore, {
     "/": {
-        change() {
+        change(sender, dataStore) {
             console.log("SYNC", arguments);
+            return dataStore;
         }
     },
     "/$user/username": {
-        keyup(sender, dataStore) {
-            console.log(sender);
+        click(sender, dataStore) {
+            console.log(arguments);
             dataStore.username = "halli hallo";
+
+            return dataStore;
         }
     }
 });
 ////////////////////////////////////////////////////////////////////////////
+let elements = loginForm.dom.getBestMatchingElements("/$user/username");
 
-console.log(loginForm.dom._area.outerHTML);
+//console.log("value", elements[0].$el.value);
+
+elements[0].$el.click();
+
+console.log(loginForm.dom._area.outerHTML,elements[0].$el.value);
