@@ -9,7 +9,7 @@ export class app {
 
     }
 
-    addComponent() {
+    createComponent(name) {
 
     }
   
