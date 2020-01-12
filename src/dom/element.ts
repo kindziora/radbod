@@ -1,12 +1,12 @@
 import { op } from "../store.js";
-import { domHandler } from "../dom.js";
+import { dom } from "../dom.js";
 
 export class kelement {
 
     public id: String;
     public $el: HTMLElement;
     public $scope: HTMLElement;
-    public dom: domHandler;
+    public dom: dom;
     private _isListItem: boolean = false;
     private _listContainer: kelement | null;
 
@@ -17,7 +17,7 @@ export class kelement {
      * @param counter 
      * @param dom 
      */
-    constructor(el: HTMLElement, $scope: HTMLElement, counter: number = 1, dom:domHandler) {
+    constructor(el: HTMLElement, $scope: HTMLElement, counter: number = 1, dom:dom) {
         this.$el = el;
         this.$scope = $scope;
         this.dom = dom;
@@ -60,10 +60,12 @@ export class kelement {
     }
 
     replace(change: op) {
+        this.$el.setAttribute("value", change.value);
         this.$el.value = change.value;
     }
 
     add(change: op) {
+        this.$el.setAttribute("value", change.value);
         this.$el.value = change.value;
     }
 

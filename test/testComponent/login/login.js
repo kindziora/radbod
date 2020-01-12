@@ -12,17 +12,16 @@ browserEnv();
 let events = new eventHandler();
 let dataH = new dataHandler(events);
 
-
 ///////CREATE DATASTORE/////////////////////////////////////////////////////
 let userStore = dataH.createStore("user", { "username": "AlexKindziora", "age": 32, "mail": "kindziora@live.de" });
 ////////////////////////////////////////////////////////////////////////////
 
-
 let form = document.createElement("div");
 form.setAttribute("data-name", "userform");
 form.innerHTML = loginHTML(userStore.data);
+class card extends component { }
 
-let domHTML = new dom(form);
+let domHTML = new dom(form, {card});
 ////////////////////////////////////////////////////////////////////////////
 
 ////////CUSTOM EXTENSIONS OF DEFAULT COMPONENT COULD HAPPEN HERE////////////
@@ -41,7 +40,6 @@ export const loginForm = new login(domHTML, userStore, {
         click(sender, dataStore) {
             console.log(arguments);
             dataStore.username = "halli hallo";
-
             return dataStore;
         }
     }
@@ -53,4 +51,4 @@ let elements = loginForm.dom.getBestMatchingElements("/$user/username");
 
 elements[0].$el.click();
 
-console.log(loginForm.dom._area.outerHTML,elements[0].$el.value);
+console.log(loginForm.dom._area.outerHTML, loginForm.dom);

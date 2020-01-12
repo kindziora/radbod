@@ -9,8 +9,9 @@ import { button } from './dom/element/button.js';
 import { elist } from './dom/list.js';
 import { select } from './dom/list/select.js';
 import { textarea } from './dom/element/textarea.js';
+import { component } from "./component.js";
 export class dom {
-    constructor(area) {
+    constructor(area, types) {
         this._area = {};
         this._identifier = '[data-name]';
         this.element = {};
@@ -25,7 +26,17 @@ export class dom {
         if (area.hasAttribute('data-name')) {
             this.name = area.getAttribute('data-name') || this.name;
         }
+        this.addTypes(types);
         this.loadElements();
+    }
+    /**
+     *
+     * @param types
+     */
+    addTypes(types) {
+        for (let i in types) {
+            this.elementTypes[i] = types[i];
+        }
     }
     setId() {
         let id = "component-" + this.counter;
@@ -68,7 +79,14 @@ export class dom {
      */
     createElement($el, currentIndex) {
         let fieldTypeName = this.mapField($el.tagName.toLowerCase(), $el);
-        return new this.elementTypes[fieldTypeName]($el, this._area, currentIndex, this); //decorate and extend dom element        
+        let element;
+        if (this.elementTypes[fieldTypeName].prototype instanceof component) {
+            element = new this.elementTypes[fieldTypeName]($el, this._area, currentIndex, this); //decorate and extend dom element   
+        }
+        else {
+            element = this.elementTypes[fieldTypeName]; //decorate and extend dom element   
+        }
+        return element;
     }
     /**
      *

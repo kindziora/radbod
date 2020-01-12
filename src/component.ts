@@ -17,7 +17,12 @@ export class component {
         this.store = store;
         this.interactions = acts;
         this.name = this.dom.name;
+
         this.bindEvents();
+    }
+
+    getName(){
+        return this.name;
     }
 
     bindEvents() {
@@ -63,7 +68,7 @@ export class component {
     update(changes: Array<op>) {
         for (let i: number = 0; i < changes.length; i++) {
             let change: op = changes[i];
-            
+
             this.dom.getBestMatchingElements(change.path)
             .forEach((el) => el.update([change]));
         }

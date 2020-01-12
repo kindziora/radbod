@@ -1,4 +1,7 @@
-import {dom} from "./dom";
+import { component } from "./component.js";
+import { dom } from './dom.js';
+import { eventHandler } from './eventHandler.js';
+import { dataHandler } from './dataHandler.js';
 
 export class app {
 
@@ -6,7 +9,11 @@ export class app {
 
     }
 
-    public test () {
-        console.log("asdasds");
+    addComponent() {
+
+    }
+  
+    removeComponent() {
+  
     }
 }

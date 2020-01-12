@@ -1,6 +1,7 @@
 export const loginHTML = (user) => `<form method="post">
     <h1>Payment form</h1>
     <p>Required fields are followed by <strong><abbr title="required">*</abbr></strong>.</p>
+    <card data-name="/$friends"></card>
     <section>
         <h2>Contact information</h2>
         <p>

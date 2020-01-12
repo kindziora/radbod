@@ -11,6 +11,7 @@ import { button } from './dom/element/button.js';
 import { elist } from './dom/list.js';
 import { select } from './dom/list/select.js';
 import { textarea } from './dom/element/textarea.js';
+import { component } from "./component.js";
 
 export class dom {
     private _area: HTMLElement = {} as HTMLElement;
@@ -26,14 +27,25 @@ export class dom {
 
     public name: string = "component-x";
 
-    constructor(area: HTMLElement) {
+    constructor(area: HTMLElement, types:{ [index: string] : any} ) {
         this._area = area as HTMLElement;
         this.counter++;
         this.setId();
         if(area.hasAttribute('data-name')){
             this.name = area.getAttribute('data-name') || this.name;
         }
+        this.addTypes(types);
         this.loadElements();
+    }
+
+    /**
+     * 
+     * @param types 
+     */
+    public addTypes(types:{ [index: string]: any }){
+        for(let i in types){
+            this.elementTypes[i] = types[i];
+        }
     }
 
     private setId() {
@@ -79,7 +91,14 @@ export class dom {
      */
     private createElement($el: Element, currentIndex: number): kelement {
         let fieldTypeName: string = this.mapField(<string>$el.tagName.toLowerCase(), $el);
-        return new this.elementTypes[fieldTypeName]($el, this._area, currentIndex, this); //decorate and extend dom element        
+        let element; 
+        if(this.elementTypes[fieldTypeName].prototype instanceof component){
+            element = new this.elementTypes[fieldTypeName]($el, this._area, currentIndex, this); //decorate and extend dom element   
+        }else{
+            element = this.elementTypes[fieldTypeName]; //decorate and extend dom element   
+        }
+
+        return element; 
     }
     /**
      * 
@@ -97,9 +116,8 @@ export class dom {
                     t_el.setListContainer(this.element[id]);
                 }
             }
-            
         }
-
+        
     }
 
     loadElement($el: Element, currentIndex?: number): kelement{

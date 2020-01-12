@@ -13,6 +13,9 @@ export class component {
         this.name = this.dom.name;
         this.bindEvents();
     }
+    getName() {
+        return this.name;
+    }
     bindEvents() {
         //this.update.bind(this);
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
