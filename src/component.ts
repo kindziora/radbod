@@ -31,8 +31,8 @@ export class component {
         this.store.events?.addEvent(this.name, "/", "change", this.update, this);
         this.store.events?.addEvent(this.store.name, "/", "change", this.update, this);
 
-        this.store.events?.addEvent(this.name, "/", "change", this.interactions?.["/"]["change"], this);
-        this.store.events?.addEvent(this.store.name, "/", "change", this.interactions?.["/"]["change"], this);
+        this.store.events?.addEvent(this.name, "/", "change", this.interactions?.["/"]?.["change"], this);
+        this.store.events?.addEvent(this.store.name, "/", "change", this.interactions?.["/"]?.["change"], this);
 
         for (let path in this.interactions) {
 

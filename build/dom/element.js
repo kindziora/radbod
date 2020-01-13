@@ -6,12 +6,13 @@ export class kelement {
      * @param counter
      * @param dom
      */
-    constructor(el, $scope, counter = 1, dom) {
+    constructor(el, $scope, counter = 1, dom, template) {
         this._isListItem = false;
         this.$el = el;
         this.$scope = $scope;
         this.dom = dom;
         this.setId(this.$el.getAttribute('data-id') || null, counter);
+        this.setTemplate(template || ((data) => data));
     }
     getValue() {
         return this.$el.value;
@@ -33,21 +34,21 @@ export class kelement {
             }
         }
     }
+    setTemplate(template) {
+        this.template = template;
+    }
     /**
-     *
-     * @param change
+     * !!caution this is slow and overwrites the home html of the dom area
+     * @param data
      */
-    render(change) {
-        this.$el.outerHTML = `<div data-name="${change.path}">${change.value}</div>`;
-        return this.$el.outerHTML;
+    render(data) {
+        this.$el.innerHTML = this.template(data);
     }
     replace(change) {
-        this.$el.setAttribute("value", change.value);
-        this.$el.value = change.value;
+        this.render(change.value);
     }
     add(change) {
-        this.$el.setAttribute("value", change.value);
-        this.$el.value = change.value;
+        this.render(change.value);
     }
     remove(change) {
         var _a;
@@ -56,7 +57,7 @@ export class kelement {
             (_a = this.getListContainer()) === null || _a === void 0 ? void 0 : _a.remove(change);
         }
         else {
-            this.$el.value = "";
+            this.$el.remove();
         }
     }
     isListItem() {

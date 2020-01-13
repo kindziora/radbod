@@ -51,6 +51,8 @@ export class eventHandler {
      * @param cb
      */
     addEvent(component, id, name, cb, context) {
+        if (typeof cb !== "function")
+            return;
         let callbackId = this.addFunction(cb, { component, id, name }, context);
         if (typeof this.event[component] === "undefined") {
             this.event[component] = {};

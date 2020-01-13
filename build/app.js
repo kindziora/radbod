@@ -15,15 +15,36 @@ export class app {
      * @param actions
      * @param injections
      */
-    createComponent(name, html, data, actions, injections) {
+    createComponent(name, views, data, actions, injections) {
+        var _a, _b;
         let store = this.dataH.createStore(name, data);
-        let el = document.createElement("div");
-        el.outerHTML = html;
+        let el = document.createElement("component");
+        el.innerHTML = (_a = views) === null || _a === void 0 ? void 0 : _a[name](data);
         el.setAttribute("data-name", name);
         this.components[name] = new component(new dom(el, injections), store, actions);
+        this.components[name].dom.setTemplate((_b = views) === null || _b === void 0 ? void 0 : _b[name]);
         return this.components[name];
     }
-    removeComponent() {
+    /**
+     *
+     * @param name
+     * @param views
+     */
+    bindViews(name, views) {
+        var _a, _b, _c;
+        for (let i in this.components[name].dom.element) {
+            let el = this.components[name].dom.element[i];
+            if (el.$el.hasAttribute("data-name")) {
+                el.setTemplate((_a = views) === null || _a === void 0 ? void 0 : _a[(_c = (_b = el) === null || _b === void 0 ? void 0 : _b.$el) === null || _c === void 0 ? void 0 : _c.getAttribute("data-name")]);
+            }
+        }
+    }
+    /**
+     *
+     * @param name
+     */
+    removeComponent(name) {
+        delete this.components[name];
     }
     /**
      *

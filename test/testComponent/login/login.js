@@ -21,7 +21,7 @@ form.setAttribute("data-name", "userform");
 form.innerHTML = loginHTML(userStore.data);
 class card extends component { }
 
-let domHTML = new dom(form, {card});
+let domHTML = new dom(form, {});
 ////////////////////////////////////////////////////////////////////////////
 
 ////////CUSTOM EXTENSIONS OF DEFAULT COMPONENT COULD HAPPEN HERE////////////

@@ -29,6 +29,19 @@ export class dom {
         this.addTypes(types);
         this.loadElements();
     }
+    setTemplate(template) {
+        this.template = template;
+    }
+    /**
+     * !!caution this is slow and overwrites the home html of the dom area
+     * @param data
+     */
+    render(data) {
+        this.element = {};
+        this.elementByName = {};
+        this._area.innerHTML = this.template(data);
+        this.loadElements();
+    }
     /**
      *
      * @param types
@@ -88,11 +101,11 @@ export class dom {
      * @param t_el
      */
     detectType(t_el) {
-        var _a, _b, _c, _d, _e;
-        let last = (_b = (_a = t_el.getName()) === null || _a === void 0 ? void 0 : _a.split("/")) === null || _b === void 0 ? void 0 : _b.pop();
-        if (!isNaN(last) || ((_c = t_el.$el) === null || _c === void 0 ? void 0 : _c.getAttribute('data-type')) == "list-item") {
+        var _a, _b, _c, _d, _e, _f, _g;
+        let last = (_c = (_b = (_a = t_el) === null || _a === void 0 ? void 0 : _a.getName()) === null || _b === void 0 ? void 0 : _b.split("/")) === null || _c === void 0 ? void 0 : _c.pop();
+        if (!isNaN(last) || ((_e = (_d = t_el) === null || _d === void 0 ? void 0 : _d.$el) === null || _e === void 0 ? void 0 : _e.getAttribute('data-type')) == "list-item") {
             t_el.setIsListItem(true);
-            let id = (_e = (_d = t_el.$el) === null || _d === void 0 ? void 0 : _d.parentElement) === null || _e === void 0 ? void 0 : _e.getAttribute("data-id");
+            let id = (_g = (_f = t_el.$el) === null || _f === void 0 ? void 0 : _f.parentElement) === null || _g === void 0 ? void 0 : _g.getAttribute("data-id");
             if (id) {
                 if (this.element[id]) {
                     t_el.setListContainer(this.element[id]);

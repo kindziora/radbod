@@ -14,27 +14,44 @@ import { textarea } from './dom/element/textarea.js';
 import { component } from "./component.js";
 
 export class dom {
-    private _area: HTMLElement = {} as HTMLElement;
+    public _area: HTMLElement = {} as HTMLElement;
     private _identifier: string = '[data-name]';
 
     public element: { [index: string]: kelement } = {};
     public elementByName: { [index: string]: Array<kelement> } = {};
 
-    public elementTypes: { [index: string]: any } = { input, text, radio, checkbox, range, file, button, list : elist, select, textarea, kelement };
+    public elementTypes: { [index: string]: any } = { input, text, radio, checkbox, range, file, button, list: elist, select, textarea, kelement };
 
     public counter: number = 0;
     public id: string = "component-0";
 
     public name: string = "component-x";
+    public template: Function;
 
-    constructor(area: HTMLElement, types:{ [index: string] : any} ) {
+    constructor(area: HTMLElement, types: { [index: string]: any }) {
+
         this._area = area as HTMLElement;
         this.counter++;
         this.setId();
-        if(area.hasAttribute('data-name')){
+        if (area.hasAttribute('data-name')) {
             this.name = area.getAttribute('data-name') || this.name;
         }
         this.addTypes(types);
+        this.loadElements();
+    }
+
+    setTemplate(template: Function) {
+        this.template = template;
+    }
+
+    /**
+     * !!caution this is slow and overwrites the home html of the dom area
+     * @param data 
+     */
+    render(data: object){
+        this.element = {};
+        this.elementByName = {};
+        this._area.innerHTML = this.template(data);
         this.loadElements();
     }
 
@@ -42,8 +59,8 @@ export class dom {
      * 
      * @param types 
      */
-    public addTypes(types:{ [index: string]: any }){
-        for(let i in types){
+    public addTypes(types: { [index: string]: any }) {
+        for (let i in types) {
             this.elementTypes[i] = types[i];
         }
     }
@@ -65,7 +82,7 @@ export class dom {
                 if ($element.getAttribute('type'))
                     name = <string>$element.getAttribute('type');
                 break;
-            case "ul": name = "list";$element?.setAttribute('data-type', "list");
+            case "ul": name = "list"; $element?.setAttribute('data-type', "list");
                 break;
         }
 
@@ -73,14 +90,14 @@ export class dom {
             name = "kelement";
         }
 
-        if($element?.getAttribute('data-type') == "list"){ 
+        if ($element?.getAttribute('data-type') == "list") {
             name = "list";
         }
 
         return name;
     }
 
-    public insertElementByElement(el: kelement, where : InsertPosition = 'beforeend', html: string){
+    public insertElementByElement(el: kelement, where: InsertPosition = 'beforeend', html: string) {
         el.$el?.insertAdjacentHTML(where, html);
     }
 
@@ -90,25 +107,25 @@ export class dom {
      * @param currentIndex 
      */
     private createElement($el: Element, currentIndex: number): kelement {
-        let fieldTypeName: string = this.mapField(<string>$el.tagName.toLowerCase(), $el);        
-        
+        let fieldTypeName: string = this.mapField(<string>$el.tagName.toLowerCase(), $el);
+
         return this.elementTypes[fieldTypeName].prototype instanceof component ?
-        this.elementTypes[fieldTypeName]:
-        new this.elementTypes[fieldTypeName]($el, this._area, currentIndex, this);
+            this.elementTypes[fieldTypeName] :
+            new this.elementTypes[fieldTypeName]($el, this._area, currentIndex, this);
     }
     /**
      * 
      * @param t_el 
      */
-    detectType(t_el: kelement){
-        let last = t_el.getName()?.split("/")?.pop();
+    detectType(t_el: kelement) {
+        let last = t_el?.getName()?.split("/")?.pop();
 
-        if(!isNaN(last) || t_el.$el?.getAttribute('data-type') == "list-item"){
+        if (!isNaN(last) || t_el?.$el?.getAttribute('data-type') == "list-item") {
             t_el.setIsListItem(true);
-            
-            let id = t_el.$el?.parentElement?.getAttribute("data-id"); 
-            if(id){
-                if(this.element[id]){
+
+            let id = t_el.$el?.parentElement?.getAttribute("data-id");
+            if (id) {
+                if (this.element[id]) {
                     t_el.setListContainer(this.element[id]);
                 }
             }
@@ -116,11 +133,11 @@ export class dom {
 
     }
 
-    loadElement($el: Element, currentIndex?: number): kelement{
+    loadElement($el: Element, currentIndex?: number): kelement {
         this.counter++;
 
         let t_el: kelement = this.createElement($el, currentIndex || this.counter); //decorate and extend dom element
-        
+
         this.detectType(t_el);
         this.addElement(t_el);
         this.addElementByName(t_el);
@@ -131,14 +148,14 @@ export class dom {
     loadElements() {
         let element: NodeListOf<Element> = this._area.querySelectorAll(this._identifier) as NodeListOf<Element>;
         try {
-            element.forEach(($el: Element, currentIndex: number)=>this.loadElement($el, currentIndex));
+            element.forEach(($el: Element, currentIndex: number) => this.loadElement($el, currentIndex));
         } catch (e) {
             console.log(e);
         }
 
     }
 
-    removeElement(el: kelement){
+    removeElement(el: kelement) {
         el.$el.remove();
         delete this.element[<string>el.id];
     }

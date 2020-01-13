@@ -19,20 +19,40 @@ export class app {
      * @param actions 
      * @param injections 
      */
-    createComponent(name: string, html: string, data: object, actions: object, injections: object) {
+    createComponent(name: string, views: { [index: string]: Function }, data: object, actions: object, injections: object) {
 
         let store = this.dataH.createStore(name, data);
-        let el = document.createElement("div");
-        el.outerHTML = html;
+        let el = document.createElement("component");
+
+        el.innerHTML = views?.[name](data);
         el.setAttribute("data-name", name);
 
         this.components[name] = new component(new dom(el, injections), store, actions);
+        this.components[name].dom.setTemplate(views?.[name]);
 
         return this.components[name];
     }
+    
+    /**
+     * 
+     * @param name 
+     * @param views 
+     */
+    bindViews(name:string, views: { [index: string]: Function }){
+        for(let i in this.components[name].dom.element){
+            let el = this.components[name].dom.element[i];
+            if(el.$el.hasAttribute("data-name")){
+                el.setTemplate(views?.[el?.$el?.getAttribute("data-name")]);
+            }
+        }
+    }
 
-    removeComponent() {
-
+    /**
+     * 
+     * @param name 
+     */
+    removeComponent(name: string) {
+        delete this.components[name];
     }
 
     /**

@@ -10,6 +10,8 @@ export class kelement {
     private _isListItem: boolean = false;
     private _listContainer: kelement | null;
 
+    public template: Function;
+
     /**
      * 
      * @param el 
@@ -17,11 +19,13 @@ export class kelement {
      * @param counter 
      * @param dom 
      */
-    constructor(el: HTMLElement, $scope: HTMLElement, counter: number = 1, dom:dom) {
+    constructor(el: HTMLElement, $scope: HTMLElement, counter: number = 1, dom:dom, template:Function) {
         this.$el = el;
         this.$scope = $scope;
         this.dom = dom;
         this.setId(this.$el.getAttribute('data-id') || null, counter);
+
+        this.setTemplate(template || ((data) => data));
     }
 
     public getValue() {
@@ -50,23 +54,24 @@ export class kelement {
         
     }
 
+    setTemplate(template: Function) {
+        this.template = template;
+    }
+
     /**
-     * 
-     * @param change 
+     * !!caution this is slow and overwrites the home html of the dom area
+     * @param data 
      */
-    render(change: op){
-        this.$el.outerHTML = `<div data-name="${change.path}">${change.value}</div>`;
-        return this.$el.outerHTML;
+    render(data: object){
+        this.$el.innerHTML = this.template(data);
     }
 
     replace(change: op) {
-        this.$el.setAttribute("value", change.value);
-        this.$el.value = change.value;
+       this.render(change.value);
     }
 
     add(change: op) {
-        this.$el.setAttribute("value", change.value);
-        this.$el.value = change.value;
+        this.render(change.value);
     }
 
     remove(change: op) {
@@ -74,7 +79,7 @@ export class kelement {
         if(this.isListItem()){
             this.getListContainer()?.remove(change);
         }else{
-            this.$el.value = "";
+            this.$el.remove();
         }
     }
 

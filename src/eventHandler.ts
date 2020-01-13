@@ -64,7 +64,8 @@ export class eventHandler {
      * @param cb 
      */
     addEvent(component: string, id: string, name: string, cb: Function, context? : object) {
-    
+        if(typeof cb !=="function") return;
+
         let callbackId: number = this.addFunction(cb, { component, id, name }, context);
 
         if (typeof this.event[component] === "undefined") {
@@ -86,8 +87,6 @@ export class eventHandler {
     }
 
     dispatchEvent(component: string, id: string, name: string, args = null, returnValue = null, context? : object) {
-
-
 
         if (this.event[component]?.[id]?.[name]) {
             let ret = null || returnValue;

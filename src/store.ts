@@ -51,7 +51,7 @@ export class store {
                 },
                 set: (oTarget, sKey, vValue) => {
                     let op: string = typeof oTarget[sKey] === "undefined" ? "add" : "replace";
-                    let diff: fjp.Operation = { op, path: parentPath + "/" + sKey, value: vValue };
+                    let diff: op = { op, path: parentPath + "/" + sKey, value: vValue };
 
                     /**
                      * @todo set value and use this.pxy[px] for $ connected values 
