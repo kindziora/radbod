@@ -6,20 +6,27 @@ import { app } from '../build/app.js';
 let x = new app();
 
 
+//generate view templates for all data-name fields by innerHTML and make them render functions
+
 let card =
     x.createComponent(
         "card", {
         card : (card) => `<section> 
 <h2>Contact information ${card.src}</h2>
 <div data-name="/$card/src" data-view="imgContainer"></div>
+<div data-name="/$card/alignment">
+    <ul>
+    ${card.alignment.map((e,i)=>`<li data-name="/$card/alignment[${i}]">${e}</li>`)}
+    </ul>
+</div>
 </section>`,
-imgContainer : (data) => `<b>${data.map(d)}</b>`
+imgContainer : (change) => `<b>${change.value}</b>`
 },
         {
             "src": "Images/Sun.png",
             "hOffset": 250,
             "vOffset": 250,
-            "alignment": "center"
+            "alignment": ["center", "left", "right"]
         },
         {
             "/$user/username": {

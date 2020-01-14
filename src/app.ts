@@ -30,6 +30,7 @@ export class app {
         this.components[name] = new component(new dom(el, injections), store, actions);
         this.components[name].dom.setTemplate(views?.[name]);
 
+        this.bindViews(name, views);
         return this.components[name];
     }
     
@@ -38,11 +39,11 @@ export class app {
      * @param name 
      * @param views 
      */
-    bindViews(name:string, views: { [index: string]: Function }){
+    bindViews(name:string, views: { [index: string]: Function }){ 
         for(let i in this.components[name].dom.element){
             let el = this.components[name].dom.element[i];
-            if(el.$el.hasAttribute("data-name")){
-                el.setTemplate(views?.[el?.$el?.getAttribute("data-name")]);
+            if(el.$el.hasAttribute("data-view")){
+                el.setTemplate(views?.[el?.$el?.getAttribute("data-view")]);
             }
         }
     }
@@ -62,9 +63,5 @@ export class app {
     render(url:string){
 
     }
-
-
-
-
 
 }

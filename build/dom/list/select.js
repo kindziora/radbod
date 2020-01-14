@@ -13,7 +13,7 @@ export class select extends elist {
      * @param change
      */
     render(change) {
-        this.$el.outerHTML = `<select data-type="list" data-name="${change.path}">${change.value.map(this.renderItem).join('')}</select>`;
-        return this.$el.outerHTML;
+        // this.$el.outerHTML = `<select data-type="list" data-name="${change.path}">${change.value.map(this.renderItem).join('')}</select>`;
+        //return this.$el.outerHTML;
     }
 }

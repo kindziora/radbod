@@ -25,7 +25,7 @@ export class kelement {
         this.dom = dom;
         this.setId(this.$el.getAttribute('data-id') || null, counter);
 
-        this.setTemplate(template || ((data) => data));
+        this.setTemplate(template);
     }
 
     public getValue() {
@@ -59,19 +59,23 @@ export class kelement {
     }
 
     /**
-     * !!caution this is slow and overwrites the home html of the dom area
+     * !!caution this is slow and overwrites the hole html of the $element
      * @param data 
      */
-    render(data: object){
-        this.$el.innerHTML = this.template(data);
+    render(change: op){
+        if(this.template){
+            this.$el.innerHTML = this.template(change);
+        }else{
+            this.$el.innerHTML = change.value; 
+        }
     }
 
     replace(change: op) {
-       this.render(change.value);
+       this.render(change);
     }
 
     add(change: op) {
-        this.render(change.value);
+        this.render(change);
     }
 
     remove(change: op) {

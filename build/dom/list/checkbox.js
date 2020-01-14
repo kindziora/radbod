@@ -26,7 +26,6 @@ export class checkbox extends elist {
      */
     render(change) {
         let items = this.getListItems();
-        this.$el.outerHTML = `<div data-type="list" data-name="${change.path}">${change.value.map(this.renderItem).join('')}</div>`;
-        return this.$el.outerHTML;
+        // `<div data-type="list" data-name="${change.path}">${change.value.map(this.renderItem).join('')}</div>`;
     }
 }

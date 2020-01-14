@@ -12,7 +12,7 @@ export class kelement {
         this.$scope = $scope;
         this.dom = dom;
         this.setId(this.$el.getAttribute('data-id') || null, counter);
-        this.setTemplate(template || ((data) => data));
+        this.setTemplate(template);
     }
     getValue() {
         return this.$el.value;
@@ -38,17 +38,22 @@ export class kelement {
         this.template = template;
     }
     /**
-     * !!caution this is slow and overwrites the home html of the dom area
+     * !!caution this is slow and overwrites the hole html of the $element
      * @param data
      */
-    render(data) {
-        this.$el.innerHTML = this.template(data);
+    render(change) {
+        if (this.template) {
+            this.$el.innerHTML = this.template(change);
+        }
+        else {
+            this.$el.innerHTML = change.value;
+        }
     }
     replace(change) {
-        this.render(change.value);
+        this.render(change);
     }
     add(change) {
-        this.render(change.value);
+        this.render(change);
     }
     remove(change) {
         var _a;
