@@ -21,7 +21,6 @@ export class dom {
         this.id = "component-0";
         this.name = "component-x";
         this._area = area;
-        this.counter++;
         this.setId();
         if (area.hasAttribute('data-name')) {
             this.name = area.getAttribute('data-name') || this.name;
@@ -52,6 +51,7 @@ export class dom {
         }
     }
     setId() {
+        this.counter++;
         let id = "component-" + this.counter;
         this._area.setAttribute("data-id", id);
         this.id = id;
@@ -115,7 +115,7 @@ export class dom {
     }
     loadElement($el, currentIndex) {
         this.counter++;
-        let t_el = this.createElement($el, currentIndex || this.counter); //decorate and extend dom element
+        let t_el = this.createElement($el, this.counter); //decorate and extend dom element
         this.detectType(t_el);
         this.addElement(t_el);
         this.addElementByName(t_el);
