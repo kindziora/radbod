@@ -31,7 +31,7 @@ export class dom {
     constructor(area: HTMLElement, types: { [index: string]: any }) {
 
         this._area = area as HTMLElement;
-        
+       
         this.setId();
         if (area.hasAttribute('data-name')) {
             this.name = area.getAttribute('data-name') || this.name;
@@ -109,7 +109,7 @@ export class dom {
      */
     private createElement($el: Element, currentIndex: number): kelement {
         let fieldTypeName: string = this.mapField(<string>$el.tagName.toLowerCase(), $el);
-
+        
         return this.elementTypes[fieldTypeName].prototype instanceof component ?
             this.elementTypes[fieldTypeName] :
             new this.elementTypes[fieldTypeName]($el, this._area, currentIndex, this);
@@ -136,7 +136,7 @@ export class dom {
 
     loadElement($el: Element, currentIndex?: number): kelement {
         this.counter++;
-
+       
         let t_el: kelement = this.createElement($el, this.counter); //decorate and extend dom element
 
         this.detectType(t_el);
@@ -148,7 +148,9 @@ export class dom {
 
     loadElements() {
         let element: NodeListOf<Element> = this._area.querySelectorAll(this._identifier) as NodeListOf<Element>;
+       
         try {
+           
             element.forEach(($el: Element, currentIndex: number) => this.loadElement($el, currentIndex));
         } catch (e) {
             console.log(e);

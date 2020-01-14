@@ -6,7 +6,7 @@ export class kelement {
      * @param counter
      * @param dom
      */
-    constructor(el, $scope, counter = 1, dom, template) {
+    constructor(el, $scope, counter, dom, template) {
         this._isListItem = false;
         this.$el = el;
         this.$scope = $scope;
