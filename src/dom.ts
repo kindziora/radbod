@@ -31,7 +31,7 @@ export class dom {
     constructor(area: HTMLElement, types: { [index: string]: any }) {
 
         this._area = area as HTMLElement;
-        this.counter++;
+        
         this.setId();
         if (area.hasAttribute('data-name')) {
             this.name = area.getAttribute('data-name') || this.name;
@@ -66,6 +66,7 @@ export class dom {
     }
 
     private setId() {
+        this.counter++;
         let id: string = "component-" + this.counter;
         this._area.setAttribute("data-id", id);
         this.id = id;
@@ -136,7 +137,7 @@ export class dom {
     loadElement($el: Element, currentIndex?: number): kelement {
         this.counter++;
 
-        let t_el: kelement = this.createElement($el, currentIndex || this.counter); //decorate and extend dom element
+        let t_el: kelement = this.createElement($el, this.counter); //decorate and extend dom element
 
         this.detectType(t_el);
         this.addElement(t_el);

@@ -19,7 +19,7 @@ export class kelement {
      * @param counter 
      * @param dom 
      */
-    constructor(el: HTMLElement, $scope: HTMLElement, counter: number = 1, dom:dom, template:Function) {
+    constructor(el: HTMLElement, $scope: HTMLElement, counter: number, dom:dom, template:Function) {
         this.$el = el;
         this.$scope = $scope;
         this.dom = dom;
