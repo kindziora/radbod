@@ -37,7 +37,7 @@ export class dom {
             this.name = area.getAttribute('data-name') || this.name;
         }
         this.addTypes(types);
-        this.loadElements();
+        this.loadElements();  
     }
 
     setTemplate(template: Function) {

@@ -13,6 +13,11 @@ export class kelement {
         this.dom = dom;
         this.setId(this.$el.getAttribute('data-id') || null, counter);
         this.setTemplate(template);
+        if (!this.$el.hasAttribute("data-view")) {
+            this.$el.setAttribute("data-view", this.id);
+            if (!template)
+                this.setTemplate(eval('(data)=>`' + this.$el.innerHTML + '`'));
+        }
     }
     getValue() {
         return this.$el.value;
