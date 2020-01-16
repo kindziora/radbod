@@ -16,7 +16,7 @@ let card =
 <div data-name="/$card/src" data-view="imgContainer"></div>
 <div data-name="/$card/alignment">
     <ul>
-    ${card.alignment.map((e,i)=>`<li data-name="/$card/alignment[${i}]">${e}</li>`)}
+    ${card.alignment.map((e,i)=>`<li data-name="/$card/alignment/${i}">${e}</li>`)}
     </ul>
 </div>
 </section>`,
