@@ -88,7 +88,7 @@ export class testDomHandler{
                     </p>
                 </section>
                 <section>
-                    <p> <button type="submit">Validate the payment</button> </p>
+                    <p> <button type="submit">Validate the payment</button> </p> 
                 </section>
             </form>
        `;
