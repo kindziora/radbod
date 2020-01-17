@@ -1,1 +1,1 @@
-/home/akindziora/Downloads/projekte/kjs/dist/kjs.js
+/home/akindziora/projekte/kjs/dist/kjs.js
