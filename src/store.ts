@@ -58,10 +58,10 @@ export class store {
                      */
 
                     if (oTarget[sKey] !== vValue) {
-                        vValue = this.changeStore(component, diff);
+                        let tmpChain = this.changeStore(component, diff); 
                     }
-                    
-                    oTarget[sKey] = vValue;
+                     
+                    oTarget[sKey] = vValue; 
 
                     return true;
                 },

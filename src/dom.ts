@@ -34,8 +34,11 @@ export class dom {
        
         this.setId();
         if (area.hasAttribute('data-name')) {
-            this.name = area.getAttribute('data-name') || this.name;
+            this.name = area.getAttribute('data-name');
+        }else{
+            this.name = area?.tagName;
         }
+
         this.addTypes(types);
         this.loadElements();  
     }
