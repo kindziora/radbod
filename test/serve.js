@@ -7,12 +7,11 @@ const app = express();
 // server configuration
 const PORT = 8800;
 
-app.use(express.static('/home/akindziora/Downloads/projekte/kjs/test/browser'));
-
-
-// create a route for the app
-app.get('/', (req, res) => {
-  res.send('Hello World');
+app.use(express.static('/home/akindziora/projekte/kjs/test/browser'));
+ 
+app.use(function (err, req, res, next) {
+  console.log(req);
+  return res.status(500).send({ error: err });
 });
 
 // make the server listen to requests
