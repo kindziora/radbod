@@ -81,6 +81,8 @@ export class component {
 
     render(changes: Array<op>){
         console.log("COMPONENT UPDATE BECAUSE NO FIELD TO MATCH");
+         this.dom.render(changes);
+         this.bindEvents();
     }
 
 }
