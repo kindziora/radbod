@@ -67,13 +67,14 @@ export class store {
      * @param changes
      */
     changeStore(component, change) {
-        var _a, _b;
+        var _a, _b, _c;
         let ret = null;
         this.patchQueue.push(change);
         let retChange = (_a = this.events) === null || _a === void 0 ? void 0 : _a.dispatchEvent(component, "/", "change", [change], this.data);
         //console.log(component, "/", "change", change);
         try {
-            ret = (_b = this.events) === null || _b === void 0 ? void 0 : _b.dispatchEvent(component, change.path, change.op, [change], this.data);
+            ret = (_b = this.events) === null || _b === void 0 ? void 0 : _b.dispatchEvent(component, change.path, "change", [change], this.data);
+            ret = (_c = this.events) === null || _c === void 0 ? void 0 : _c.dispatchEvent(component, change.path, change.op, [change], this.data, ret);
         }
         catch (e) {
             ret = retChange;

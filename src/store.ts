@@ -97,7 +97,8 @@ export class store {
         //console.log(component, "/", "change", change);
 
         try{
-            ret = this.events?.dispatchEvent(component, change.path, change.op, [change], this.data);
+            ret = this.events?.dispatchEvent(component, change.path, "change", [change], this.data);
+            ret = this.events?.dispatchEvent(component, change.path, change.op, [change], this.data, ret);
         }catch(e){
             ret = retChange;
         }
