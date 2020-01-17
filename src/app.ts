@@ -2,6 +2,7 @@ import { component } from "./component.js";
 import { dom } from './dom.js';
 import { eventHandler } from './eventHandler.js';
 import { dataHandler } from './dataHandler.js';
+import { store } from './store.js';
 
 export class app {
     public dataH: dataHandler;
@@ -19,34 +20,38 @@ export class app {
      * @param actions 
      * @param injections 
      */
-    createComponent(name: string, views: { [index: string]: Function }, data: object, actions: object, injections: object) {
-
-        let store = this.dataH.createStore(name, data);
+    createComponent(name: string, views: { [index: string]: Function }, data: Object | store, actions: object, injections: object) {
+        let s;
+     
+        if(data instanceof store){
+            s = data;
+        }else{
+            s = this.dataH.createStore(name, data);
+        } 
+        
         let el = document.createElement("component");
 
-        el.innerHTML = views?.[name](data);
+        if(typeof views?.[name] ==="function"){
+            el.innerHTML = views?.[name](data);
+        } else{
+            el.innerHTML = views?.[name];
+        }
+
+        let ddom = new dom(el, injections);
+        ddom.name = name;
         el.setAttribute("data-name", name);
 
-        this.components[name] = new component(new dom(el, injections), store, actions);
-        this.components[name].dom.setTemplate(views?.[name]);
+        this.components[name] = new component(ddom, s, actions);
 
-        this.bindViews(name, views);
+        if(typeof views?.[name] !== "function"){ 
+            this.components[name].dom.setTemplate(eval('(data)=>`'+ this.components[name].dom._area.innerHTML +'`'));
+        }else{
+            this.components[name].dom.setTemplate(views?.[name]);
+        } 
+
         return this.components[name];
     }
-    
-    /**
-     * 
-     * @param name 
-     * @param views 
-     */
-    bindViews(name:string, views: { [index: string]: Function }){ 
-        for(let i in this.components[name].dom.element){
-            let el = this.components[name].dom.element[i];
-            if(el.$el.hasAttribute("data-view")){
-                el.setTemplate(views?.[el?.$el?.getAttribute("data-view")]);
-            }
-        }
-    }
+ 
 
     /**
      * 
@@ -61,7 +66,7 @@ export class app {
      * @param url 
      */
     render(url:string){
-
+        
     }
 
 }

@@ -12,6 +12,7 @@ import { textarea } from './dom/element/textarea.js';
 import { component } from "./component.js";
 export class dom {
     constructor(area, types) {
+        var _a;
         this._area = {};
         this._identifier = '[data-name]';
         this.element = {};
@@ -23,7 +24,10 @@ export class dom {
         this._area = area;
         this.setId();
         if (area.hasAttribute('data-name')) {
-            this.name = area.getAttribute('data-name') || this.name;
+            this.name = area.getAttribute('data-name');
+        }
+        else {
+            this.name = (_a = area) === null || _a === void 0 ? void 0 : _a.tagName;
         }
         this.addTypes(types);
         this.loadElements();

@@ -39,7 +39,7 @@ export class store {
                      * @todo set value and use this.pxy[px] for $ connected values
                      */
                     if (oTarget[sKey] !== vValue) {
-                        vValue = this.changeStore(component, diff);
+                        let tmpChain = this.changeStore(component, diff);
                     }
                     oTarget[sKey] = vValue;
                     return true;

@@ -52,8 +52,16 @@ export class component {
     update(changes) {
         for (let i = 0; i < changes.length; i++) {
             let change = changes[i];
-            this.dom.getBestMatchingElements(change.path)
-                .forEach((el) => el.update([change]));
+            let chs = this.dom.getBestMatchingElements(change.path);
+            chs.forEach((el) => el.update([change]));
+            if (chs.length === 0) {
+                this.render(change);
+            }
         }
+    }
+    render(changes) {
+        console.log("COMPONENT UPDATE BECAUSE NO FIELD TO MATCH");
+        this.dom.render(changes);
+        this.bindEvents();
     }
 }

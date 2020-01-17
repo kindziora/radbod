@@ -26,6 +26,13 @@ export class kelement {
         this.setId(this.$el.getAttribute('data-id') || null, counter);
 
         this.setTemplate(template);
+
+        if(!this.$el.hasAttribute("data-view")){
+            this.$el.setAttribute("data-view", this.id);
+            if(!template)
+                this.setTemplate(eval('(data)=>`'+ this.$el.innerHTML +'`')); 
+        }
+
     }
 
     public getValue() {

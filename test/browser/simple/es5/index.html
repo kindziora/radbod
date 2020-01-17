@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Title of the document</title>
+    </head>
+    <body>
+        <section class="content">
+            <home>
+                <h1>This is home</h1>
+                <p>this is a home stuff</p>
+                <p data-name="/$user/name">${data.value}</p>
+                ${data.test}
+                <p data-name="/$user/info">
+                    <h3 data-name="/$user/info/gender">${data.value}</h3>
+                    <span data-name="/$user/info/age">${data.value}</span>
+                </p>
+                <card></card>
+            </home>
+
+        </section>
+
+        <script src="/kjs.js"></script>
+        <script>var app = new kjs.app();</script>
+        <script src="/simple/es5/component/card.js"></script>
+        <script src="/simple/es5/home.js"></script>
+    </body>
+</html>
