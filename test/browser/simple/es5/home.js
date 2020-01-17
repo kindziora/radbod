@@ -20,7 +20,8 @@ let interactions = {
 };
 
 app.createComponent(
-    "home", {home : tplELEMENT.innerHTML},
+    "home", 
+    {home : tplELEMENT.innerHTML},
     userStore,
     interactions, {
     card : app.components.card
