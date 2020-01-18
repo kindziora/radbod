@@ -14,6 +14,9 @@ app.use(function (err, req, res, next) {
   return res.status(500).send({ error: err });
 });
 
+//SSR IMPLEMENTATION
+
+
 // make the server listen to requests
 app.listen(PORT, () => {
   console.log(`Server running at: http://localhost:${PORT}/`);

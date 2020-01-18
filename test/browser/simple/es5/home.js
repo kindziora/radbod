@@ -14,7 +14,7 @@ let interactions = {
         "click"(sender, dataStore) { //address specific element in dom
             console.log('CLICK', sender.field.getValue());
             dataStore.name += " ,";
-          
+            
         }
     }
 };
