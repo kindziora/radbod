@@ -17,7 +17,7 @@ export class app {
      * @param injections
      */
     createComponent(name, views, data, actions, injections) {
-        var _a, _b, _c, _d, _e;
+        var _a, _b, _c, _d, _e, _f, _g;
         let s;
         if (data instanceof store) {
             s = data;
@@ -37,10 +37,11 @@ export class app {
         el.setAttribute("data-name", name);
         this.components[name] = new component(ddom, s, actions);
         if (typeof ((_d = views) === null || _d === void 0 ? void 0 : _d[name]) !== "function") {
-            this.components[name].dom.setTemplate(eval('(data)=>`' + this.components[name].dom._area.innerHTML + '`'));
+            let stores = (_f = Object.keys((_e = this.dataH) === null || _e === void 0 ? void 0 : _e.store)) === null || _f === void 0 ? void 0 : _f.join(',');
+            this.components[name].dom.setTemplate(eval('(change,' + stores + ')=>`' + this.components[name].dom._area.innerHTML + '`'));
         }
         else {
-            this.components[name].dom.setTemplate((_e = views) === null || _e === void 0 ? void 0 : _e[name]);
+            this.components[name].dom.setTemplate((_g = views) === null || _g === void 0 ? void 0 : _g[name]);
         }
         return this.components[name];
     }

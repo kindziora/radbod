@@ -58,7 +58,13 @@ export class dom {
     render(data: object){
         this.element = {};
         this.elementByName = {};
-        this._area.innerHTML = this.template(data);
+
+        let params = [data];
+        for(let e in this.store.dataH?.store){
+            params.push(this.store.dataH?.store[e].data);
+        } 
+
+        this._area.innerHTML = this.template.apply(this, params);
         this.loadElements();
     }
 

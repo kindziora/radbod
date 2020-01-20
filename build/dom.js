@@ -41,9 +41,14 @@ export class dom {
      * @param data
      */
     render(data) {
+        var _a, _b;
         this.element = {};
         this.elementByName = {};
-        this._area.innerHTML = this.template(data);
+        let params = [data];
+        for (let e in (_a = this.store.dataH) === null || _a === void 0 ? void 0 : _a.store) {
+            params.push((_b = this.store.dataH) === null || _b === void 0 ? void 0 : _b.store[e].data);
+        }
+        this._area.innerHTML = this.template.apply(this, params);
         this.loadElements();
     }
     /**

@@ -44,7 +44,9 @@ export class app {
         this.components[name] = new component(ddom, s, actions);
 
         if(typeof views?.[name] !== "function"){ 
-            this.components[name].dom.setTemplate(eval('(data)=>`'+ this.components[name].dom._area.innerHTML +'`'));
+            let stores = Object.keys(this.dataH?.store)?.join(',');
+     
+            this.components[name].dom.setTemplate(eval('(change,' + stores + ')=>`'+ this.components[name].dom._area.innerHTML +'`'));
         }else{
             this.components[name].dom.setTemplate(views?.[name]);
         } 
