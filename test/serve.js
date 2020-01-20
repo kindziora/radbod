@@ -11,8 +11,8 @@ const PORT = 8800;
 
 app.use(express.static(path.join(__dirname, 'browser')));
  
-console.log(path.join(__dirname, 'test/browser'));
-
+app.use(express.static(path.join(__dirname, '../dist')));
+ 
 app.use(function (err, req, res, next) {
   console.log(req);
   return res.status(500).send({ error: err });

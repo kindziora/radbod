@@ -12,6 +12,8 @@ import { elist } from './dom/list.js';
 import { select } from './dom/list/select.js';
 import { textarea } from './dom/element/textarea.js';
 import { component } from "./component.js";
+import { store, op } from './store.js';
+
 
 export class dom {
     public _area: HTMLElement = {} as HTMLElement;
@@ -28,7 +30,9 @@ export class dom {
     public name: string = "component-x";
     public template: Function;
 
-    constructor(area: HTMLElement, types: { [index: string]: any }) {
+    public store : store;
+
+    constructor(area: HTMLElement, types: { [index: string]: any }, s: store) {
 
         this._area = area as HTMLElement;
        
@@ -38,7 +42,7 @@ export class dom {
         }else{
             this.name = area?.tagName;
         }
-
+        this.store = s;
         this.addTypes(types);
         this.loadElements();  
     }

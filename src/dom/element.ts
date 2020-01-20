@@ -29,8 +29,12 @@ export class kelement {
 
         if(!this.$el.hasAttribute("data-view")){
             this.$el.setAttribute("data-view", this.id);
-            if(!template)
-                this.setTemplate(eval('(data)=>`'+ this.$el.innerHTML +'`')); 
+
+            if(!template){ 
+                let stores = Object.keys(this.dom.store?.dataH?.store)?.join(',');
+                this.setTemplate(eval('(change, ' + stores + ' )=>`'+ this.$el.innerHTML +'`')); 
+            }
+                
         }
 
     }
@@ -70,8 +74,13 @@ export class kelement {
      * @param data 
      */
     render(change: op){
-        if(this.template){
-            this.$el.innerHTML = this.template(change);
+        if(this.template){ 
+            let params = [change];
+            for(let e in this.dom.store?.dataH?.store){
+                params.push(this.dom.store?.dataH?.store[e].data);
+            }
+           
+            this.$el.innerHTML = this.template.apply(this, params);
         }else{
             this.$el.innerHTML = change.value; 
         }

@@ -7,6 +7,7 @@ export class kelement {
      * @param dom
      */
     constructor(el, $scope, counter, dom, template) {
+        var _a, _b, _c;
         this._isListItem = false;
         this.$el = el;
         this.$scope = $scope;
@@ -15,8 +16,10 @@ export class kelement {
         this.setTemplate(template);
         if (!this.$el.hasAttribute("data-view")) {
             this.$el.setAttribute("data-view", this.id);
-            if (!template)
-                this.setTemplate(eval('(data)=>`' + this.$el.innerHTML + '`'));
+            if (!template) {
+                let stores = (_c = Object.keys((_b = (_a = this.dom.store) === null || _a === void 0 ? void 0 : _a.dataH) === null || _b === void 0 ? void 0 : _b.store)) === null || _c === void 0 ? void 0 : _c.join(',');
+                this.setTemplate(eval('(change, ' + stores + ' )=>`' + this.$el.innerHTML + '`'));
+            }
         }
     }
     getValue() {
@@ -47,8 +50,13 @@ export class kelement {
      * @param data
      */
     render(change) {
+        var _a, _b, _c, _d;
         if (this.template) {
-            this.$el.innerHTML = this.template(change);
+            let params = [change];
+            for (let e in (_b = (_a = this.dom.store) === null || _a === void 0 ? void 0 : _a.dataH) === null || _b === void 0 ? void 0 : _b.store) {
+                params.push((_d = (_c = this.dom.store) === null || _c === void 0 ? void 0 : _c.dataH) === null || _d === void 0 ? void 0 : _d.store[e].data);
+            }
+            this.$el.innerHTML = this.template.apply(this, params);
         }
         else {
             this.$el.innerHTML = change.value;

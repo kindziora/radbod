@@ -37,7 +37,7 @@ export class app {
             el.innerHTML = views?.[name];
         }
 
-        let ddom = new dom(el, injections);
+        let ddom = new dom(el, injections, s);
         ddom.name = name;
         el.setAttribute("data-name", name);
 

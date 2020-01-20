@@ -11,7 +11,7 @@ import { select } from './dom/list/select.js';
 import { textarea } from './dom/element/textarea.js';
 import { component } from "./component.js";
 export class dom {
-    constructor(area, types) {
+    constructor(area, types, s) {
         var _a;
         this._area = {};
         this._identifier = '[data-name]';
@@ -29,6 +29,7 @@ export class dom {
         else {
             this.name = (_a = area) === null || _a === void 0 ? void 0 : _a.tagName;
         }
+        this.store = s;
         this.addTypes(types);
         this.loadElements();
     }

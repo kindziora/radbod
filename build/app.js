@@ -32,7 +32,7 @@ export class app {
         else {
             el.innerHTML = (_c = views) === null || _c === void 0 ? void 0 : _c[name];
         }
-        let ddom = new dom(el, injections);
+        let ddom = new dom(el, injections, s);
         ddom.name = name;
         el.setAttribute("data-name", name);
         this.components[name] = new component(ddom, s, actions);
