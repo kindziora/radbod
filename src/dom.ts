@@ -147,6 +147,11 @@ export class dom {
 
     }
 
+    /**
+     * 
+     * @param $el 
+     * @param currentIndex 
+     */
     loadElement($el: Element, currentIndex?: number): kelement {
         this.counter++;
        
@@ -154,10 +159,32 @@ export class dom {
 
         this.detectType(t_el);
         this.addElement(t_el);
-        this.addElementByName(t_el);
+        this.addElementByName(t_el, <string>t_el.getName());
 
+        this.detectOrphanVariables(t_el)
+        .forEach(name => this.addElementByName(t_el, name));
+        
         return t_el;
     }
+
+    /**
+     * detect orphan variable usages
+     * @param t_el 
+     */
+    detectOrphanVariables(t_el: kelement){
+        let tpNode = t_el.$el.cloneNode(true);
+
+        Array.from(tpNode.childNodes).map(e => {if(e.hasAttribute("data-name"))e.remove() });
+
+        let transForm = (m) => ("/" + m[1])
+        .replace(/\.|\[|\]|\'|\"/g, '/')
+        .replace(/\/\//g, "/")
+        .replace(/\/$/, '');
+
+        return Array.from(tpNode.innerHTML.matchAll(/\${([\w\.\[\]]*)}/ig), transForm);
+    }
+
+
 
     loadElements() {
         let element: NodeListOf<Element> = this._area.querySelectorAll(this._identifier) as NodeListOf<Element>;
@@ -180,11 +207,11 @@ export class dom {
         this.element[<string>el.id] = el;
     }
 
-    addElementByName(el: kelement) {
-        if (typeof this.elementByName[<string>el.getName()] === "undefined") {
-            this.elementByName[<string>el.getName()] = [];
+    addElementByName(el: kelement, name: string) {
+        if (typeof this.elementByName[name] === "undefined") {
+            this.elementByName[name] = [];
         }
-        this.elementByName[<string>el.getName()].push(el);
+        this.elementByName[name].push(el);
     }
 
     // patch  == [
