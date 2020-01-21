@@ -40,7 +40,7 @@ could load:
 
 returns:
 
-`HTML`
+`{ data: "HTML" }`
 
 ## create data_loader
 
@@ -53,9 +53,9 @@ expects a Route:
 
 could load:
 
-`path/to/project/data/user/model_server.js ${getUser(13)} at nodeJS runtime executes DB query`
+`path/to/project/data/user/model_server.js ${getUser(13)} at nodeJS runtime executes DB queries`
 `path/to/project/data/user/model_client.js ${getUser(13)} at browser runtime, will make ajax requests`
 
 returns:
 
-`JAVASCRIPT`
+`{ file: "http://localhost:8080/js/model_client.js", data: {user: {id : 123, name: "alexander"}}, ajax: "http://localhost:8080/data/user/get" }`
