@@ -16,9 +16,14 @@
                     <span data-name="/$user/info/age">${change.value}</span>
                 </p>
 
-                <span>${user.lastname}</span>
+                <span>${user.name}</span>
 
                 <card></card>
+
+
+                <select data-name="/$user/list" data-foreach="key,value">
+                    <option data-name="/$user/list/${key}">${value}</option>
+                </select>
             </home>
 
         </section>

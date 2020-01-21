@@ -1,11 +1,16 @@
 import {kelement} from "./element.js";
-import { domHandler } from "../dom.js";
+import { dom } from "../dom.js";
 import { op } from '../store.js';
 
 export class elist extends kelement{
 
     private _listItems: { [index: string]: kelement } = {};
     private _listItemsByName: { [index: string]: kelement } = {};
+
+    
+    isListItem():boolean{
+        return true;
+    }
 
     getNativeListItems(): HTMLCollection{
         return this.$el?.children as HTMLCollection;
