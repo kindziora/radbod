@@ -1,0 +1,1 @@
+export interface actions { [index: string]: Object };

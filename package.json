@@ -1,0 +1,40 @@
+{
+  "name": "kjs",
+  "version": "1.0.0",
+  "description": "framework for next gen ui ",
+  "module": "./build/app.js",
+  "main": "./build/app.js",
+  "type": "module",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "dev": "npx webpack --entry ./build/app.js --output-filename kjs.js --mode development --output-library kjs",
+    "prod": "npx webpack --entry ./build/app.js --output-filename kjs.js --output-library kjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kindziora/kjs.git"
+  },
+  "keywords": [
+    "next",
+    "gen",
+    "ts",
+    "ui"
+  ],
+  "author": "alexander kindziora",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kindziora/kjs/issues"
+  },
+  "homepage": "https://github.com/kindziora/kjs#readme",
+  "devDependencies": {
+    "browser-env": "^3.3.0",
+    "express": "^4.17.1",
+    "systemjs": "^6.1.7",
+    "typescript": "^3.7.4",
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.10"
+  },
+  "dependencies": {}
+}
