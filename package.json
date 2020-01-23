@@ -1,16 +1,17 @@
 {
-  "name": "kjs",
+  "name": "lofo",
   "version": "1.0.0",
   "description": "framework for next gen ui ",
   "module": "./build/app.js",
   "main": "./build/app.js",
+  "browser" : "./dist.lofo.js",
   "type": "module",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "dev": "npx webpack --entry ./build/app.js --output-filename kjs.js --mode development --output-library kjs",
-    "prod": "npx webpack --entry ./build/app.js --output-filename kjs.js --output-library kjs"
+    "dev": "npx webpack --entry ./build/app.js --output-filename lofo.js --mode development --output-library lofo",
+    "prod": "npx webpack --entry ./build/app.js --output-filename lofo.js --output-library lofo"
   },
   "repository": {
     "type": "git",

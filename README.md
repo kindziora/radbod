@@ -1,4 +1,4 @@
-# kjs
+# lofo.js
 
 Minimalstic ES2015 MVVM Framework with zero dependencies. Just ~20KB.
 
@@ -40,7 +40,7 @@ load:
 
 return:
 
-`{ data: "HTML" }`
+`{ html: "HTML" }`
 
 ## data_loader
 

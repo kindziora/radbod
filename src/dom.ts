@@ -74,6 +74,7 @@ export class dom {
      */
     public addTypes(types: { [index: string]: any }) {
         for (let i in types) {
+            types[i].prototype = "component";
             this.elementTypes[i] = types[i];
         }
     }
@@ -115,6 +116,49 @@ export class dom {
         el.$el?.insertAdjacentHTML(where, html);
     }
 
+
+
+    createComponent($el : Element, fieldTypeName : string, data?: Object | store) {
+        let s;
+        let componentObject: Object = this.elementTypes[fieldTypeName];
+
+        let name = fieldTypeName;
+
+        if(data instanceof store){
+            s = data;
+        }else if(typeof data !== "undefined"){
+            s = this.dataH.createStore(name, data);
+        }else{
+            s = componentObject.data();
+        }
+         
+       // const shadowRoot = $el.attachShadow({mode: 'open'});
+ 
+        let views = componentObject.views();
+
+        if(typeof views?.[name] ==="function"){
+            $el.innerHTML = views?.[name](data);
+        } else{
+            $el.innerHTML = views?.[name];
+        }
+
+        let ddom = new dom($el, componentObject.components, s);
+        ddom.name = name;
+        $el.setAttribute("data-name", name);
+         
+        let newcomponent = new component(ddom, s, componentObject.interactions());
+
+        if(typeof views?.[name] !== "function"){ 
+            let stores = Object.keys(this.dataH?.store)?.join(',');
+            newcomponent.dom.setTemplate(eval('(change,' + stores + ')=>`'+ newcomponent.dom._area.innerHTML +'`'));
+        }else{
+            newcomponent.dom.setTemplate(views?.[name]);
+        } 
+
+        return newcomponent;
+    }
+ 
+ 
     /**
      * 
      * @param $el 
@@ -123,8 +167,8 @@ export class dom {
     private createElement($el: Element, currentIndex: number): kelement {
         let fieldTypeName: string = this.mapField(<string>$el.tagName.toLowerCase(), $el);
         
-        return this.elementTypes[fieldTypeName].prototype instanceof component ?
-            this.elementTypes[fieldTypeName] :
+        return this.elementTypes[fieldTypeName].prototype === component ?
+            this.createComponent($el, fieldTypeName) :
             new this.elementTypes[fieldTypeName]($el, this._area, currentIndex, this);
     }
     /**

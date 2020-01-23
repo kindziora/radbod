@@ -10,6 +10,7 @@ import { elist } from './dom/list.js';
 import { select } from './dom/list/select.js';
 import { textarea } from './dom/element/textarea.js';
 import { component } from "./component.js";
+import { store } from './store.js';
 export class dom {
     constructor(area, types, s) {
         var _a;
@@ -57,6 +58,7 @@ export class dom {
      */
     addTypes(types) {
         for (let i in types) {
+            types[i].prototype = "component";
             this.elementTypes[i] = types[i];
         }
     }
@@ -95,6 +97,41 @@ export class dom {
         var _a;
         (_a = el.$el) === null || _a === void 0 ? void 0 : _a.insertAdjacentHTML(where, html);
     }
+    createComponent($el, fieldTypeName, data) {
+        var _a, _b, _c, _d, _e, _f, _g;
+        let s;
+        let componentObject = this.elementTypes[fieldTypeName];
+        let name = fieldTypeName;
+        if (data instanceof store) {
+            s = data;
+        }
+        else if (typeof data !== "undefined") {
+            s = this.dataH.createStore(name, data);
+        }
+        else {
+            s = componentObject.data();
+        }
+        // const shadowRoot = $el.attachShadow({mode: 'open'});
+        let views = componentObject.views();
+        if (typeof ((_a = views) === null || _a === void 0 ? void 0 : _a[name]) === "function") {
+            $el.innerHTML = (_b = views) === null || _b === void 0 ? void 0 : _b[name](data);
+        }
+        else {
+            $el.innerHTML = (_c = views) === null || _c === void 0 ? void 0 : _c[name];
+        }
+        let ddom = new dom($el, componentObject.components, s);
+        ddom.name = name;
+        $el.setAttribute("data-name", name);
+        let newcomponent = new component(ddom, s, componentObject.interactions());
+        if (typeof ((_d = views) === null || _d === void 0 ? void 0 : _d[name]) !== "function") {
+            let stores = (_f = Object.keys((_e = this.dataH) === null || _e === void 0 ? void 0 : _e.store)) === null || _f === void 0 ? void 0 : _f.join(',');
+            newcomponent.dom.setTemplate(eval('(change,' + stores + ')=>`' + newcomponent.dom._area.innerHTML + '`'));
+        }
+        else {
+            newcomponent.dom.setTemplate((_g = views) === null || _g === void 0 ? void 0 : _g[name]);
+        }
+        return newcomponent;
+    }
     /**
      *
      * @param $el
@@ -102,8 +139,8 @@ export class dom {
      */
     createElement($el, currentIndex) {
         let fieldTypeName = this.mapField($el.tagName.toLowerCase(), $el);
-        return this.elementTypes[fieldTypeName].prototype instanceof component ?
-            this.elementTypes[fieldTypeName] :
+        return this.elementTypes[fieldTypeName].prototype === component ?
+            this.createComponent($el, fieldTypeName) :
             new this.elementTypes[fieldTypeName]($el, this._area, currentIndex, this);
     }
     /**
@@ -123,13 +160,34 @@ export class dom {
             }
         }
     }
+    /**
+     *
+     * @param $el
+     * @param currentIndex
+     */
     loadElement($el, currentIndex) {
         this.counter++;
         let t_el = this.createElement($el, this.counter); //decorate and extend dom element
         this.detectType(t_el);
         this.addElement(t_el);
-        this.addElementByName(t_el);
+        this.addElementByName(t_el, t_el.getName());
+        this.detectOrphanVariables(t_el)
+            .forEach(name => this.addElementByName(t_el, name));
         return t_el;
+    }
+    /**
+     * detect orphan variable usages
+     * @param t_el
+     */
+    detectOrphanVariables(t_el) {
+        let tpNode = t_el.$el.cloneNode(true);
+        Array.from(tpNode.childNodes).map(e => { if (e.hasAttribute("data-name"))
+            e.remove(); });
+        let transForm = (m) => ("/" + m[1])
+            .replace(/\.|\[|\]|\'|\"/g, '/')
+            .replace(/\/\//g, "/")
+            .replace(/\/$/, '');
+        return Array.from(tpNode.innerHTML.matchAll(/\${([\w\.\[\]]*)}/ig), transForm);
     }
     loadElements() {
         let element = this._area.querySelectorAll(this._identifier);
@@ -147,11 +205,11 @@ export class dom {
     addElement(el) {
         this.element[el.id] = el;
     }
-    addElementByName(el) {
-        if (typeof this.elementByName[el.getName()] === "undefined") {
-            this.elementByName[el.getName()] = [];
+    addElementByName(el, name) {
+        if (typeof this.elementByName[name] === "undefined") {
+            this.elementByName[name] = [];
         }
-        this.elementByName[el.getName()].push(el);
+        this.elementByName[name].push(el);
     }
     // patch  == [
     //   { op: "replace", path: "/firstName", value: "Albert"},

@@ -5,6 +5,9 @@ export class elist extends kelement {
         this._listItems = {};
         this._listItemsByName = {};
     }
+    isListItem() {
+        return true;
+    }
     getNativeListItems() {
         var _a;
         return (_a = this.$el) === null || _a === void 0 ? void 0 : _a.children;
