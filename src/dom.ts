@@ -111,13 +111,23 @@ export class dom {
 
         return name;
     }
-
+    
+    /**
+     * 
+     * @param el 
+     * @param where 
+     * @param html 
+     */
     public insertElementByElement(el: kelement, where: InsertPosition = 'beforeend', html: string) {
         el.$el?.insertAdjacentHTML(where, html);
     }
 
-
-
+    /**
+     * 
+     * @param $el 
+     * @param fieldTypeName 
+     * @param data 
+     */
     createComponent($el : Element, fieldTypeName : string, data?: Object | store) {
         let s;
         let componentObject: Object = this.elementTypes[fieldTypeName];
