@@ -5,7 +5,7 @@ import fs from 'fs';
 const __dirname = path.resolve();
 const template = /<template.*>([^]+)<\/template>/igm;
 const script = /<script.*>([^]+)<\/script>/igm;
-const scriptLang = /<script(\S+)=["']?((?:.(?!["']?\s+(?:\S+)=|[>"']))+.)["']?/igm;
+const scriptLang = /<script.*language\=\"([A-Za-z0-9 _]*)\"/igm;
 const openeningBracketObject = /export.*?\s({)/gim;
 const style = /<style.*>([^]+)<\/style>/igm;
 
@@ -41,6 +41,7 @@ export function buildFile(file){
     fs.readFile(file, 'utf8', function(err, content) {
         
         let {html, js, css} = extract(content);
+        let slang = Array.from(scriptLang.exec(content))[1];
 
         let inject = `
          html : '${html.replace(/\s/ig, " ").replace(/  +/ig, " ")}',
@@ -48,8 +49,8 @@ export function buildFile(file){
          `;
         
         let newFile = injectCode(js, inject);
-     
-        fs.writeFile(getName(file) + ".js", newFile, (err) => {
+        
+        fs.writeFile(getName(file) + "." + slang, newFile, (err) => {
             if (err) console.log(err);
 
         });
