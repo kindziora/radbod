@@ -5,6 +5,7 @@ import fs from 'fs';
 const __dirname = path.resolve();
 const template = /<template.*>([^]+)<\/template>/igm;
 const script = /<script.*>([^]+)<\/script>/igm;
+const scriptLang = /<script(\S+)=["']?((?:.(?!["']?\s+(?:\S+)=|[>"']))+.)["']?/igm;
 const openeningBracketObject = /export.*?\s({)/gim;
 const style = /<style.*>([^]+)<\/style>/igm;
 
@@ -47,15 +48,11 @@ export function buildFile(file){
          `;
         
         let newFile = injectCode(js, inject);
-        console.log(newFile);
-        
-        return;
-
+     
         fs.writeFile(getName(file) + ".js", newFile, (err) => {
             if (err) console.log(err);
 
         });
-
 
 
     });   
