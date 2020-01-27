@@ -11,7 +11,8 @@ const style = /<style.*>([^]+)<\/style>/igm;
 
 
 export async function extract(content) {
-    return { html: template.exec(content)[1], js: script.exec(content)[1], css: style.exec(content)[1] };
+
+    return { html: Array.from(content.matchAll(template))[0][1], js: Array.from(content.matchAll(script))[0][1], css: Array.from(content.matchAll(style))[0][1] };
 }
 
 /**
@@ -20,7 +21,7 @@ export async function extract(content) {
  * @param {*} codeToInject 
  */
 async function injectCode(script, codeToInject) {
-    let find = Array.from(openeningBracketObject.exec(script))[0];
+    let find = Array.from(script.matchAll(openeningBracketObject))[0];
     return script.replace(find, find + codeToInject);
 }
 
@@ -49,7 +50,7 @@ export async function buildFile(file, ready) {
     let content = await fs.readFile(file, 'utf8');
 
     let { html, js, css } = await extract(content);
-    let slang = scriptLang.exec(content)[1];
+    let slang = Array.from(content.matchAll(scriptLang))[0][1];
 
     let inject = `
          html : '${html.replace(/\s/ig, " ").replace(/  +/ig, " ")}',
