@@ -12,6 +12,10 @@ export class app {
         this.dataH = new dataHandler(new eventHandler());
 
     }
+
+    createComponentSFC(singleFileComponent: Object) {
+
+    }
     
  /**
      * 
@@ -33,7 +37,7 @@ export class app {
         let el = document.createElement("component");
 
         if(typeof views?.[name] ==="function"){
-            el.innerHTML = views?.[name](data);
+            el.innerHTML = views?.[name].apply(null, this.dataH?.store);
         } else{
             el.innerHTML = views?.[name];
         }
