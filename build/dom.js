@@ -93,10 +93,22 @@ export class dom {
         }
         return name;
     }
+    /**
+     *
+     * @param el
+     * @param where
+     * @param html
+     */
     insertElementByElement(el, where = 'beforeend', html) {
         var _a;
         (_a = el.$el) === null || _a === void 0 ? void 0 : _a.insertAdjacentHTML(where, html);
     }
+    /**
+     *
+     * @param $el
+     * @param fieldTypeName
+     * @param data
+     */
     createComponent($el, fieldTypeName, data) {
         var _a, _b, _c, _d, _e, _f, _g;
         let s;
@@ -181,7 +193,7 @@ export class dom {
      */
     detectOrphanVariables(t_el) {
         let tpNode = t_el.$el.cloneNode(true);
-        Array.from(tpNode.childNodes).map(e => { if (e.hasAttribute("data-name"))
+        Array.from(tpNode.childNodes).map(e => { if (e.hasAttribute && e.hasAttribute("data-name"))
             e.remove(); });
         let transForm = (m) => ("/" + m[1])
             .replace(/\.|\[|\]|\'|\"/g, '/')

@@ -227,8 +227,8 @@ export class dom {
      */
     detectOrphanVariables(t_el: kelement){
         let tpNode = t_el.$el.cloneNode(true);
-
-        Array.from(tpNode.childNodes).map(e => {if(e.hasAttribute("data-name"))e.remove() });
+        
+        Array.from(tpNode.childNodes).map(e => {if(e.hasAttribute && e.hasAttribute("data-name"))e.remove() });
 
         let transForm = (m) => ("/" + m[1])
         .replace(/\.|\[|\]|\'|\"/g, '/')
