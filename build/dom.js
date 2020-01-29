@@ -203,7 +203,6 @@ export class dom {
             .replace(/\/\//g, "/")
             .replace(/\/$/, '');
         let names = Array.from(tpNode.innerHTML.matchAll(/\${([\w\.\[\]]*)}/ig), transForm);
-        //  console.log(tpNode.outerHTML);
         return names;
     }
     loadElements() {

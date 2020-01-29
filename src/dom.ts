@@ -209,7 +209,7 @@ export class dom {
      */
     loadElement($el: Element, currentIndex?: number): kelement {
         this.counter++;
-       
+
         let t_el: kelement = this.createElement($el, this.counter); //decorate and extend dom element
 
         this.detectType(t_el);
@@ -230,7 +230,7 @@ export class dom {
         if(!t_el.$el) return [];
 
         let tpNode = t_el.$el.cloneNode(true);
-        
+       
         Array.from(tpNode.childNodes).map(e => {if(e.hasAttribute && e.hasAttribute("data-name"))e.remove() });
 
         let transForm = (m) => ("/$" + m[1])
@@ -240,18 +240,13 @@ export class dom {
 
         let names = Array.from(tpNode.innerHTML.matchAll(/\${([\w\.\[\]]*)}/ig), transForm);
         
-      //  console.log(tpNode.outerHTML);
-
         return names;
     }
-
-
 
     loadElements() {
         let element: NodeListOf<Element> = this._area.querySelectorAll(this._identifier) as NodeListOf<Element>;
        
         try {
-           
             element.forEach(($el: Element, currentIndex: number) => this.loadElement($el, currentIndex));
         } catch (e) {
             console.log(e);

@@ -14,7 +14,7 @@ export class compileViews {
         let buildApp = new app();
         let compo = buildApp.createComponent(name, views, component.data.call(buildApp.dataH), component.interactions(), component.components);
 
-       // console.log(compo);
+        console.log(compo);
     }
 
     compile() {
