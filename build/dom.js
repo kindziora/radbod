@@ -136,6 +136,7 @@ export class dom {
         ddom.name = name;
         $el.setAttribute("data-name", name);
         let newcomponent = new component(ddom, s, componentObject.interactions());
+        newcomponent.setId(newcomponent.$el.getAttribute('data-id') || null, ++this.counter);
         if (typeof ((_d = views) === null || _d === void 0 ? void 0 : _d[name]) !== "function") {
             let stores = (_f = Object.keys((_e = this.store.dataH) === null || _e === void 0 ? void 0 : _e.store)) === null || _f === void 0 ? void 0 : _f.join(',');
             newcomponent.dom.setTemplate(eval('(change,' + stores + ')=>`' + newcomponent.dom._area.innerHTML + '`'));

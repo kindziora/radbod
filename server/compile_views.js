@@ -12,9 +12,17 @@ export class compileViews {
         views[name] = component.html.trim(); 
  
         let buildApp = new app();
-        let compo = buildApp.createComponent(name, views, component.data.call(buildApp.dataH), component.interactions(), component.components);
 
-        console.log(compo.dom.elementByName);
+        let compo = buildApp.createComponent(
+            name,
+            views,
+            component.data.call(buildApp.dataH),
+            component.interactions(),
+            component.components
+        );
+
+        console.log(compo);
+        
     }
 
     compile() {

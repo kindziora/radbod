@@ -7,6 +7,9 @@ export class component {
     public store: store;
     public name: string = "";
     private interactions: actions = {};
+    public id: String;
+    public $el: HTMLElement;
+
     /**
      * 
      * @param dom 
@@ -17,12 +20,19 @@ export class component {
         this.store = store;
         this.interactions = acts;
         this.name = this.dom.name;
+        this.$el = dom._area;
 
         this.bindEvents();
     }
 
     getName(){
         return this.name;
+    }
+
+    setId(namesp: string | null, counter: number) {
+        let id: string = namesp || "element" + "-" + counter;
+        this.$el.setAttribute("data-id", id);
+        this.id = id;
     }
 
     bindEvents() {

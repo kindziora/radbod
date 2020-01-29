@@ -159,12 +159,14 @@ export class dom {
  
         let newcomponent = new component(ddom, s, componentObject.interactions());
 
-        if(typeof views?.[name] !== "function"){ 
+        newcomponent.setId(newcomponent.$el.getAttribute('data-id') || null, ++this.counter);
+
+        if(typeof views?.[name] !== "function"){
             let stores = Object.keys(this.store.dataH?.store)?.join(',');
             newcomponent.dom.setTemplate(eval('(change,' + stores + ')=>`'+ newcomponent.dom._area.innerHTML +'`'));
         }else{
             newcomponent.dom.setTemplate(views?.[name]);
-        } 
+        }
 
         return newcomponent;
     }
