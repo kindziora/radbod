@@ -118,25 +118,26 @@ export class dom {
             s = data;
         }
         else if (typeof data !== "undefined") {
-            s = this.dataH.createStore(name, data);
+            s = this.store.dataH.createStore(name, data);
         }
         else {
-            s = componentObject.data();
+            s = componentObject.data.call(this.store.dataH);
         }
         // const shadowRoot = $el.attachShadow({mode: 'open'});
-        let views = componentObject.views();
+        let views = {};
+        views[name] = componentObject.html.trim();
         if (typeof ((_a = views) === null || _a === void 0 ? void 0 : _a[name]) === "function") {
             $el.innerHTML = (_b = views) === null || _b === void 0 ? void 0 : _b[name](data);
         }
         else {
             $el.innerHTML = (_c = views) === null || _c === void 0 ? void 0 : _c[name];
         }
-        let ddom = new dom($el, componentObject.components, s);
+        let ddom = new dom($el, componentObject.components || {}, s);
         ddom.name = name;
         $el.setAttribute("data-name", name);
         let newcomponent = new component(ddom, s, componentObject.interactions());
         if (typeof ((_d = views) === null || _d === void 0 ? void 0 : _d[name]) !== "function") {
-            let stores = (_f = Object.keys((_e = this.dataH) === null || _e === void 0 ? void 0 : _e.store)) === null || _f === void 0 ? void 0 : _f.join(',');
+            let stores = (_f = Object.keys((_e = this.store.dataH) === null || _e === void 0 ? void 0 : _e.store)) === null || _f === void 0 ? void 0 : _f.join(',');
             newcomponent.dom.setTemplate(eval('(change,' + stores + ')=>`' + newcomponent.dom._area.innerHTML + '`'));
         }
         else {
@@ -151,7 +152,7 @@ export class dom {
      */
     createElement($el, currentIndex) {
         let fieldTypeName = this.mapField($el.tagName.toLowerCase(), $el);
-        return this.elementTypes[fieldTypeName].prototype === component ?
+        return this.elementTypes[fieldTypeName].prototype === "component" ?
             this.createComponent($el, fieldTypeName) :
             new this.elementTypes[fieldTypeName]($el, this._area, currentIndex, this);
     }
@@ -192,14 +193,18 @@ export class dom {
      * @param t_el
      */
     detectOrphanVariables(t_el) {
+        if (!t_el.$el)
+            return [];
         let tpNode = t_el.$el.cloneNode(true);
         Array.from(tpNode.childNodes).map(e => { if (e.hasAttribute && e.hasAttribute("data-name"))
             e.remove(); });
-        let transForm = (m) => ("/" + m[1])
+        let transForm = (m) => ("/$" + m[1])
             .replace(/\.|\[|\]|\'|\"/g, '/')
             .replace(/\/\//g, "/")
             .replace(/\/$/, '');
-        return Array.from(tpNode.innerHTML.matchAll(/\${([\w\.\[\]]*)}/ig), transForm);
+        let names = Array.from(tpNode.innerHTML.matchAll(/\${([\w\.\[\]]*)}/ig), transForm);
+        //  console.log(tpNode.outerHTML);
+        return names;
     }
     loadElements() {
         let element = this._area.querySelectorAll(this._identifier);

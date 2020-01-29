@@ -12,10 +12,6 @@ export class app {
         this.dataH = new dataHandler(new eventHandler());
 
     }
-
-    createComponentSFC(singleFileComponent: Object) {
-
-    }
     
  /**
      * 
@@ -25,7 +21,7 @@ export class app {
      * @param actions 
      * @param injections 
      */
-    createComponent(name: string, views: { [index: string]: Function }, data: Object | store, actions: object, injections: object) {
+    createComponent(name: string, views: { [index: string]: string }, data: Object | store, actions: object, injections: object) {
         let s;
      
         if(data instanceof store){
@@ -35,12 +31,9 @@ export class app {
         } 
         
         let el = document.createElement("component");
-
-        if(typeof views?.[name] ==="function"){
-            el.innerHTML = views?.[name].apply(null, this.dataH?.store);
-        } else{
-            el.innerHTML = views?.[name];
-        }
+        
+        el.innerHTML = views?.[name];
+        
 
         let ddom = new dom(el, injections, s);
         ddom.name = name;

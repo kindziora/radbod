@@ -131,20 +131,21 @@ export class dom {
     createComponent($el : Element, fieldTypeName : string, data?: Object | store) {
         let s;
         let componentObject: Object = this.elementTypes[fieldTypeName];
-
+ 
         let name = fieldTypeName;
 
         if(data instanceof store){
             s = data;
         }else if(typeof data !== "undefined"){
-            s = this.dataH.createStore(name, data);
+            s = this.store.dataH.createStore(name, data);
         }else{
-            s = componentObject.data();
+            s = componentObject.data.call(this.store.dataH);
         }
          
        // const shadowRoot = $el.attachShadow({mode: 'open'});
  
-        let views = componentObject.views();
+        let views = {};
+        views[name] = componentObject.html.trim();
 
         if(typeof views?.[name] ==="function"){
             $el.innerHTML = views?.[name](data);
@@ -152,14 +153,14 @@ export class dom {
             $el.innerHTML = views?.[name];
         }
 
-        let ddom = new dom($el, componentObject.components, s);
+        let ddom = new dom($el, componentObject.components|| {}, s);
         ddom.name = name;
         $el.setAttribute("data-name", name);
-         
+ 
         let newcomponent = new component(ddom, s, componentObject.interactions());
 
         if(typeof views?.[name] !== "function"){ 
-            let stores = Object.keys(this.dataH?.store)?.join(',');
+            let stores = Object.keys(this.store.dataH?.store)?.join(',');
             newcomponent.dom.setTemplate(eval('(change,' + stores + ')=>`'+ newcomponent.dom._area.innerHTML +'`'));
         }else{
             newcomponent.dom.setTemplate(views?.[name]);
@@ -176,8 +177,8 @@ export class dom {
      */
     private createElement($el: Element, currentIndex: number): kelement {
         let fieldTypeName: string = this.mapField(<string>$el.tagName.toLowerCase(), $el);
-        
-        return this.elementTypes[fieldTypeName].prototype === component ?
+
+        return this.elementTypes[fieldTypeName].prototype === "component" ?
             this.createComponent($el, fieldTypeName) :
             new this.elementTypes[fieldTypeName]($el, this._area, currentIndex, this);
     }
@@ -226,16 +227,22 @@ export class dom {
      * @param t_el 
      */
     detectOrphanVariables(t_el: kelement){
+        if(!t_el.$el) return [];
+
         let tpNode = t_el.$el.cloneNode(true);
         
         Array.from(tpNode.childNodes).map(e => {if(e.hasAttribute && e.hasAttribute("data-name"))e.remove() });
 
-        let transForm = (m) => ("/" + m[1])
+        let transForm = (m) => ("/$" + m[1])
         .replace(/\.|\[|\]|\'|\"/g, '/')
         .replace(/\/\//g, "/")
         .replace(/\/$/, '');
 
-        return Array.from(tpNode.innerHTML.matchAll(/\${([\w\.\[\]]*)}/ig), transForm);
+        let names = Array.from(tpNode.innerHTML.matchAll(/\${([\w\.\[\]]*)}/ig), transForm);
+        
+      //  console.log(tpNode.outerHTML);
+
+        return names;
     }
 
 

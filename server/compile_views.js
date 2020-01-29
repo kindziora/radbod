@@ -1,19 +1,20 @@
-import { dom } from '../build/dom.js';
-import { dataHandler } from '../build/dataHandler.js';
-import { eventHandler } from '../build/eventHandler.js';
-import { store } from '../build/store.js';
-
+import { app } from '../build/app.js';
 import browserEnv from 'browser-env';
 browserEnv();
 
 export class compileViews {
 
-    constructor(component) {
-        this.dataH = new dataHandler(new eventHandler());
-        this.maindiv = document.createElement("div");
-        this.maindiv.innerHTML = component.html.trim();
-        this.domHandler = new dom(this.maindiv, component.components, component.data.call(this.dataH));
+    constructor(componentInfo) {
         
+        let name = Object.keys(componentInfo)[0];
+        let component = componentInfo[name];
+        let views = {};
+        views[name] = component.html.trim(); 
+ 
+        let buildApp = new app();
+        let compo = buildApp.createComponent(name, views, component.data.call(buildApp.dataH), component.interactions(), component.components);
+
+       // console.log(compo);
     }
 
     compile() {

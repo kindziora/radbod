@@ -8,8 +8,6 @@ export class app {
         this.components = {};
         this.dataH = new dataHandler(new eventHandler());
     }
-    createComponentSFC(singleFileComponent) {
-    }
     /**
         *
         * @param name
@@ -19,7 +17,7 @@ export class app {
         * @param injections
         */
     createComponent(name, views, data, actions, injections) {
-        var _a, _b, _c, _d, _e, _f, _g, _h;
+        var _a, _b, _c, _d, _e;
         let s;
         if (data instanceof store) {
             s = data;
@@ -28,22 +26,17 @@ export class app {
             s = this.dataH.createStore(name, data);
         }
         let el = document.createElement("component");
-        if (typeof ((_a = views) === null || _a === void 0 ? void 0 : _a[name]) === "function") {
-            el.innerHTML = (_b = views) === null || _b === void 0 ? void 0 : _b[name].apply(null, (_c = this.dataH) === null || _c === void 0 ? void 0 : _c.store);
-        }
-        else {
-            el.innerHTML = (_d = views) === null || _d === void 0 ? void 0 : _d[name];
-        }
+        el.innerHTML = (_a = views) === null || _a === void 0 ? void 0 : _a[name];
         let ddom = new dom(el, injections, s);
         ddom.name = name;
         el.setAttribute("data-name", name);
         this.components[name] = new component(ddom, s, actions);
-        if (typeof ((_e = views) === null || _e === void 0 ? void 0 : _e[name]) !== "function") {
-            let stores = (_g = Object.keys((_f = this.dataH) === null || _f === void 0 ? void 0 : _f.store)) === null || _g === void 0 ? void 0 : _g.join(',');
+        if (typeof ((_b = views) === null || _b === void 0 ? void 0 : _b[name]) !== "function") {
+            let stores = (_d = Object.keys((_c = this.dataH) === null || _c === void 0 ? void 0 : _c.store)) === null || _d === void 0 ? void 0 : _d.join(',');
             this.components[name].dom.setTemplate(eval('(change,' + stores + ')=>`' + this.components[name].dom._area.innerHTML + '`'));
         }
         else {
-            this.components[name].dom.setTemplate((_h = views) === null || _h === void 0 ? void 0 : _h[name]);
+            this.components[name].dom.setTemplate((_e = views) === null || _e === void 0 ? void 0 : _e[name]);
         }
         return this.components[name];
     }
