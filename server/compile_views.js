@@ -27,8 +27,8 @@ export class compileViews {
             let element = compo.dom.element[i];
             viewsFinal[element.id] = element.template ? element.template.toString() : null;
         }
-        viewsFinal[compo.dom.id] = compo.dom.template.toString();
-        
+        viewsFinal[name] = compo.dom.template.toString();
+
         console.log(viewsFinal);
 
     }
