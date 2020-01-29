@@ -5,12 +5,12 @@ browserEnv();
 export class compileViews {
 
     constructor(componentInfo) {
-        
+
         let name = Object.keys(componentInfo)[0];
         let component = componentInfo[name];
         let views = {};
-        views[name] = component.html.trim(); 
- 
+        views[name] = component.html.trim();
+
         let buildApp = new app();
 
         let compo = buildApp.createComponent(
@@ -20,9 +20,17 @@ export class compileViews {
             component.interactions(),
             component.components
         );
-
-        console.log(compo);
         
+        let viewsFinal = {};
+
+        for (let i in compo.dom.element) {
+            let element = compo.dom.element[i];
+            viewsFinal[element.id] = element.template ? element.template.toString() : null;
+        }
+        viewsFinal[compo.dom.id] = compo.dom.template.toString();
+        
+        console.log(viewsFinal);
+
     }
 
     compile() {
