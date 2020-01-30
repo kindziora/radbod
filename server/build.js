@@ -9,9 +9,10 @@ fbuilder.buildFile('/home/akindziora/projekte/kjs/test/todoMVC/src/component/tod
     
     component = cmper.compile(component);
     
-    let enhanced = JSON.stringify(component, (k,v) => typeof v === "function" ? "" + v : v);
+    let enhanced = JSON.stringify(component, (k,v) => typeof v === "function" ? ">>>>!" + v + "!<<<<" : v);
 
-   // await fs.writeFile(file, enhanced);
+ //regex inject views, remove plain html
+   // await fs.writeFile(file, enhanced.replace(/">>>>!|!<<<<"/g, ""));
 
    // JSON.parse(json, (k,v) => typeof v === "string"? (v.startsWith('function')? eval("("+v+")") : v): v);
 
