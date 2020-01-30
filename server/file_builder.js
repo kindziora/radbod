@@ -85,7 +85,7 @@ export async function buildFile(file, ready, opts) {
     let compoN;
     try {
         compoN = await import(fileBuilt);
-        await ready(compoN);
+        await ready(compoN, fileBuilt);
         return true;
     } catch (e) {
         if (e.code === "ERR_MODULE_NOT_FOUND") {
@@ -96,7 +96,7 @@ export async function buildFile(file, ready, opts) {
                 console.log("SUBLOADING WITHOUT CB");
             });
             compoN = await import(fileBuilt);
-            await ready(compoN);
+            await ready(compoN, fileBuilt);
         } else {
             console.log(e);
         }

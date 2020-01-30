@@ -29,11 +29,13 @@ export class compileViews {
 
         for (let i in compo.dom.element) {
             let element = compo.dom.element[i];
-            viewsFinal[element.id] = element.template ? element.template.toString() : null;
+            if(element.template)
+                viewsFinal[element.id] = element.template ? element.template.toString() : null;
         }
         viewsFinal[name] = compo.dom.template.toString();
-
-        return viewsFinal;
+        component['views'] = viewsFinal;
+        delete component.html;
+        return component;
 
     }
 

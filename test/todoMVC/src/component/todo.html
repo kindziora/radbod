@@ -11,7 +11,7 @@
         <ul class="todo-list" data-name="/$items">
             <li data-name="/$items/${change.index}">
                 <div class="view">
-                    <input class="toggle" ${ change.value.checked ? `checked` : `` } type="checkbox">
+                    <input class="toggle" ${change.value.checked?`checked`:``} type="checkbox">
                     <label data-name="/$items/${change.index}">${change.value.label}</label>
                     <button class="destroy" data-name="/$items/${change.index}" data-id="destroy"></button>
                 </div>

@@ -33,8 +33,8 @@ export class kelement {
             if(!template){ 
                 let stores = Object.keys(this.dom.store?.dataH?.store)?.join(',');
 
-                console.log('(change, ' + stores + ' ) => `'+ this.$el.innerHTML +'`');
-                this.setTemplate(eval('(change, ' + stores + ' ) => `'+ this.$el.innerHTML +'`')); 
+                if(this.$el.innerHTML.trim() !=="")
+                    this.setTemplate(eval('(change, ' + stores + ' ) => `'+ this.$el.innerHTML.trim() +'`')); 
             }
                 
         }

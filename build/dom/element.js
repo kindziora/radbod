@@ -18,8 +18,8 @@ export class kelement {
             this.$el.setAttribute("data-view", this.id);
             if (!template) {
                 let stores = (_c = Object.keys((_b = (_a = this.dom.store) === null || _a === void 0 ? void 0 : _a.dataH) === null || _b === void 0 ? void 0 : _b.store)) === null || _c === void 0 ? void 0 : _c.join(',');
-                console.log('(change, ' + stores + ' ) => `' + this.$el.innerHTML + '`');
-                this.setTemplate(eval('(change, ' + stores + ' ) => `' + this.$el.innerHTML + '`'));
+                if (this.$el.innerHTML.trim() !== "")
+                    this.setTemplate(eval('(change, ' + stores + ' ) => `' + this.$el.innerHTML.trim() + '`'));
             }
         }
     }

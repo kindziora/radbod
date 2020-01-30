@@ -1,12 +1,19 @@
 import * as fbuilder from './file_builder.js';
 import {compileViews} from './compile_views.js';
 
-fbuilder.buildFile('/home/akindziora/projekte/kjs/test/todoMVC/src/component/todo.html', async function(component) {
+import path from 'path';
+import { promises as fs } from 'fs';
+
+fbuilder.buildFile('/home/akindziora/projekte/kjs/test/todoMVC/src/component/todo.html', async function(component, file) {
     let cmper = new compileViews();
     
-    let views = cmper.compile(component);
+    component = cmper.compile(component);
+    
+    let enhanced = JSON.stringify(component, (k,v) => typeof v === "function" ? "" + v : v);
 
-    console.log(views);
+   // await fs.writeFile(file, enhanced);
+
+   // JSON.parse(json, (k,v) => typeof v === "string"? (v.startsWith('function')? eval("("+v+")") : v): v);
 
 }, {
     buildPath : "public/build/dev"
