@@ -8,6 +8,14 @@ export class app {
         this.components = {};
         this.dataH = new dataHandler(new eventHandler());
     }
+    /**
+        *
+        * @param name
+        * @param html
+        * @param data
+        * @param actions
+        * @param injections
+        */
     createComponent(name, views, data, actions, injections) {
         var _a, _b, _c, _d, _e, _f, _g;
         let s;
@@ -37,6 +45,10 @@ export class app {
         }
         return this.components[name];
     }
+    /**
+     *
+     * @param name
+     */
     removeComponent(name) {
         delete this.components[name];
     }

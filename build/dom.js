@@ -58,6 +58,7 @@ export class dom {
      */
     addTypes(types) {
         for (let i in types) {
+            types[i].prototype = "component";
             this.elementTypes[i] = types[i];
         }
     }
@@ -92,6 +93,12 @@ export class dom {
         }
         return name;
     }
+    /**
+     *
+     * @param el
+     * @param where
+     * @param html
+     */
     insertElementByElement(el, where = 'beforeend', html) {
         var _a;
         (_a = el.$el) === null || _a === void 0 ? void 0 : _a.insertAdjacentHTML(where, html);
@@ -99,8 +106,6 @@ export class dom {
     /**
      *
      * @param $el
-<<<<<<< HEAD
-=======
      * @param fieldTypeName
      * @param data
      */
@@ -131,7 +136,6 @@ export class dom {
         ddom.name = name;
         $el.setAttribute("data-name", name);
         let newcomponent = new component(ddom, s, componentObject.interactions());
-        newcomponent.setId(newcomponent.$el.getAttribute('data-id') || null, ++this.counter);
         if (typeof ((_d = views) === null || _d === void 0 ? void 0 : _d[name]) !== "function") {
             let stores = (_f = Object.keys((_e = this.store.dataH) === null || _e === void 0 ? void 0 : _e.store)) === null || _f === void 0 ? void 0 : _f.join(',');
             newcomponent.dom.setTemplate(eval('(change,' + stores + ')=>`' + newcomponent.dom._area.innerHTML + '`'));
@@ -144,13 +148,12 @@ export class dom {
     /**
      *
      * @param $el
->>>>>>> fa689233721103392755eef07c92e9dfd3cda9cc
      * @param currentIndex
      */
     createElement($el, currentIndex) {
         let fieldTypeName = this.mapField($el.tagName.toLowerCase(), $el);
-        return this.elementTypes[fieldTypeName].prototype instanceof component ?
-            this.elementTypes[fieldTypeName] :
+        return this.elementTypes[fieldTypeName].prototype === "component" ?
+            this.createComponent($el, fieldTypeName) :
             new this.elementTypes[fieldTypeName]($el, this._area, currentIndex, this);
     }
     /**
@@ -190,14 +193,18 @@ export class dom {
      * @param t_el
      */
     detectOrphanVariables(t_el) {
+        if (!t_el.$el)
+            return [];
         let tpNode = t_el.$el.cloneNode(true);
-        Array.from(tpNode.childNodes).map(e => { if (e.hasAttribute("data-name"))
+        Array.from(tpNode.childNodes).map(e => { if (e.hasAttribute && e.hasAttribute("data-name"))
             e.remove(); });
-        let transForm = (m) => ("/" + m[1])
+        let transForm = (m) => ("/$" + m[1])
             .replace(/\.|\[|\]|\'|\"/g, '/')
             .replace(/\/\//g, "/")
             .replace(/\/$/, '');
-        return Array.from(tpNode.innerHTML.matchAll(/\${([\w\.\[\]]*)}/ig), transForm);
+        let names = Array.from(tpNode.innerHTML.matchAll(/\${([\w\.\[\]]*)}/ig), transForm);
+        //  console.log(tpNode.outerHTML);
+        return names;
     }
     loadElements() {
         let element = this._area.querySelectorAll(this._identifier);

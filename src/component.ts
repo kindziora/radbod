@@ -7,12 +7,10 @@ export class component {
     public store: store;
     public name: string = "";
     private interactions: actions = {};
-<<<<<<< HEAD
-=======
+
     public id: String;
     public $el: HTMLElement;
 
->>>>>>> fa689233721103392755eef07c92e9dfd3cda9cc
     /**
      * 
      * @param dom 
@@ -23,27 +21,23 @@ export class component {
         this.store = store;
         this.interactions = acts;
         this.name = this.dom.name;
-<<<<<<< HEAD
-=======
+
         this.$el = dom._area;
->>>>>>> fa689233721103392755eef07c92e9dfd3cda9cc
 
         this.bindEvents();
     }
 
-    getName(){
+    getName() {
         return this.name;
     }
 
-<<<<<<< HEAD
-=======
+
     setId(namesp: string | null, counter: number) {
         let id: string = namesp || "element" + "-" + counter;
         this.$el.setAttribute("data-id", id);
         this.id = id;
     }
 
->>>>>>> fa689233721103392755eef07c92e9dfd3cda9cc
     bindEvents() {
         //this.update.bind(this);
 
@@ -63,11 +57,11 @@ export class component {
                     let mapEvent = event.split('#');
 
                     if (mapEvent.length > 1) {
-                         if (fieldID === mapEvent[1]) {
+                        if (fieldID === mapEvent[1]) {
                             this.store.events?.addEvent(this.name, path, event, this.interactions?.[path]?.[event]);
-                           
+
                             $el.addEventListener(mapEvent[0], (ev) => {
-                                 this.store.events?.dispatchEvent(this.name, path, event, { "field": this.dom.elementByName[path][field], ev }, this.store.data);
+                                this.store.events?.dispatchEvent(this.name, path, event, { "field": this.dom.elementByName[path][field], ev }, this.store.data);
                             });
                         }
                     } else {
@@ -91,17 +85,17 @@ export class component {
             let chs = this.dom.getBestMatchingElements(change.path);
             chs.forEach((el) => el.update([change]));
 
-            if(chs.length === 0){
+            if (chs.length === 0) {
                 this.render(change);
             }
         }
 
     }
 
-    render(changes: Array<op>){
+    render(changes: Array<op>) {
         console.log("COMPONENT UPDATE BECAUSE NO FIELD TO MATCH");
-         this.dom.render(changes);
-         this.bindEvents();
+        this.dom.render(changes);
+        this.bindEvents();
     }
 
 }

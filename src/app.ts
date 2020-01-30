@@ -12,45 +12,30 @@ export class app {
         this.dataH = new dataHandler(new eventHandler());
 
     }
-<<<<<<< HEAD
-    /**
-=======
-    
- /**
->>>>>>> fa689233721103392755eef07c92e9dfd3cda9cc
-     * 
-     * @param name 
-     * @param html 
-     * @param data 
-     * @param actions 
-     * @param injections 
-     */
-<<<<<<< HEAD
-    createComponent(name: string, views: { [index: string]: Function }, data: Object | store, actions: object, injections: object) {
-=======
+    /** 
+        * 
+        * @param name 
+        * @param html 
+        * @param data 
+        * @param actions 
+        * @param injections 
+        */
     createComponent(name: string, views: { [index: string]: string }, data: Object | store, actions: object, injections: object) {
->>>>>>> fa689233721103392755eef07c92e9dfd3cda9cc
         let s;
-     
-        if(data instanceof store){
-            s = data;
-        }else{
-            s = this.dataH.createStore(name, data);
-        } 
-        
-        let el = document.createElement("component");
-<<<<<<< HEAD
 
-        if(typeof views?.[name] ==="function"){
+        if (data instanceof store) {
+            s = data;
+        } else {
+            s = this.dataH.createStore(name, data);
+        }
+
+        let el = document.createElement("component");
+
+        if (typeof views?.[name] === "function") {
             el.innerHTML = views?.[name](data);
-        } else{
+        } else {
             el.innerHTML = views?.[name];
         }
-=======
-        
-        el.innerHTML = views?.[name];
-        
->>>>>>> fa689233721103392755eef07c92e9dfd3cda9cc
 
         let ddom = new dom(el, injections, s);
         ddom.name = name;
@@ -58,20 +43,16 @@ export class app {
 
         this.components[name] = new component(ddom, s, actions);
 
-        if(typeof views?.[name] !== "function"){ 
+        if (typeof views?.[name] !== "function") {
             let stores = Object.keys(this.dataH?.store)?.join(',');
-     
-            this.components[name].dom.setTemplate(eval('(change,' + stores + ')=>`'+ this.components[name].dom._area.innerHTML +'`'));
-        }else{
+
+            this.components[name].dom.setTemplate(eval('(change,' + stores + ')=>`' + this.components[name].dom._area.innerHTML + '`'));
+        } else {
             this.components[name].dom.setTemplate(views?.[name]);
-        } 
+        }
 
         return this.components[name];
     }
-<<<<<<< HEAD
- 
-=======
->>>>>>> fa689233721103392755eef07c92e9dfd3cda9cc
 
     /**
      * 
@@ -85,8 +66,8 @@ export class app {
      * 
      * @param url 
      */
-    render(url:string){
-        
+    render(url: string) {
+
     }
 
 }

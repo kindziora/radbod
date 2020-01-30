@@ -1,7 +1,7 @@
 
 import path from 'path';
 import { promises as fs } from 'fs';
-
+ 
 const __dirname = path.resolve();
 const template = /<template.*>([^]+)<\/template>/igm;
 const script = /<script.*>([^]+)<\/script>/igm;
@@ -9,6 +9,8 @@ const scriptLang = /<script.*language\=\"([A-Za-z0-9 _]*)\"/igm;
 const openeningBracketObject = /export.*?\s({)/gim;
 const importStatement = /import(.*?)from\s+"(.*?)";/ig;
 const style = /<style.*>([^]+)<\/style>/igm;
+
+let options = { buildPath: "public/build/dev" };
 
 export async function extract(content) {
     return { html: Array.from(content.matchAll(template))[0][1], js: Array.from(content.matchAll(script))[0][1], css: Array.from(content.matchAll(style))[0][1] };
@@ -46,12 +48,13 @@ async function getName(filepath) {
 }
 
 async function getBuildLocation(filepath) {
-    return filepath.replace("src", "public/build/dev");
+    return filepath.replace("src", options.buildPath);
 }
 async function getSrcLocation(filepath) {
-    return filepath.replace("public/build/dev", "src");
+    return filepath.replace(options.buildPath, "src");
 }
-export async function buildFile(file, ready) {
+export async function buildFile(file, ready, opts) {
+    options = opts ? opts : options;
 
     console.log("BUILD: try to build " + file);
 
@@ -59,22 +62,25 @@ export async function buildFile(file, ready) {
 
     let { html, js, css } = await extract(content);
     let slang = Array.from(content.matchAll(scriptLang))[0][1];
-    
+
     let inject = `
          html : '${html.replace(/\s/ig, " ").replace(/  +/ig, " ")}',
          style : '${css.replace(/\s/ig, " ").replace(/  +/ig, " ")}}',
          `;
 
 
-    let replacedImports =  await replaceImports(js, slang);
+    let replacedImports = await replaceImports(js, slang);
     let newFile = await injectCode(replacedImports, inject);
 
     let fileBuilt = await getBuildLocation(file);
     fileBuilt = fileBuilt.replace("html", slang);
 
-    let error = await fs.writeFile(fileBuilt, newFile);
+    let bpath = fileBuilt.split("/");
+    bpath.pop();
 
-    if (error) console.log(error);
+    await fs.mkdir(bpath.join("/"), { recursive: true });
+
+    await fs.writeFile(fileBuilt, newFile);
 
     let compoN;
     try {
@@ -86,7 +92,7 @@ export async function buildFile(file, ready) {
             let nf = await getSrcLocation(e.stack.match(/Cannot find module (.*) imported/i)[1].replace('.js', '.html'));
             console.log("BUILD: found import try to build " + nf);
 
-            let subFile = await buildFile(nf, function(sub){
+            let subFile = await buildFile(nf, function (sub) {
                 console.log("SUBLOADING WITHOUT CB");
             });
             compoN = await import(fileBuilt);

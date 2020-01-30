@@ -1,4 +1,9 @@
 export class component {
+    /**
+     *
+     * @param dom
+     * @param store
+     */
     constructor(dom, store, acts) {
         this.name = "";
         this.interactions = {};
@@ -6,10 +11,16 @@ export class component {
         this.store = store;
         this.interactions = acts;
         this.name = this.dom.name;
+        this.$el = dom._area;
         this.bindEvents();
     }
     getName() {
         return this.name;
+    }
+    setId(namesp, counter) {
+        let id = namesp || "element" + "-" + counter;
+        this.$el.setAttribute("data-id", id);
+        this.id = id;
     }
     bindEvents() {
         //this.update.bind(this);
