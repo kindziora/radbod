@@ -10,10 +10,7 @@ import { elist } from './dom/list.js';
 import { select } from './dom/list/select.js';
 import { textarea } from './dom/element/textarea.js';
 import { component } from "./component.js";
-<<<<<<< HEAD
-=======
 import { store } from './store.js';
->>>>>>> fa689233721103392755eef07c92e9dfd3cda9cc
 export class dom {
     constructor(area, types, s) {
         var _a;
@@ -61,10 +58,6 @@ export class dom {
      */
     addTypes(types) {
         for (let i in types) {
-<<<<<<< HEAD
-=======
-            types[i].prototype = "component";
->>>>>>> fa689233721103392755eef07c92e9dfd3cda9cc
             this.elementTypes[i] = types[i];
         }
     }
@@ -99,15 +92,6 @@ export class dom {
         }
         return name;
     }
-<<<<<<< HEAD
-=======
-    /**
-     *
-     * @param el
-     * @param where
-     * @param html
-     */
->>>>>>> fa689233721103392755eef07c92e9dfd3cda9cc
     insertElementByElement(el, where = 'beforeend', html) {
         var _a;
         (_a = el.$el) === null || _a === void 0 ? void 0 : _a.insertAdjacentHTML(where, html);
@@ -165,13 +149,8 @@ export class dom {
      */
     createElement($el, currentIndex) {
         let fieldTypeName = this.mapField($el.tagName.toLowerCase(), $el);
-<<<<<<< HEAD
         return this.elementTypes[fieldTypeName].prototype instanceof component ?
             this.elementTypes[fieldTypeName] :
-=======
-        return this.elementTypes[fieldTypeName].prototype === "component" ?
-            this.createComponent($el, fieldTypeName) :
->>>>>>> fa689233721103392755eef07c92e9dfd3cda9cc
             new this.elementTypes[fieldTypeName]($el, this._area, currentIndex, this);
     }
     /**
@@ -191,24 +170,16 @@ export class dom {
             }
         }
     }
-<<<<<<< HEAD
-=======
     /**
      *
      * @param $el
      * @param currentIndex
      */
->>>>>>> fa689233721103392755eef07c92e9dfd3cda9cc
     loadElement($el, currentIndex) {
         this.counter++;
         let t_el = this.createElement($el, this.counter); //decorate and extend dom element
         this.detectType(t_el);
         this.addElement(t_el);
-<<<<<<< HEAD
-        this.addElementByName(t_el);
-        return t_el;
-    }
-=======
         this.addElementByName(t_el, t_el.getName());
         this.detectOrphanVariables(t_el)
             .forEach(name => this.addElementByName(t_el, name));
@@ -219,19 +190,15 @@ export class dom {
      * @param t_el
      */
     detectOrphanVariables(t_el) {
-        if (!t_el.$el)
-            return [];
         let tpNode = t_el.$el.cloneNode(true);
-        Array.from(tpNode.childNodes).map(e => { if (e.hasAttribute && e.hasAttribute("data-name"))
+        Array.from(tpNode.childNodes).map(e => { if (e.hasAttribute("data-name"))
             e.remove(); });
-        let transForm = (m) => ("/$" + m[1])
+        let transForm = (m) => ("/" + m[1])
             .replace(/\.|\[|\]|\'|\"/g, '/')
             .replace(/\/\//g, "/")
             .replace(/\/$/, '');
-        let names = Array.from(tpNode.innerHTML.matchAll(/\${([\w\.\[\]]*)}/ig), transForm);
-        return names;
+        return Array.from(tpNode.innerHTML.matchAll(/\${([\w\.\[\]]*)}/ig), transForm);
     }
->>>>>>> fa689233721103392755eef07c92e9dfd3cda9cc
     loadElements() {
         let element = this._area.querySelectorAll(this._identifier);
         try {
@@ -248,19 +215,11 @@ export class dom {
     addElement(el) {
         this.element[el.id] = el;
     }
-<<<<<<< HEAD
-    addElementByName(el) {
-        if (typeof this.elementByName[el.getName()] === "undefined") {
-            this.elementByName[el.getName()] = [];
-        }
-        this.elementByName[el.getName()].push(el);
-=======
     addElementByName(el, name) {
         if (typeof this.elementByName[name] === "undefined") {
             this.elementByName[name] = [];
         }
         this.elementByName[name].push(el);
->>>>>>> fa689233721103392755eef07c92e9dfd3cda9cc
     }
     // patch  == [
     //   { op: "replace", path: "/firstName", value: "Albert"},

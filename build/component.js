@@ -1,9 +1,4 @@
 export class component {
-    /**
-     *
-     * @param dom
-     * @param store
-     */
     constructor(dom, store, acts) {
         this.name = "";
         this.interactions = {};
@@ -11,23 +6,11 @@ export class component {
         this.store = store;
         this.interactions = acts;
         this.name = this.dom.name;
-<<<<<<< HEAD
-=======
-        this.$el = dom._area;
->>>>>>> fa689233721103392755eef07c92e9dfd3cda9cc
         this.bindEvents();
     }
     getName() {
         return this.name;
     }
-<<<<<<< HEAD
-=======
-    setId(namesp, counter) {
-        let id = namesp || "element" + "-" + counter;
-        this.$el.setAttribute("data-id", id);
-        this.id = id;
-    }
->>>>>>> fa689233721103392755eef07c92e9dfd3cda9cc
     bindEvents() {
         //this.update.bind(this);
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;

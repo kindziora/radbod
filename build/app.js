@@ -8,28 +8,8 @@ export class app {
         this.components = {};
         this.dataH = new dataHandler(new eventHandler());
     }
-    /**
-<<<<<<< HEAD
-     *
-     * @param name
-     * @param html
-     * @param data
-     * @param actions
-     * @param injections
-     */
     createComponent(name, views, data, actions, injections) {
         var _a, _b, _c, _d, _e, _f, _g;
-=======
-        *
-        * @param name
-        * @param html
-        * @param data
-        * @param actions
-        * @param injections
-        */
-    createComponent(name, views, data, actions, injections) {
-        var _a, _b, _c, _d, _e;
->>>>>>> fa689233721103392755eef07c92e9dfd3cda9cc
         let s;
         if (data instanceof store) {
             s = data;
@@ -38,42 +18,25 @@ export class app {
             s = this.dataH.createStore(name, data);
         }
         let el = document.createElement("component");
-<<<<<<< HEAD
         if (typeof ((_a = views) === null || _a === void 0 ? void 0 : _a[name]) === "function") {
             el.innerHTML = (_b = views) === null || _b === void 0 ? void 0 : _b[name](data);
         }
         else {
             el.innerHTML = (_c = views) === null || _c === void 0 ? void 0 : _c[name];
         }
-=======
-        el.innerHTML = (_a = views) === null || _a === void 0 ? void 0 : _a[name];
->>>>>>> fa689233721103392755eef07c92e9dfd3cda9cc
         let ddom = new dom(el, injections, s);
         ddom.name = name;
         el.setAttribute("data-name", name);
         this.components[name] = new component(ddom, s, actions);
-<<<<<<< HEAD
         if (typeof ((_d = views) === null || _d === void 0 ? void 0 : _d[name]) !== "function") {
             let stores = (_f = Object.keys((_e = this.dataH) === null || _e === void 0 ? void 0 : _e.store)) === null || _f === void 0 ? void 0 : _f.join(',');
             this.components[name].dom.setTemplate(eval('(change,' + stores + ')=>`' + this.components[name].dom._area.innerHTML + '`'));
         }
         else {
             this.components[name].dom.setTemplate((_g = views) === null || _g === void 0 ? void 0 : _g[name]);
-=======
-        if (typeof ((_b = views) === null || _b === void 0 ? void 0 : _b[name]) !== "function") {
-            let stores = (_d = Object.keys((_c = this.dataH) === null || _c === void 0 ? void 0 : _c.store)) === null || _d === void 0 ? void 0 : _d.join(',');
-            this.components[name].dom.setTemplate(eval('(change,' + stores + ')=>`' + this.components[name].dom._area.innerHTML + '`'));
-        }
-        else {
-            this.components[name].dom.setTemplate((_e = views) === null || _e === void 0 ? void 0 : _e[name]);
->>>>>>> fa689233721103392755eef07c92e9dfd3cda9cc
         }
         return this.components[name];
     }
-    /**
-     *
-     * @param name
-     */
     removeComponent(name) {
         delete this.components[name];
     }
