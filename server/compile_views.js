@@ -4,7 +4,11 @@ browserEnv();
 
 export class compileViews {
 
-    constructor(componentInfo) {
+    constructor() {
+
+    }
+
+    compile(componentInfo) {
 
         let name = Object.keys(componentInfo)[0];
         let component = componentInfo[name];
@@ -29,11 +33,7 @@ export class compileViews {
         }
         viewsFinal[name] = compo.dom.template.toString();
 
-        console.log(viewsFinal);
-
-    }
-
-    compile() {
+        return viewsFinal;
 
     }
 

@@ -1,1 +1,0 @@
-/home/akindziora/projekte/kjs/dist/kjs.js
