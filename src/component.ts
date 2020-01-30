@@ -7,6 +7,12 @@ export class component {
     public store: store;
     public name: string = "";
     private interactions: actions = {};
+<<<<<<< HEAD
+=======
+    public id: String;
+    public $el: HTMLElement;
+
+>>>>>>> fa689233721103392755eef07c92e9dfd3cda9cc
     /**
      * 
      * @param dom 
@@ -17,6 +23,10 @@ export class component {
         this.store = store;
         this.interactions = acts;
         this.name = this.dom.name;
+<<<<<<< HEAD
+=======
+        this.$el = dom._area;
+>>>>>>> fa689233721103392755eef07c92e9dfd3cda9cc
 
         this.bindEvents();
     }
@@ -25,6 +35,15 @@ export class component {
         return this.name;
     }
 
+<<<<<<< HEAD
+=======
+    setId(namesp: string | null, counter: number) {
+        let id: string = namesp || "element" + "-" + counter;
+        this.$el.setAttribute("data-id", id);
+        this.id = id;
+    }
+
+>>>>>>> fa689233721103392755eef07c92e9dfd3cda9cc
     bindEvents() {
         //this.update.bind(this);
 

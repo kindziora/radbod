@@ -10,6 +10,10 @@ import { elist } from './dom/list.js';
 import { select } from './dom/list/select.js';
 import { textarea } from './dom/element/textarea.js';
 import { component } from "./component.js";
+<<<<<<< HEAD
+=======
+import { store } from './store.js';
+>>>>>>> fa689233721103392755eef07c92e9dfd3cda9cc
 export class dom {
     constructor(area, types, s) {
         var _a;
@@ -57,6 +61,10 @@ export class dom {
      */
     addTypes(types) {
         for (let i in types) {
+<<<<<<< HEAD
+=======
+            types[i].prototype = "component";
+>>>>>>> fa689233721103392755eef07c92e9dfd3cda9cc
             this.elementTypes[i] = types[i];
         }
     }
@@ -91,6 +99,15 @@ export class dom {
         }
         return name;
     }
+<<<<<<< HEAD
+=======
+    /**
+     *
+     * @param el
+     * @param where
+     * @param html
+     */
+>>>>>>> fa689233721103392755eef07c92e9dfd3cda9cc
     insertElementByElement(el, where = 'beforeend', html) {
         var _a;
         (_a = el.$el) === null || _a === void 0 ? void 0 : _a.insertAdjacentHTML(where, html);
@@ -98,12 +115,63 @@ export class dom {
     /**
      *
      * @param $el
+<<<<<<< HEAD
+=======
+     * @param fieldTypeName
+     * @param data
+     */
+    createComponent($el, fieldTypeName, data) {
+        var _a, _b, _c, _d, _e, _f, _g;
+        let s;
+        let componentObject = this.elementTypes[fieldTypeName];
+        let name = fieldTypeName;
+        if (data instanceof store) {
+            s = data;
+        }
+        else if (typeof data !== "undefined") {
+            s = this.store.dataH.createStore(name, data);
+        }
+        else {
+            s = componentObject.data.call(this.store.dataH);
+        }
+        // const shadowRoot = $el.attachShadow({mode: 'open'});
+        let views = {};
+        views[name] = componentObject.html.trim();
+        if (typeof ((_a = views) === null || _a === void 0 ? void 0 : _a[name]) === "function") {
+            $el.innerHTML = (_b = views) === null || _b === void 0 ? void 0 : _b[name](data);
+        }
+        else {
+            $el.innerHTML = (_c = views) === null || _c === void 0 ? void 0 : _c[name];
+        }
+        let ddom = new dom($el, componentObject.components || {}, s);
+        ddom.name = name;
+        $el.setAttribute("data-name", name);
+        let newcomponent = new component(ddom, s, componentObject.interactions());
+        newcomponent.setId(newcomponent.$el.getAttribute('data-id') || null, ++this.counter);
+        if (typeof ((_d = views) === null || _d === void 0 ? void 0 : _d[name]) !== "function") {
+            let stores = (_f = Object.keys((_e = this.store.dataH) === null || _e === void 0 ? void 0 : _e.store)) === null || _f === void 0 ? void 0 : _f.join(',');
+            newcomponent.dom.setTemplate(eval('(change,' + stores + ')=>`' + newcomponent.dom._area.innerHTML + '`'));
+        }
+        else {
+            newcomponent.dom.setTemplate((_g = views) === null || _g === void 0 ? void 0 : _g[name]);
+        }
+        return newcomponent;
+    }
+    /**
+     *
+     * @param $el
+>>>>>>> fa689233721103392755eef07c92e9dfd3cda9cc
      * @param currentIndex
      */
     createElement($el, currentIndex) {
         let fieldTypeName = this.mapField($el.tagName.toLowerCase(), $el);
+<<<<<<< HEAD
         return this.elementTypes[fieldTypeName].prototype instanceof component ?
             this.elementTypes[fieldTypeName] :
+=======
+        return this.elementTypes[fieldTypeName].prototype === "component" ?
+            this.createComponent($el, fieldTypeName) :
+>>>>>>> fa689233721103392755eef07c92e9dfd3cda9cc
             new this.elementTypes[fieldTypeName]($el, this._area, currentIndex, this);
     }
     /**
@@ -123,14 +191,47 @@ export class dom {
             }
         }
     }
+<<<<<<< HEAD
+=======
+    /**
+     *
+     * @param $el
+     * @param currentIndex
+     */
+>>>>>>> fa689233721103392755eef07c92e9dfd3cda9cc
     loadElement($el, currentIndex) {
         this.counter++;
         let t_el = this.createElement($el, this.counter); //decorate and extend dom element
         this.detectType(t_el);
         this.addElement(t_el);
+<<<<<<< HEAD
         this.addElementByName(t_el);
         return t_el;
     }
+=======
+        this.addElementByName(t_el, t_el.getName());
+        this.detectOrphanVariables(t_el)
+            .forEach(name => this.addElementByName(t_el, name));
+        return t_el;
+    }
+    /**
+     * detect orphan variable usages
+     * @param t_el
+     */
+    detectOrphanVariables(t_el) {
+        if (!t_el.$el)
+            return [];
+        let tpNode = t_el.$el.cloneNode(true);
+        Array.from(tpNode.childNodes).map(e => { if (e.hasAttribute && e.hasAttribute("data-name"))
+            e.remove(); });
+        let transForm = (m) => ("/$" + m[1])
+            .replace(/\.|\[|\]|\'|\"/g, '/')
+            .replace(/\/\//g, "/")
+            .replace(/\/$/, '');
+        let names = Array.from(tpNode.innerHTML.matchAll(/\${([\w\.\[\]]*)}/ig), transForm);
+        return names;
+    }
+>>>>>>> fa689233721103392755eef07c92e9dfd3cda9cc
     loadElements() {
         let element = this._area.querySelectorAll(this._identifier);
         try {
@@ -147,11 +248,19 @@ export class dom {
     addElement(el) {
         this.element[el.id] = el;
     }
+<<<<<<< HEAD
     addElementByName(el) {
         if (typeof this.elementByName[el.getName()] === "undefined") {
             this.elementByName[el.getName()] = [];
         }
         this.elementByName[el.getName()].push(el);
+=======
+    addElementByName(el, name) {
+        if (typeof this.elementByName[name] === "undefined") {
+            this.elementByName[name] = [];
+        }
+        this.elementByName[name].push(el);
+>>>>>>> fa689233721103392755eef07c92e9dfd3cda9cc
     }
     // patch  == [
     //   { op: "replace", path: "/firstName", value: "Albert"},

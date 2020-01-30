@@ -1,2 +1,6 @@
 .nyc_output
 coverage
+<<<<<<< HEAD
+=======
+node_modules
+>>>>>>> fa689233721103392755eef07c92e9dfd3cda9cc

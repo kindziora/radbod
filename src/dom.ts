@@ -74,6 +74,10 @@ export class dom {
      */
     public addTypes(types: { [index: string]: any }) {
         for (let i in types) {
+<<<<<<< HEAD
+=======
+            types[i].prototype = "component";
+>>>>>>> fa689233721103392755eef07c92e9dfd3cda9cc
             this.elementTypes[i] = types[i];
         }
     }
@@ -110,7 +114,17 @@ export class dom {
 
         return name;
     }
+<<<<<<< HEAD
 
+=======
+    
+    /**
+     * 
+     * @param el 
+     * @param where 
+     * @param html 
+     */
+>>>>>>> fa689233721103392755eef07c92e9dfd3cda9cc
     public insertElementByElement(el: kelement, where: InsertPosition = 'beforeend', html: string) {
         el.$el?.insertAdjacentHTML(where, html);
     }
@@ -118,13 +132,72 @@ export class dom {
     /**
      * 
      * @param $el 
+<<<<<<< HEAD
+=======
+     * @param fieldTypeName 
+     * @param data 
+     */
+    createComponent($el : Element, fieldTypeName : string, data?: Object | store) {
+        let s;
+        let componentObject: Object = this.elementTypes[fieldTypeName];
+ 
+        let name = fieldTypeName;
+
+        if(data instanceof store){
+            s = data;
+        }else if(typeof data !== "undefined"){
+            s = this.store.dataH.createStore(name, data);
+        }else{
+            s = componentObject.data.call(this.store.dataH);
+        }
+         
+       // const shadowRoot = $el.attachShadow({mode: 'open'});
+ 
+        let views = {};
+        views[name] = componentObject.html.trim();
+
+        if(typeof views?.[name] ==="function"){
+            $el.innerHTML = views?.[name](data);
+        } else{
+            $el.innerHTML = views?.[name];
+        }
+
+        let ddom = new dom($el, componentObject.components|| {}, s);
+        ddom.name = name;
+        $el.setAttribute("data-name", name);
+ 
+        let newcomponent = new component(ddom, s, componentObject.interactions());
+
+        newcomponent.setId(newcomponent.$el.getAttribute('data-id') || null, ++this.counter);
+
+        if(typeof views?.[name] !== "function"){
+            let stores = Object.keys(this.store.dataH?.store)?.join(',');
+            newcomponent.dom.setTemplate(eval('(change,' + stores + ')=>`'+ newcomponent.dom._area.innerHTML +'`'));
+        }else{
+            newcomponent.dom.setTemplate(views?.[name]);
+        }
+
+        return newcomponent;
+    }
+ 
+ 
+    /**
+     * 
+     * @param $el 
+>>>>>>> fa689233721103392755eef07c92e9dfd3cda9cc
      * @param currentIndex 
      */
     private createElement($el: Element, currentIndex: number): kelement {
         let fieldTypeName: string = this.mapField(<string>$el.tagName.toLowerCase(), $el);
+<<<<<<< HEAD
         
         return this.elementTypes[fieldTypeName].prototype instanceof component ?
             this.elementTypes[fieldTypeName] :
+=======
+
+        return this.elementTypes[fieldTypeName].prototype === "component" ?
+            this.createComponent($el, fieldTypeName) :
+>>>>>>> fa689233721103392755eef07c92e9dfd3cda9cc
             new this.elementTypes[fieldTypeName]($el, this._area, currentIndex, this);
     }
     /**
@@ -154,7 +227,11 @@ export class dom {
      */
     loadElement($el: Element, currentIndex?: number): kelement {
         this.counter++;
+<<<<<<< HEAD
        
+=======
+
+>>>>>>> fa689233721103392755eef07c92e9dfd3cda9cc
         let t_el: kelement = this.createElement($el, this.counter); //decorate and extend dom element
 
         this.detectType(t_el);
@@ -172,25 +249,46 @@ export class dom {
      * @param t_el 
      */
     detectOrphanVariables(t_el: kelement){
+<<<<<<< HEAD
         let tpNode = t_el.$el.cloneNode(true);
 
         Array.from(tpNode.childNodes).map(e => {if(e.hasAttribute("data-name"))e.remove() });
 
         let transForm = (m) => ("/" + m[1])
+=======
+        if(!t_el.$el) return [];
+
+        let tpNode = t_el.$el.cloneNode(true);
+       
+        Array.from(tpNode.childNodes).map(e => {if(e.hasAttribute && e.hasAttribute("data-name"))e.remove() });
+
+        let transForm = (m) => ("/$" + m[1])
+>>>>>>> fa689233721103392755eef07c92e9dfd3cda9cc
         .replace(/\.|\[|\]|\'|\"/g, '/')
         .replace(/\/\//g, "/")
         .replace(/\/$/, '');
 
+<<<<<<< HEAD
         return Array.from(tpNode.innerHTML.matchAll(/\${([\w\.\[\]]*)}/ig), transForm);
     }
 
 
 
+=======
+        let names = Array.from(tpNode.innerHTML.matchAll(/\${([\w\.\[\]]*)}/ig), transForm);
+        
+        return names;
+    }
+
+>>>>>>> fa689233721103392755eef07c92e9dfd3cda9cc
     loadElements() {
         let element: NodeListOf<Element> = this._area.querySelectorAll(this._identifier) as NodeListOf<Element>;
        
         try {
+<<<<<<< HEAD
            
+=======
+>>>>>>> fa689233721103392755eef07c92e9dfd3cda9cc
             element.forEach(($el: Element, currentIndex: number) => this.loadElement($el, currentIndex));
         } catch (e) {
             console.log(e);

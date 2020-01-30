@@ -12,7 +12,12 @@ export class app {
         this.dataH = new dataHandler(new eventHandler());
 
     }
+<<<<<<< HEAD
     /**
+=======
+    
+ /**
+>>>>>>> fa689233721103392755eef07c92e9dfd3cda9cc
      * 
      * @param name 
      * @param html 
@@ -20,7 +25,11 @@ export class app {
      * @param actions 
      * @param injections 
      */
+<<<<<<< HEAD
     createComponent(name: string, views: { [index: string]: Function }, data: Object | store, actions: object, injections: object) {
+=======
+    createComponent(name: string, views: { [index: string]: string }, data: Object | store, actions: object, injections: object) {
+>>>>>>> fa689233721103392755eef07c92e9dfd3cda9cc
         let s;
      
         if(data instanceof store){
@@ -30,12 +39,18 @@ export class app {
         } 
         
         let el = document.createElement("component");
+<<<<<<< HEAD
 
         if(typeof views?.[name] ==="function"){
             el.innerHTML = views?.[name](data);
         } else{
             el.innerHTML = views?.[name];
         }
+=======
+        
+        el.innerHTML = views?.[name];
+        
+>>>>>>> fa689233721103392755eef07c92e9dfd3cda9cc
 
         let ddom = new dom(el, injections, s);
         ddom.name = name;
@@ -53,7 +68,10 @@ export class app {
 
         return this.components[name];
     }
+<<<<<<< HEAD
  
+=======
+>>>>>>> fa689233721103392755eef07c92e9dfd3cda9cc
 
     /**
      * 

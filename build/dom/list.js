@@ -5,6 +5,12 @@ export class elist extends kelement {
         this._listItems = {};
         this._listItemsByName = {};
     }
+<<<<<<< HEAD
+=======
+    isListItem() {
+        return true;
+    }
+>>>>>>> fa689233721103392755eef07c92e9dfd3cda9cc
     getNativeListItems() {
         var _a;
         return (_a = this.$el) === null || _a === void 0 ? void 0 : _a.children;
