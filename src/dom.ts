@@ -29,13 +29,15 @@ export class dom {
 
     public name: string = "component-x";
     public template: Function;
+    
+    public views?: { [index: string]: Function };
 
     public store : store;
 
-    constructor(area: HTMLElement, types: { [index: string]: any }, s: store) {
+    constructor(area: HTMLElement, types: { [index: string]: any }, s: store, views?: { [index: string]: Function }) {
 
         this._area = area as HTMLElement;
-       
+        this.views = views;
         this.setId();
         if (area.hasAttribute('data-name')) {
             this.name = area.getAttribute('data-name');
@@ -141,29 +143,25 @@ export class dom {
         }else{
             s = componentObject.data.call(this.store.dataH);
         }
-         
+        let stores = Object.keys(this.store.dataH?.store);
        // const shadowRoot = $el.attachShadow({mode: 'open'});
- 
-        let views = {};
-        views[name] = componentObject.html.trim();
-
-        if(typeof views?.[name] ==="function"){
-            $el.innerHTML = views?.[name](data);
-        } else{
-            $el.innerHTML = views?.[name];
+        
+        if(componentObject?.views[name]) {
+            $el.innerHTML = componentObject.views[name].apply(s, [{}, ...stores]);
+        }else{
+            $el.innerHTML = componentObject.html.trim();
         }
-
-        let ddom = new dom($el, componentObject.components|| {}, s);
+       
+        let ddom = new dom($el, componentObject.components || {}, s, componentObject.views);
         ddom.name = name;
         $el.setAttribute("data-name", name);
  
         let newcomponent = new component(ddom, s, componentObject.interactions());
 
-        if(typeof views?.[name] !== "function"){ 
-            let stores = Object.keys(this.store.dataH?.store)?.join(',');
-            newcomponent.dom.setTemplate(eval('(change,' + stores + ')=>`'+ newcomponent.dom._area.innerHTML +'`'));
+        if(typeof componentObject?.views[name] !== "function"){ 
+            newcomponent.dom.setTemplate(eval('(change,' + stores?.join(',') + ')=>`'+ newcomponent.dom._area.innerHTML +'`'));
         }else{
-            newcomponent.dom.setTemplate(views?.[name]);
+            newcomponent.dom.setTemplate(componentObject?.views[name]);
         } 
 
         return newcomponent;
@@ -180,7 +178,7 @@ export class dom {
 
         return this.elementTypes[fieldTypeName].prototype === "component" ?
             this.createComponent($el, fieldTypeName) :
-            new this.elementTypes[fieldTypeName]($el, this._area, currentIndex, this);
+            new this.elementTypes[fieldTypeName]($el, this._area, currentIndex, this, this.views);
     }
     /**
      * 

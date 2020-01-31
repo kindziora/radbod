@@ -19,18 +19,18 @@ export class kelement {
      * @param counter 
      * @param dom 
      */
-    constructor(el: HTMLElement, $scope: HTMLElement, counter: number, dom:dom, template:Function) {
+    constructor(el: HTMLElement, $scope: HTMLElement, counter: number, dom:dom, views?: { [index: string]: Function }) {
         this.$el = el;
         this.$scope = $scope;
         this.dom = dom;
         this.setId(this.$el.getAttribute('data-id') || null, counter);
 
-        this.setTemplate(template);
+        this.setTemplate(views[this.id]);
 
         if(!this.$el.hasAttribute("data-view")){
             this.$el.setAttribute("data-view", this.id);
 
-            if(!template){ 
+            if(!views[this.id]){ 
                 let stores = Object.keys(this.dom.store?.dataH?.store)?.join(',');
 
                 if(this.$el.innerHTML.trim() !=="")

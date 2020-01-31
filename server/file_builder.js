@@ -60,14 +60,17 @@ export async function buildFile(file, ready, opts) {
 
     let content = await fs.readFile(file, 'utf8');
 
+    if(!Array.from(content.matchAll(template))[0]){
+        console.log("no template tag in single file component: ", file)
+        return;
+    };
+
     let { html, js, css } = await extract(content);
     let slang = Array.from(content.matchAll(scriptLang))[0][1];
 
     let inject = `
-         html : '${html.replace(/\s/ig, " ").replace(/  +/ig, " ")}',
-         style : '${css.replace(/\s/ig, " ").replace(/  +/ig, " ")}}',
-         `;
-
+         html : '${html.replace(/\s/ig, " ").replace(/  +/ig, " ").trim()}',
+         style : '${css.replace(/\s/ig, " ").replace(/  +/ig, " ").trim()}',`;
 
     let replacedImports = await replaceImports(js, slang);
     let newFile = await injectCode(replacedImports, inject);
@@ -85,7 +88,7 @@ export async function buildFile(file, ready, opts) {
     let compoN;
     try {
         compoN = await import(fileBuilt);
-        await ready(compoN, fileBuilt);
+        await ready(compoN, fileBuilt, newFile);
         return true;
     } catch (e) {
         if (e.code === "ERR_MODULE_NOT_FOUND") {
@@ -96,18 +99,11 @@ export async function buildFile(file, ready, opts) {
                 console.log("SUBLOADING WITHOUT CB");
             });
             compoN = await import(fileBuilt);
-            await ready(compoN, fileBuilt);
+            await ready(compoN, fileBuilt, newFile);
         } else {
             console.log(e);
         }
     }
-
-
-
-
-
-
-
 
 }
 
