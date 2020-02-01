@@ -80,8 +80,12 @@ export async function buildFile(file, ready, opts) {
 
     let bpath = fileBuilt.split("/");
     bpath.pop();
-
+try{
     await fs.mkdir(bpath.join("/"), { recursive: true });
+
+} catch (e) {
+    console.log(e);
+}
 
     await fs.writeFile(fileBuilt, newFile);
 
