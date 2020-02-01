@@ -56,6 +56,10 @@ async function getSrcLocation(filepath) {
 export async function buildFile(file, ready, opts) {
     options = opts ? opts : options;
 
+    if(file.indexOf(".") ==-1){
+        file = file+ ".html";
+    }
+
     console.log("BUILD: try to build " + file);
 
     let content = await fs.readFile(file, 'utf8');
@@ -80,12 +84,8 @@ export async function buildFile(file, ready, opts) {
 
     let bpath = fileBuilt.split("/");
     bpath.pop();
-try{
-    await fs.mkdir(bpath.join("/"), { recursive: true });
 
-} catch (e) {
-    console.log(e);
-}
+    await fs.mkdir(bpath.join("/"), { recursive: true });
 
     await fs.writeFile(fileBuilt, newFile);
 
@@ -99,9 +99,7 @@ try{
             let nf = await getSrcLocation(e.stack.match(/Cannot find module (.*) imported/i)[1].replace('.js', '.html'));
             console.log("BUILD: found import try to build " + nf);
 
-            let subFile = await buildFile(nf, function (sub) {
-                console.log("SUBLOADING WITHOUT CB");
-            });
+            let subFile = await buildFile(nf, ready);
             compoN = await import(fileBuilt);
             await ready(compoN, fileBuilt, newFile);
         } else {
