@@ -5,7 +5,7 @@ import {getFiles} from './files.js';
 import { promises as fs } from 'fs';
 
 (async () => {
-    for await (const file of getFiles('/home/akindziora/Downloads/projekte/kjs/test/todoMVC/src/page')) {
+    for await (const file of getFiles('/home/akindziora/projekte/kjs/test/todoMVC/src/page/')) {
         
         fbuilder.buildFile(file, async function(component, file, content) {
             let cmper = new compileViews();

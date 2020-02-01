@@ -12,7 +12,7 @@ import { textarea } from './dom/element/textarea.js';
 import { component } from "./component.js";
 import { store } from './store.js';
 export class dom {
-    constructor(area, types, s) {
+    constructor(area, types, s, views) {
         var _a;
         this._area = {};
         this._identifier = '[data-name]';
@@ -23,6 +23,7 @@ export class dom {
         this.id = "component-0";
         this.name = "component-x";
         this._area = area;
+        this.views = views;
         this.setId();
         if (area.hasAttribute('data-name')) {
             this.name = area.getAttribute('data-name');
@@ -110,7 +111,7 @@ export class dom {
      * @param data
      */
     createComponent($el, fieldTypeName, data) {
-        var _a, _b, _c, _d, _e, _f, _g;
+        var _a, _b, _c, _d, _e;
         let s;
         let componentObject = this.elementTypes[fieldTypeName];
         let name = fieldTypeName;
@@ -123,25 +124,23 @@ export class dom {
         else {
             s = componentObject.data.call(this.store.dataH);
         }
+        let stores = Object.keys((_a = this.store.dataH) === null || _a === void 0 ? void 0 : _a.store);
         // const shadowRoot = $el.attachShadow({mode: 'open'});
-        let views = {};
-        views[name] = componentObject.html.trim();
-        if (typeof ((_a = views) === null || _a === void 0 ? void 0 : _a[name]) === "function") {
-            $el.innerHTML = (_b = views) === null || _b === void 0 ? void 0 : _b[name](data);
+        if ((_b = componentObject) === null || _b === void 0 ? void 0 : _b.views[name]) {
+            $el.innerHTML = componentObject.views[name].apply(s, [{}, ...stores]);
         }
         else {
-            $el.innerHTML = (_c = views) === null || _c === void 0 ? void 0 : _c[name];
+            $el.innerHTML = componentObject.html.trim();
         }
-        let ddom = new dom($el, componentObject.components || {}, s);
+        let ddom = new dom($el, componentObject.components || {}, s, componentObject.views);
         ddom.name = name;
         $el.setAttribute("data-name", name);
         let newcomponent = new component(ddom, s, componentObject.interactions());
-        if (typeof ((_d = views) === null || _d === void 0 ? void 0 : _d[name]) !== "function") {
-            let stores = (_f = Object.keys((_e = this.store.dataH) === null || _e === void 0 ? void 0 : _e.store)) === null || _f === void 0 ? void 0 : _f.join(',');
-            newcomponent.dom.setTemplate(eval('(change,' + stores + ')=>`' + newcomponent.dom._area.innerHTML + '`'));
+        if (typeof ((_c = componentObject) === null || _c === void 0 ? void 0 : _c.views[name]) !== "function") {
+            newcomponent.dom.setTemplate(eval('(change,' + ((_d = stores) === null || _d === void 0 ? void 0 : _d.join(',')) + ')=>`' + newcomponent.dom._area.innerHTML + '`'));
         }
         else {
-            newcomponent.dom.setTemplate((_g = views) === null || _g === void 0 ? void 0 : _g[name]);
+            newcomponent.dom.setTemplate((_e = componentObject) === null || _e === void 0 ? void 0 : _e.views[name]);
         }
         return newcomponent;
     }
@@ -154,7 +153,7 @@ export class dom {
         let fieldTypeName = this.mapField($el.tagName.toLowerCase(), $el);
         return this.elementTypes[fieldTypeName].prototype === "component" ?
             this.createComponent($el, fieldTypeName) :
-            new this.elementTypes[fieldTypeName]($el, this._area, currentIndex, this);
+            new this.elementTypes[fieldTypeName]($el, this._area, currentIndex, this, this.views);
     }
     /**
      *

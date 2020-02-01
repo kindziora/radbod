@@ -6,17 +6,17 @@ export class kelement {
      * @param counter
      * @param dom
      */
-    constructor(el, $scope, counter, dom, template) {
+    constructor(el, $scope, counter, dom, views) {
         var _a, _b, _c;
         this._isListItem = false;
         this.$el = el;
         this.$scope = $scope;
         this.dom = dom;
         this.setId(this.$el.getAttribute('data-id') || null, counter);
-        this.setTemplate(template);
+        this.setTemplate(views[this.id]);
         if (!this.$el.hasAttribute("data-view")) {
             this.$el.setAttribute("data-view", this.id);
-            if (!template) {
+            if (!views[this.id]) {
                 let stores = (_c = Object.keys((_b = (_a = this.dom.store) === null || _a === void 0 ? void 0 : _a.dataH) === null || _b === void 0 ? void 0 : _b.store)) === null || _c === void 0 ? void 0 : _c.join(',');
                 if (this.$el.innerHTML.trim() !== "")
                     this.setTemplate(eval('(change, ' + stores + ' ) => `' + this.$el.innerHTML.trim() + '`'));
