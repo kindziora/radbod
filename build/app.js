@@ -17,7 +17,7 @@ export class app {
         * @param injections
         */
     createComponent(name, views, data, actions, injections) {
-        var _a, _b, _c, _d, _e, _f, _g;
+        var _a, _b, _c, _d, _e, _f, _g, _h;
         let s;
         if (data instanceof store) {
             s = data;
@@ -32,16 +32,17 @@ export class app {
         else {
             el.innerHTML = (_c = views) === null || _c === void 0 ? void 0 : _c[name];
         }
-        let ddom = new dom(el, injections, s);
+        let ddom = new dom(el, injections, s, views);
         ddom.name = name;
         el.setAttribute("data-name", name);
         this.components[name] = new component(ddom, s, actions);
-        if (typeof ((_d = views) === null || _d === void 0 ? void 0 : _d[name]) !== "function") {
-            let stores = (_f = Object.keys((_e = this.dataH) === null || _e === void 0 ? void 0 : _e.store)) === null || _f === void 0 ? void 0 : _f.join(',');
+        let storeArray = (_d = this.dataH) === null || _d === void 0 ? void 0 : _d.store.toArray();
+        if (typeof ((_e = views) === null || _e === void 0 ? void 0 : _e[name]) !== "function") {
+            let stores = (_g = (_f = this.dataH) === null || _f === void 0 ? void 0 : _f.store.keys()) === null || _g === void 0 ? void 0 : _g.join(',');
             this.components[name].dom.setTemplate(eval('(change,' + stores + ')=>`' + this.components[name].dom._area.innerHTML + '`'));
         }
         else {
-            this.components[name].dom.setTemplate((_g = views) === null || _g === void 0 ? void 0 : _g[name]);
+            this.components[name].dom.setTemplate((_h = views) === null || _h === void 0 ? void 0 : _h[name]);
         }
         return this.components[name];
     }

@@ -1,8 +1,10 @@
 
-    import {todo} from '../component/todo';
+    import  {todo}  from "../component/todo.js";
 
     export let home = {
-         html : '<section class="todoapp"> <todo data-name="/$items"></todo> </section> <footer class="info"> <p>Double-click to edit a todo</p> <p>Written by <a href="http://twitter.com/lukeed05">Luke Edwards</a></p> <p>Refactored by <a href="https://github.com/xorgy">Aaron Muir Hamilton</a></p> <p>Part of <a href="http://todomvc.com">TodoMVC</a></p> </footer>',
+         views : {
+             'home' : (change,home,todos)=>`<section class="todoapp"> <todo data-name="todo" data-id="component-1"><header class="header"> <h1>todos</h1> <input class="new-todo" data-name="/$todo" placeholder="What needs to be done?" autofocus data-id="element-2" data-view="element-2"> </header> <section style="display:none" class="main"> <input id="toggle-all" data-id="toggle-all" class="toggle-all" type="checkbox" data-name="/$items" data-view="toggle-all"> <label for="toggle-all">Mark all as complete</label> <ul class="todo-list" data-name="/$items" data-type="list" data-id="element-4" data-view="element-4"> <li data-name="/$items/undefined" data-id="element-5" data-view="element-5"> <div class="view"> <input class="toggle"  type="checkbox"> <label data-name="/$items/undefined" data-id="element-6" data-view="element-6">undefined</label> <button class="destroy" data-name="/$items/undefined" data-id="destroy" data-view="destroy"></button> </div> </li> </ul> <footer class="footer"> <span class="todo-count"></span> <ul class="filters"> <li> <a href="#/" class="selected">All</a> </li> <li> <a href="#/active">Active</a> </li> <li> <a href="#/completed">Completed</a> </li> </ul> <button class="clear-completed">Clear completed</button> </footer> </section></todo> </section> <footer class="info"> <p>Double-click to edit a todo</p> <p>Written by <a href="http://twitter.com/lukeed05">Luke Edwards</a></p> <p>Refactored by <a href="https://github.com/xorgy">Aaron Muir Hamilton</a></p> <p>Part of <a href="http://todomvc.com">TodoMVC</a></p> </footer>` },
+        
          style : '',
         components: {todo},
         data(){

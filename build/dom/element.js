@@ -7,7 +7,7 @@ export class kelement {
      * @param dom
      */
     constructor(el, $scope, counter, dom, views) {
-        var _a, _b, _c;
+        var _a, _b, _c, _d;
         this._isListItem = false;
         this.$el = el;
         this.$scope = $scope;
@@ -17,9 +17,9 @@ export class kelement {
         if (!this.$el.hasAttribute("data-view")) {
             this.$el.setAttribute("data-view", this.id);
             if (!views[this.id]) {
-                let stores = (_c = Object.keys((_b = (_a = this.dom.store) === null || _a === void 0 ? void 0 : _a.dataH) === null || _b === void 0 ? void 0 : _b.store)) === null || _c === void 0 ? void 0 : _c.join(',');
+                let stores = (_c = (_b = (_a = this.dom.store) === null || _a === void 0 ? void 0 : _a.dataH) === null || _b === void 0 ? void 0 : _b.store.keys()) === null || _c === void 0 ? void 0 : _c.join(',');
                 if (this.$el.innerHTML.trim() !== "")
-                    this.setTemplate(eval('(change, ' + stores + ' ) => `' + this.$el.innerHTML.trim() + '`'));
+                    this.setTemplate(eval('(change, ' + stores + ' ) => `' + ((_d = this.$el.innerHTML) === null || _d === void 0 ? void 0 : _d.trim()) + '`'));
             }
         }
     }
@@ -51,13 +51,9 @@ export class kelement {
      * @param data
      */
     render(change) {
-        var _a, _b, _c, _d;
+        var _a, _b;
         if (this.template) {
-            let params = [change];
-            for (let e in (_b = (_a = this.dom.store) === null || _a === void 0 ? void 0 : _a.dataH) === null || _b === void 0 ? void 0 : _b.store) {
-                params.push((_d = (_c = this.dom.store) === null || _c === void 0 ? void 0 : _c.dataH) === null || _d === void 0 ? void 0 : _d.store[e].data);
-            }
-            this.$el.innerHTML = this.template.apply(this, params);
+            this.$el.innerHTML = this.template.apply(this, [change, ...(_b = (_a = this.dom.store) === null || _a === void 0 ? void 0 : _a.dataH) === null || _b === void 0 ? void 0 : _b.store.toArray()]);
         }
         else {
             this.$el.innerHTML = change.value;

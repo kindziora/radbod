@@ -28,7 +28,7 @@ export class app {
         } else {
             s = this.dataH.createStore(name, data);
         }
-
+       
         let el = document.createElement("component");
 
         if (typeof views?.[name] === "function") {
@@ -37,14 +37,16 @@ export class app {
             el.innerHTML = views?.[name];
         }
 
-        let ddom = new dom(el, injections, s);
+        let ddom = new dom(el, injections, s, views);
         ddom.name = name;
         el.setAttribute("data-name", name);
 
         this.components[name] = new component(ddom, s, actions);
 
-        if (typeof views?.[name] !== "function") {
-            let stores = Object.keys(this.dataH?.store)?.join(',');
+        let storeArray = this.dataH?.store.toArray();
+
+        if (typeof views?.[name] !== "function") { 
+            let stores = this.dataH?.store.keys()?.join(',');
 
             this.components[name].dom.setTemplate(eval('(change,' + stores + ')=>`' + this.components[name].dom._area.innerHTML + '`'));
         } else {

@@ -11,6 +11,22 @@ export class dataHandler {
 
     constructor(eventH: eventHandler) {
         this.events = eventH;
+        this.store.toArray = () => {
+            let arr = [];
+            for(let i in this.store){
+                if(typeof this.store[i] === "object")
+                    arr.push(this.store[i]);
+            }
+            return arr;
+        };
+        this.store.keys = () => {
+            let arr = [];
+            for(let i in this.store){
+                if(typeof this.store[i] === "object")
+                    arr.push(i);
+            }
+            return arr;
+        };
     }
 
     /**

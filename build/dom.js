@@ -111,7 +111,7 @@ export class dom {
      * @param data
      */
     createComponent($el, fieldTypeName, data) {
-        var _a, _b, _c, _d, _e;
+        var _a, _b, _c, _d, _e, _f, _g, _h;
         let s;
         let componentObject = this.elementTypes[fieldTypeName];
         let name = fieldTypeName;
@@ -124,10 +124,11 @@ export class dom {
         else {
             s = componentObject.data.call(this.store.dataH);
         }
-        let stores = Object.keys((_a = this.store.dataH) === null || _a === void 0 ? void 0 : _a.store);
+        let storeArray = (_a = this.store.dataH) === null || _a === void 0 ? void 0 : _a.store.toArray();
+        let stores = (_b = this.store.dataH) === null || _b === void 0 ? void 0 : _b.store.keys();
         // const shadowRoot = $el.attachShadow({mode: 'open'});
-        if ((_b = componentObject) === null || _b === void 0 ? void 0 : _b.views[name]) {
-            $el.innerHTML = componentObject.views[name].apply(s, [{}, ...stores]);
+        if ((_d = (_c = componentObject) === null || _c === void 0 ? void 0 : _c.views) === null || _d === void 0 ? void 0 : _d[name]) {
+            $el.innerHTML = componentObject.views[name].apply(s, [{ value: "" }, ...storeArray]);
         }
         else {
             $el.innerHTML = componentObject.html.trim();
@@ -136,11 +137,11 @@ export class dom {
         ddom.name = name;
         $el.setAttribute("data-name", name);
         let newcomponent = new component(ddom, s, componentObject.interactions());
-        if (typeof ((_c = componentObject) === null || _c === void 0 ? void 0 : _c.views[name]) !== "function") {
-            newcomponent.dom.setTemplate(eval('(change,' + ((_d = stores) === null || _d === void 0 ? void 0 : _d.join(',')) + ')=>`' + newcomponent.dom._area.innerHTML + '`'));
+        if (typeof ((_f = (_e = componentObject) === null || _e === void 0 ? void 0 : _e.views) === null || _f === void 0 ? void 0 : _f[name]) !== "function") {
+            newcomponent.dom.setTemplate(eval('(change,' + ((_g = stores) === null || _g === void 0 ? void 0 : _g.join(',')) + ')=>`' + newcomponent.dom._area.innerHTML + '`'));
         }
         else {
-            newcomponent.dom.setTemplate((_e = componentObject) === null || _e === void 0 ? void 0 : _e.views[name]);
+            newcomponent.dom.setTemplate((_h = componentObject) === null || _h === void 0 ? void 0 : _h.views[name]);
         }
         return newcomponent;
     }

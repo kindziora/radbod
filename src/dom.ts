@@ -133,7 +133,6 @@ export class dom {
     createComponent($el : Element, fieldTypeName : string, data?: Object | store) {
         let s;
         let componentObject: Object = this.elementTypes[fieldTypeName];
- 
         let name = fieldTypeName;
 
         if(data instanceof store){
@@ -143,22 +142,23 @@ export class dom {
         }else{
             s = componentObject.data.call(this.store.dataH);
         }
-        let stores = Object.keys(this.store.dataH?.store);
-       // const shadowRoot = $el.attachShadow({mode: 'open'});
-        
-        if(componentObject?.views[name]) {
-            $el.innerHTML = componentObject.views[name].apply(s, [{}, ...stores]);
+        let storeArray = this.store.dataH?.store.toArray();
+
+        let stores = this.store.dataH?.store.keys();
+         // const shadowRoot = $el.attachShadow({mode: 'open'});
+         if(componentObject?.views?.[name]) {
+            $el.innerHTML = componentObject.views[name].apply(s, [{value:""}, ...storeArray]);
         }else{
             $el.innerHTML = componentObject.html.trim();
         }
-       
+
         let ddom = new dom($el, componentObject.components || {}, s, componentObject.views);
         ddom.name = name;
         $el.setAttribute("data-name", name);
- 
+
         let newcomponent = new component(ddom, s, componentObject.interactions());
 
-        if(typeof componentObject?.views[name] !== "function"){ 
+        if(typeof componentObject?.views?.[name] !== "function"){ 
             newcomponent.dom.setTemplate(eval('(change,' + stores?.join(',') + ')=>`'+ newcomponent.dom._area.innerHTML +'`'));
         }else{
             newcomponent.dom.setTemplate(componentObject?.views[name]);

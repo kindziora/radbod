@@ -19,7 +19,7 @@ export class kelement {
      * @param counter 
      * @param dom 
      */
-    constructor(el: HTMLElement, $scope: HTMLElement, counter: number, dom:dom, views?: { [index: string]: Function }) {
+     constructor(el: HTMLElement, $scope: HTMLElement, counter: number, dom:dom, views?: { [index: string]: Function }) {
         this.$el = el;
         this.$scope = $scope;
         this.dom = dom;
@@ -31,10 +31,10 @@ export class kelement {
             this.$el.setAttribute("data-view", this.id);
 
             if(!views[this.id]){ 
-                let stores = Object.keys(this.dom.store?.dataH?.store)?.join(',');
+                let stores = this.dom.store?.dataH?.store.keys()?.join(',');
 
                 if(this.$el.innerHTML.trim() !=="")
-                    this.setTemplate(eval('(change, ' + stores + ' ) => `'+ this.$el.innerHTML.trim() +'`')); 
+                    this.setTemplate(eval('(change, ' + stores + ' ) => `'+ this.$el.innerHTML?.trim() +'`')); 
             }
                 
         }
@@ -77,12 +77,8 @@ export class kelement {
      */
     render(change: op){
         if(this.template){ 
-            let params = [change];
-            for(let e in this.dom.store?.dataH?.store){
-                params.push(this.dom.store?.dataH?.store[e].data);
-            }
            
-            this.$el.innerHTML = this.template.apply(this, params);
+            this.$el.innerHTML = this.template.apply(this, [change, ...this.dom.store?.dataH?.store.toArray()]);
         }else{
             this.$el.innerHTML = change.value; 
         }
