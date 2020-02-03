@@ -123,11 +123,11 @@ export class compileViews {
                 });
 
                 // Get the "viewport" of the page, as reported by the page.
-                const cmp = await page.evaluate((n) => {
+                const cmp = await page.evaluate(async (n) => {
 
-                    return test.toString();
+                    let e = await window[n].toString();
 
-
+return e;
                 }, n
                 );
 
