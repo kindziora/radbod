@@ -1,4 +1,3 @@
-
 import { getFiles } from './files.js';
 import puppeteer from "puppeteer";
 import { promises as fs } from 'fs';
@@ -68,16 +67,20 @@ export class compileViews {
      */
     async compileMultiple(folder) {
 
+        let rbd = await fs.readFile("./dist/radbod.js", 'utf8');
 
-
-        let radbod = await fs.readFile("/home/akindziora/Downloads/projekte/kjs/dist/lofo.js", 'utf8');
-
-        const browser = await puppeteer.launch();
+        const browser = await puppeteer.launch({
+            
+            args: ["--disable-web-security", `--user-data-dir=data`],
+           
+        });
         const page = await browser.newPage();
 
-        await page.addScriptTag({ content: radbod });
+        await page.setBypassCSP(true);
 
-        for await (const file of getFiles(folder || '/home/akindziora/projekte/kjs/test/todoMVC/public/build/dev/')) {
+        await page.addScriptTag({ content: rbd });
+
+        for await (const file of getFiles(folder || './test/todoMVC/public/build/dev/')) {
 
             console.log("BUILD VIEW: " + file);
 
@@ -86,16 +89,24 @@ export class compileViews {
 
                 let content = await fs.readFile(file, 'utf8');
                 let n = Object.keys(component)[0];
+                component = component[n];
 
-                await page.exposeFunction(n, name => {
+                // Get the "viewport" of the page, as reported by the page.
+                const cmp = await page.evaluate((n, componentSerialized) => {
+
+                    function ev() {
+                        return {}
+                    }
+
+                    let component = JSON.parse(componentSerialized, (k, v) => typeof v === "string" ? (/^(.*)\(\)/.exec(v) !== null ? ev : v) : v);
+
+                    let buildApp = new window.radbod.app();
 
                     let views = {};
-                    views[name] = component.html.trim();
-
-                    let buildApp = new lofo.app();
+                    views[n] = component.html.trim();
 
                     let compo = buildApp.createComponent(
-                        name,
+                        n,
                         views,
                         component.data.call(buildApp.dataH),
                         component.interactions(),
@@ -111,39 +122,28 @@ export class compileViews {
                             strVws.push(`'${element.id}' : ${element.template.toString()}`);
                         }
                     }
-                    viewsFinal[name] = compo.dom.template;
-                    strVws.push(`'${name}' : ${compo.dom.template.toString()}`);
+                    viewsFinal[n] = compo.dom.template;
+                    strVws.push(`'${n}' : ${compo.dom.template.toString()}`);
                     component['views'] = viewsFinal;
                     component['viewsTemplate'] = `{
                 ${strVws.join(`,
             `).replace(/=""/g, '')} }`;
-                    component.plain = compo.$el.shadowRoot.innerHTML;
+
+                    component.plain = compo.$el.shadowRoot ? compo.$el.shadowRoot.innerHTML: '';
 
                     return component;
-                });
 
-                // Get the "viewport" of the page, as reported by the page.
-                const cmp = await page.evaluate(async (n) => {
+                }, n, JSON.stringify(component, (k, v) => typeof v === "function" ? v.toString() : v));
 
-                    let e = await window[n].toString();
-
-return e;
-                }, n
-                );
-
-                console.log(cmp);
-
-                //  await this.writeToJSFile(file, content, cmp);
+                await this.writeToJSFile(file, content, cmp);
 
             } catch (e) {
                 console.log(e);
             }
 
-
-
         }
 
-        await browser.close();
+         await browser.close();
 
     }
 

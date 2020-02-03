@@ -127,7 +127,7 @@ export class dom {
         }
         let storeArray = (_a = this.store.dataH) === null || _a === void 0 ? void 0 : _a.store.toArray();
         let stores = (_b = this.store.dataH) === null || _b === void 0 ? void 0 : _b.store.keys();
-        window.customElements.define(name, class extends HTMLElement {
+        window.customElements.define(name + '-component', class extends HTMLDivElement {
         });
         console.log($el.outerHTML);
         const shadowRoot = $el.shadowRoot || $el.attachShadow({ mode: 'open' });

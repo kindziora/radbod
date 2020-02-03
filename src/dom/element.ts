@@ -25,12 +25,12 @@ export class kelement {
         this.dom = dom;
         this.setId(this.$el.getAttribute('data-id') || null, counter);
 
-        this.setTemplate(views[this.id]);
+        this.setTemplate(views?.[this.id]);
 
         if(!this.$el.hasAttribute("data-view")){
             this.$el.setAttribute("data-view", this.id);
 
-            if(!views[this.id]){ 
+            if(!views?.[this.id]){ 
                 let stores = this.dom.store?.dataH?.store.keys()?.join(',');
 
                 if(this.$el.innerHTML.trim() !=="")

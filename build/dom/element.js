@@ -7,19 +7,19 @@ export class kelement {
      * @param dom
      */
     constructor(el, $scope, counter, dom, views) {
-        var _a, _b, _c, _d;
+        var _a, _b, _c, _d, _e, _f;
         this._isListItem = false;
         this.$el = el;
         this.$scope = $scope;
         this.dom = dom;
         this.setId(this.$el.getAttribute('data-id') || null, counter);
-        this.setTemplate(views[this.id]);
+        this.setTemplate((_a = views) === null || _a === void 0 ? void 0 : _a[this.id]);
         if (!this.$el.hasAttribute("data-view")) {
             this.$el.setAttribute("data-view", this.id);
-            if (!views[this.id]) {
-                let stores = (_c = (_b = (_a = this.dom.store) === null || _a === void 0 ? void 0 : _a.dataH) === null || _b === void 0 ? void 0 : _b.store.keys()) === null || _c === void 0 ? void 0 : _c.join(',');
+            if (!((_b = views) === null || _b === void 0 ? void 0 : _b[this.id])) {
+                let stores = (_e = (_d = (_c = this.dom.store) === null || _c === void 0 ? void 0 : _c.dataH) === null || _d === void 0 ? void 0 : _d.store.keys()) === null || _e === void 0 ? void 0 : _e.join(',');
                 if (this.$el.innerHTML.trim() !== "")
-                    this.setTemplate(eval('(change, ' + stores + ' ) => `' + ((_d = this.$el.innerHTML) === null || _d === void 0 ? void 0 : _d.trim()) + '`'));
+                    this.setTemplate(eval('(change, ' + stores + ' ) => `' + ((_f = this.$el.innerHTML) === null || _f === void 0 ? void 0 : _f.trim()) + '`'));
             }
         }
     }

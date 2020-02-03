@@ -2,7 +2,7 @@
 <template language="js-template">
     <h1>Hallo ${home.name}</h1>
     <section class="todoapp">
-        <todo data-name="/$items"></todo>
+        <todo-component data-name="/$items"></todo-component>
     </section>
 
     <footer class="info">
@@ -22,7 +22,7 @@
     import {todo} from '../component/todo';
 
     export let home = {
-        components: {todo},
+        components: {"todo-component" : todo},
         data(){
             return {name : "AK"}
         },

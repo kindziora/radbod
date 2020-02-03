@@ -148,7 +148,7 @@ export class dom {
 
         let stores = this.store.dataH?.store.keys();
         
-        window.customElements.define(name, class extends HTMLElement {});
+        window.customElements.define(name + '-component', class extends HTMLDivElement {});
 
         console.log($el.outerHTML);
 

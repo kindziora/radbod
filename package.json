@@ -1,5 +1,5 @@
 {
-  "name": "lofo",
+  "name": "radbod",
   "version": "1.0.0",
   "description": "framework for next gen ui ",
   "module": "./build/app.js",
@@ -10,8 +10,8 @@
     "test": "test"
   },
   "scripts": {
-    "dev": "npx webpack --entry ./build/app.js --output-filename lofo.js --mode development --output-library lofo",
-    "prod": "npx webpack --entry ./build/app.js --output-filename lofo.js --output-library lofo"
+    "dev": "npx webpack --entry ./build/app.js --output-filename radbod.js --mode development --output-library radbod",
+    "prod": "npx webpack --entry ./build/app.js --output-filename radbod.js --output-library radbod"
   },
   "repository": {
     "type": "git",
