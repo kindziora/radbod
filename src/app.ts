@@ -42,12 +42,9 @@ export class app {
         el.setAttribute("data-name", name);
 
         this.components[name] = new component(ddom, s, actions);
-
-        let storeArray = this.dataH?.store.toArray();
-
+        
         if (typeof views?.[name] !== "function") { 
             let stores = this.dataH?.store.keys()?.join(',');
-
             this.components[name].dom.setTemplate(eval('(change,' + stores + ')=>`' + this.components[name].dom._area.innerHTML + '`'));
         } else {
             this.components[name].dom.setTemplate(views?.[name]);

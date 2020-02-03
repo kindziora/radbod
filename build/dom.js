@@ -23,6 +23,7 @@ export class dom {
         this.id = "component-0";
         this.name = "component-x";
         this._area = area;
+        this.$el = this._area;
         this.views = views;
         this.setId();
         if (area.hasAttribute('data-name')) {
@@ -126,12 +127,16 @@ export class dom {
         }
         let storeArray = (_a = this.store.dataH) === null || _a === void 0 ? void 0 : _a.store.toArray();
         let stores = (_b = this.store.dataH) === null || _b === void 0 ? void 0 : _b.store.keys();
-        // const shadowRoot = $el.attachShadow({mode: 'open'});
+        window.customElements.define(name, class extends HTMLElement {
+        });
+        console.log($el.outerHTML);
+        const shadowRoot = $el.shadowRoot || $el.attachShadow({ mode: 'open' });
         if ((_d = (_c = componentObject) === null || _c === void 0 ? void 0 : _c.views) === null || _d === void 0 ? void 0 : _d[name]) {
             $el.innerHTML = componentObject.views[name].apply(s, [{ value: "" }, ...storeArray]);
         }
         else {
             $el.innerHTML = componentObject.html.trim();
+            shadowRoot.innerHTML = componentObject.html.trim();
         }
         let ddom = new dom($el, componentObject.components || {}, s, componentObject.views);
         ddom.name = name;

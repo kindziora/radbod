@@ -10,7 +10,7 @@ export class component {
 
     public id: String;
     public $el: HTMLElement;
-
+ 
     /**
      * 
      * @param dom 
@@ -25,7 +25,7 @@ export class component {
         this.$el = dom._area;
 
         this.bindEvents();
-    }
+    } 
 
     getName() {
         return this.name;

@@ -1,6 +1,6 @@
 
 <template language="js-template">
-    
+    <h1>Hallo ${home.name}</h1>
     <section class="todoapp">
         <todo data-name="/$items"></todo>
     </section>
@@ -24,7 +24,7 @@
     export let home = {
         components: {todo},
         data(){
-            return {}
+            return {name : "AK"}
         },
         interactions(){
             return { }

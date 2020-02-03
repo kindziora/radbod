@@ -29,24 +29,26 @@ export class dom {
 
     public name: string = "component-x";
     public template: Function;
-    
+
     public views?: { [index: string]: Function };
 
-    public store : store;
+    public store: store;
+    public $el: HTMLElement;
 
     constructor(area: HTMLElement, types: { [index: string]: any }, s: store, views?: { [index: string]: Function }) {
 
         this._area = area as HTMLElement;
+        this.$el = this._area;
         this.views = views;
         this.setId();
         if (area.hasAttribute('data-name')) {
             this.name = area.getAttribute('data-name');
-        }else{
+        } else {
             this.name = area?.tagName;
         }
         this.store = s;
         this.addTypes(types);
-        this.loadElements();  
+        this.loadElements();
     }
 
     setTemplate(template: Function) {
@@ -57,14 +59,14 @@ export class dom {
      * !!caution this is slow and overwrites the home html of the dom area
      * @param data 
      */
-    render(data: object){
+    render(data: object) {
         this.element = {};
         this.elementByName = {};
 
         let params = [data];
-        for(let e in this.store.dataH?.store){
+        for (let e in this.store.dataH?.store) {
             params.push(this.store.dataH?.store[e].data);
-        } 
+        }
 
         this._area.innerHTML = this.template.apply(this, params);
         this.loadElements();
@@ -113,7 +115,7 @@ export class dom {
 
         return name;
     }
-    
+
     /**
      * 
      * @param el 
@@ -130,26 +132,33 @@ export class dom {
      * @param fieldTypeName 
      * @param data 
      */
-    createComponent($el : Element, fieldTypeName : string, data?: Object | store) {
+    createComponent($el: Element, fieldTypeName: string, data?: Object | store) {
         let s;
         let componentObject: Object = this.elementTypes[fieldTypeName];
         let name = fieldTypeName;
 
-        if(data instanceof store){
+        if (data instanceof store) {
             s = data;
-        }else if(typeof data !== "undefined"){
+        } else if (typeof data !== "undefined") {
             s = this.store.dataH.createStore(name, data);
-        }else{
+        } else {
             s = componentObject.data.call(this.store.dataH);
         }
         let storeArray = this.store.dataH?.store.toArray();
 
         let stores = this.store.dataH?.store.keys();
-         // const shadowRoot = $el.attachShadow({mode: 'open'});
-         if(componentObject?.views?.[name]) {
-            $el.innerHTML = componentObject.views[name].apply(s, [{value:""}, ...storeArray]);
-        }else{
+        
+        window.customElements.define(name, class extends HTMLElement {});
+
+        console.log($el.outerHTML);
+
+        const shadowRoot = $el.shadowRoot || $el.attachShadow({ mode: 'open' });
+
+        if (componentObject?.views?.[name]) {
+            $el.innerHTML = componentObject.views[name].apply(s, [{ value: "" }, ...storeArray]);
+        } else {
             $el.innerHTML = componentObject.html.trim();
+            shadowRoot.innerHTML = componentObject.html.trim();
         }
 
         let ddom = new dom($el, componentObject.components || {}, s, componentObject.views);
@@ -158,16 +167,16 @@ export class dom {
 
         let newcomponent = new component(ddom, s, componentObject.interactions());
 
-        if(typeof componentObject?.views?.[name] !== "function"){ 
-            newcomponent.dom.setTemplate(eval('(change,' + stores?.join(',') + ')=>`'+ newcomponent.dom._area.innerHTML +'`'));
-        }else{
+        if (typeof componentObject?.views?.[name] !== "function") {
+            newcomponent.dom.setTemplate(eval('(change,' + stores?.join(',') + ')=>`' + newcomponent.dom._area.innerHTML + '`'));
+        } else {
             newcomponent.dom.setTemplate(componentObject?.views[name]);
-        } 
+        }
 
         return newcomponent;
     }
- 
- 
+
+
     /**
      * 
      * @param $el 
@@ -207,7 +216,7 @@ export class dom {
      */
     loadElement($el: Element, currentIndex?: number): kelement {
         this.counter++;
-       
+
         let t_el: kelement = this.createElement($el, this.counter); //decorate and extend dom element
 
         this.detectType(t_el);
@@ -215,8 +224,8 @@ export class dom {
         this.addElementByName(t_el, <string>t_el.getName());
 
         this.detectOrphanVariables(t_el)
-        .forEach(name => this.addElementByName(t_el, name));
-        
+            .forEach(name => this.addElementByName(t_el, name));
+
         return t_el;
     }
 
@@ -224,21 +233,21 @@ export class dom {
      * detect orphan variable usages
      * @param t_el 
      */
-    detectOrphanVariables(t_el: kelement){
-        if(!t_el.$el) return [];
+    detectOrphanVariables(t_el: kelement) {
+        if (!t_el.$el) return [];
 
         let tpNode = t_el.$el.cloneNode(true);
-        
-        Array.from(tpNode.childNodes).map(e => {if(e.hasAttribute && e.hasAttribute("data-name"))e.remove() });
+
+        Array.from(tpNode.childNodes).map(e => { if (e.hasAttribute && e.hasAttribute("data-name")) e.remove() });
 
         let transForm = (m) => ("/$" + m[1])
-        .replace(/\.|\[|\]|\'|\"/g, '/')
-        .replace(/\/\//g, "/")
-        .replace(/\/$/, '');
+            .replace(/\.|\[|\]|\'|\"/g, '/')
+            .replace(/\/\//g, "/")
+            .replace(/\/$/, '');
 
         let names = Array.from(tpNode.innerHTML.matchAll(/\${([\w\.\[\]]*)}/ig), transForm);
-        
-      //  console.log(tpNode.outerHTML);
+
+        //  console.log(tpNode.outerHTML);
 
         return names;
     }
@@ -247,9 +256,9 @@ export class dom {
 
     loadElements() {
         let element: NodeListOf<Element> = this._area.querySelectorAll(this._identifier) as NodeListOf<Element>;
-       
+
         try {
-           
+
             element.forEach(($el: Element, currentIndex: number) => this.loadElement($el, currentIndex));
         } catch (e) {
             console.log(e);

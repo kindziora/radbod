@@ -4,7 +4,7 @@
   "description": "framework for next gen ui ",
   "module": "./build/app.js",
   "main": "./build/app.js",
-  "browser" : "./dist.lofo.js",
+  "browser": "./dist.lofo.js",
   "type": "module",
   "directories": {
     "test": "test"
@@ -30,12 +30,13 @@
   },
   "homepage": "https://github.com/kindziora/kjs#readme",
   "devDependencies": {
-    "browser-env": "^3.3.0",
     "express": "^4.17.1",
     "systemjs": "^6.1.7",
     "typescript": "^3.7.4",
     "webpack": "^4.41.5",
     "webpack-cli": "^3.3.10"
   },
-  "dependencies": {}
+  "dependencies": {
+    "puppeteer": "^2.1.0"
+  }
 }
