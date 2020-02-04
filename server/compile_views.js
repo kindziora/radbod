@@ -33,7 +33,7 @@ export class compileViews {
         let rbd = await fs.readFile("./dist/radbod.js", 'utf8');
 
         const browser = await puppeteer.launch({
-            
+            headless:false,
             args: ["--disable-web-security", `--user-data-dir=data`],
            
         });
@@ -56,12 +56,10 @@ export class compileViews {
 
                 // Get the "viewport" of the page, as reported by the page.
                 const cmp = await page.evaluate((n, componentSerialized) => {
-
-                    function ev() {
-                        return {}
-                    }
-
-                    let component = JSON.parse(componentSerialized, (k, v) => typeof v === "string" ? (/^(.*)\(\)/.exec(v) !== null ? ev : v) : v);
+                    
+                    let component = JSON.parse(componentSerialized, 
+                        (k, v) => typeof v === "string" ? 
+                        (/(.*)\(/.exec(v) !== null ? eval(`(function ${v} )`) : v) : v);
 
                     let buildApp = new window.radbod.app();
 
@@ -106,7 +104,7 @@ export class compileViews {
 
         }
 
-         await browser.close();
+       //  await browser.close();
 
     }
 

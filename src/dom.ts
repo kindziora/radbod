@@ -147,24 +147,21 @@ export class dom {
         let storeArray = this.store.dataH?.store.toArray();
 
         let stores = this.store.dataH?.store.keys();
-        
-        window.customElements.define(name + '-component', class extends HTMLDivElement {});
-
-        console.log($el.outerHTML);
-
+        /*
+        window.customElements.define(name, class extends HTMLDivElement {});
         const shadowRoot = $el.shadowRoot || $el.attachShadow({ mode: 'open' });
-
+*/
         if (componentObject?.views?.[name]) {
             $el.innerHTML = componentObject.views[name].apply(s, [{ value: "" }, ...storeArray]);
         } else {
             $el.innerHTML = componentObject.html.trim();
-            shadowRoot.innerHTML = componentObject.html.trim();
+           // shadowRoot.innerHTML = componentObject.html.trim();
         }
-
+       
         let ddom = new dom($el, componentObject.components || {}, s, componentObject.views);
         ddom.name = name;
         $el.setAttribute("data-name", name);
-
+        
         let newcomponent = new component(ddom, s, componentObject.interactions());
 
         if (typeof componentObject?.views?.[name] !== "function") {
@@ -256,7 +253,7 @@ export class dom {
 
     loadElements() {
         let element: NodeListOf<Element> = this._area.querySelectorAll(this._identifier) as NodeListOf<Element>;
-
+         
         try {
 
             element.forEach(($el: Element, currentIndex: number) => this.loadElement($el, currentIndex));

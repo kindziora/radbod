@@ -17,7 +17,7 @@
                 </div>
             </li>
         </ul>
-        
+        <xtern-component data-name="/$items"></xtern-component>
         <footer class="footer">
             <span class="todo-count"></span>
             <ul class="filters">
@@ -41,8 +41,10 @@
 </style>
 
 <script language="js">
+    import {xtern} from './xtern';
+
     export let todo = {
-        components: {},
+        components: {"xtern-component" : xtern},
         data(){
             return this.createStore("todos", { 
                 name : "AK TODOS",

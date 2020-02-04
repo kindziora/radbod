@@ -16,7 +16,7 @@ export class app {
         * @param actions
         * @param injections
         */
-    createComponent(name, views, data, actions, injections) {
+    createComponent(name, views, data, actions, injections = {}) {
         var _a, _b, _c, _d, _e, _f, _g;
         let s;
         if (data instanceof store) {

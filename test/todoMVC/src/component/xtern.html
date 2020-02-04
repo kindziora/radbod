@@ -1,0 +1,30 @@
+<template language="js-template">
+   <h2>externe daten</h2>
+   <div>
+       xtern ${ xternal.name }
+   </div>
+</template>
+
+<style language="scss">
+
+</style>
+
+<script language="js">
+
+    export let xtern = {
+        components: {},
+        data(){
+            return this.createStore("xternal", { 
+                name : "AK xternal",
+                items:[{
+                        label: "xternal",
+                        checked: false
+                      }]
+            })
+        },
+        interactions(){
+            return { }
+        }
+
+    }
+</script>

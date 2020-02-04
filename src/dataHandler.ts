@@ -17,7 +17,7 @@ export class dataHandler {
                 if(typeof this.store[i] === "object")
                     arr.push(this.store[i]);
             }
-            return arr;
+            return arr.sort();
         };
         this.store.keys = () => {
             let arr = [];
@@ -25,7 +25,7 @@ export class dataHandler {
                 if(typeof this.store[i] === "object")
                     arr.push(i);
             }
-            return arr;
+            return arr.sort();
         };
     }
 

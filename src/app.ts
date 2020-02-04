@@ -20,7 +20,7 @@ export class app {
         * @param actions 
         * @param injections 
         */
-    createComponent(name: string, views: { [index: string]: string }, data: Object | store, actions: object, injections: object) {
+    createComponent(name: string, views: { [index: string]: string }, data: Object | store, actions: object, injections: object = {}) {
         let s;
 
         if (data instanceof store) {
