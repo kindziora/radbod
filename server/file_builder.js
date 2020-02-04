@@ -3,12 +3,12 @@ import path from 'path';
 import { promises as fs } from 'fs';
  
 const __dirname = path.resolve();
-const template = /<template.*>([^]+)<\/template>/igm;
-const script = /<script.*>([^]+)<\/script>/igm;
+const template = /<template.*>([^]+)?<\/template>/igm;
+const script = /<script.*>([^]+)?<\/script>/igm;
 const scriptLang = /<script.*language\=\"([A-Za-z0-9 _]*)\"/igm;
 const openeningBracketObject = /export.*?\s({)/gim;
 const importStatement = /import(.*?)from\s+("|')(.*?)("|');/ig;
-const style = /<style.*>([^]+)<\/style>/igm;
+const style = /<style.*>([^]+)?<\/style>/igm;
 
 let options = { buildPath: "public/build/dev" };
 
@@ -60,7 +60,7 @@ export async function buildFile(file, opts) {
         console.log("no template tag in single file component: ", file)
         return;
     };
-
+    
     let { html, js, css } = await extract(content);
     let slang = Array.from(content.matchAll(scriptLang))[0][1];
 
