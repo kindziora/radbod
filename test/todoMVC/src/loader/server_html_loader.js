@@ -1,18 +1,29 @@
-import { eventHandler } from './eventHandler.js';
-import { dataHandler } from './dataHandler.js';
-
+import { dataHandler } from '../../../../build/dataHandler.js';
+import { eventHandler } from '../../../../build/eventHandler.js';
 import path from 'path';
+
 const __dirname = path.resolve();
-const base = "/home/akindziora/Downloads/projekte/radbod/test/todoMVC/public/build/dev/";
+const base = "/home/akindziora/projekte/radbod/test/todoMVC/public/build/dev/";
+
+
+(async()=>{
+   
+    let page = await import(base + "page/home.js");
+
+    let dataH = new dataHandler(new eventHandler(), {});
+    
+    console.log(page.home);
+})();
+
+
+
 
 export function html_loader(req, res, next){
     
-    let page = import(base + "page/home.js").home;
   
-    let dataH = new dataHandler(new eventHandler(), environment);
-
+    
     //recursive fetching of component data
-
+/**
     fetchData(page, function(data){
 
         if(fetchedAll){
@@ -26,7 +37,7 @@ export function html_loader(req, res, next){
         
     });
     
-    /**
+    
      * 
      * @param {*} component 
      * @param {*} callback 
