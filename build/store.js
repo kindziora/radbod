@@ -84,4 +84,15 @@ export class store {
     get data() {
         return this._data;
     }
+    db() {
+        return this._storage;
+    }
+    setDb(db) {
+        return this._storage = db;
+    }
+    load(selector, cb) {
+        if (this.db())
+            this.db().find(selector, cb);
+        return this;
+    }
 }

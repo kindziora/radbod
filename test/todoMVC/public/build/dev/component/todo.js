@@ -10,15 +10,15 @@
         plain: '',
          style : '',
         components: {"xtern-component" : xtern},
-        data(){
+        data(dataReady){
             return this.createStore("todos", { 
                 name : "AK TODOS",
                 items:[{
                         label: "Testdaten",
                         checked: false
                       }]
-            })
-        },
+            }).load({id: 1}, dataReady);
+         },
         interactions(){
             return {
                 "/$todo" : {

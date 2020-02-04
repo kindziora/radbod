@@ -1,10 +1,11 @@
 import { store } from './store.js';
 ;
 export class dataHandler {
-    constructor(eventH) {
+    constructor(eventH, environment) {
         this.store = {};
         this.pxy = {};
         this.events = eventH;
+        this.environment = environment;
         this.store.toArray = () => {
             let arr = [];
             for (let i in this.store) {
@@ -28,7 +29,9 @@ export class dataHandler {
      * @param data
      */
     createStore(component, data) {
+        var _a, _b;
         this.store[component] = new store(this.events, this, component, data);
+        this.store[component].setDb((_b = (_a = this) === null || _a === void 0 ? void 0 : _a.environment) === null || _b === void 0 ? void 0 : _b.data_loader);
         return this.store[component];
     }
     getStore(component) {

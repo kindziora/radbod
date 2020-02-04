@@ -7,9 +7,13 @@ import { store } from './store.js';
 export class app {
     public dataH: dataHandler;
     public components: { [index: string]: component } = {};
+    private environment : Object;
 
-    constructor() {
-        this.dataH = new dataHandler(new eventHandler());
+    constructor(environment : Object) {
+
+        this.environment = environment;
+
+        this.dataH = new dataHandler(new eventHandler(), environment);
 
     }
     /** 

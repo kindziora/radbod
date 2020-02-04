@@ -11,6 +11,8 @@ export class store {
     public name: string;
     private patchQueue: Array<op> = [];
 
+    private _storage: Object;
+
     constructor(eventH: eventHandler, dataH: dataHandler, component: string, data: Object) {
         this.events = eventH;
         this.dataH = dataH;
@@ -108,6 +110,20 @@ export class store {
 
     get data() {
         return this._data;
+    }
+
+    db(){
+        return this._storage;
+    }
+
+    setDb(db : object){
+        return this._storage = db;
+    }
+    
+    load(selector: Object, cb){
+        if(this.db())
+            this.db().find(selector, cb);
+        return this;
     }
     
 }

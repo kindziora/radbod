@@ -8,9 +8,12 @@ export class dataHandler {
     public store: { [index: string]: store } = {};
     private events: eventHandler;
     public pxy: { [index: string]: ProxyConstructor } = {};
+    private environment : Object;
 
-    constructor(eventH: eventHandler) {
+    constructor(eventH: eventHandler, environment : Object) {
         this.events = eventH;
+        this.environment = environment;
+
         this.store.toArray = () => {
             let arr = [];
             for(let i in this.store){
@@ -27,6 +30,7 @@ export class dataHandler {
             }
             return arr.sort();
         };
+
     }
 
     /**
@@ -36,6 +40,9 @@ export class dataHandler {
      */
     createStore(component: string, data: Object) {
         this.store[component] = new store(this.events, this, component, data);
+
+        this.store[component].setDb(this?.environment?.data_loader);
+
         return this.store[component];
     }
 

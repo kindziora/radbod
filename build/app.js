@@ -4,9 +4,10 @@ import { eventHandler } from './eventHandler.js';
 import { dataHandler } from './dataHandler.js';
 import { store } from './store.js';
 export class app {
-    constructor() {
+    constructor(environment) {
         this.components = {};
-        this.dataH = new dataHandler(new eventHandler());
+        this.environment = environment;
+        this.dataH = new dataHandler(new eventHandler(), environment);
     }
     /**
         *

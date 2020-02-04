@@ -33,7 +33,7 @@ export class compileViews {
         let rbd = await fs.readFile("./dist/radbod.js", 'utf8');
 
         const browser = await puppeteer.launch({
-            headless:false,
+          //  headless:false,
             args: ["--disable-web-security", `--user-data-dir=data`],
            
         });
@@ -46,7 +46,7 @@ export class compileViews {
         for await (const file of getFiles(folder || './test/todoMVC/public/build/dev/')) {
 
             console.log("BUILD VIEW: " + file);
-
+             
             try {
                 let component = await import(file);
 
@@ -104,7 +104,7 @@ export class compileViews {
 
         }
 
-       //  await browser.close();
+         await browser.close();
 
     }
 

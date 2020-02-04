@@ -1,19 +1,23 @@
 <template language="js-template">
     <header class="header">
         <h1>todos ${todo.name}</h1>
-        <input class="new-todo" data-name="/$todo" placeholder="What needs to be done?" autofocus />
+        <input class="new-todo" data-name="/$todo" placeholder="What needs to be
+            done?" autofocus />
     </header>
 
     <section style="display:none" class="main">
-        <input id="toggle-all" data-id="toggle-all" class="toggle-all" type="checkbox" data-name="/$items" />
+        <input id="toggle-all" data-id="toggle-all" class="toggle-all"
+            type="checkbox" data-name="/$items" />
         <label for="toggle-all">Mark all as complete</label>
-        
+
         <ul class="todo-list" data-name="/$items">
             <li data-name="/$items/${change.index}">
                 <div class="view">
-                    <input class="toggle" ${change.value.checked?`checked`:``} type="checkbox">
+                    <input class="toggle" ${change.value.checked?`checked`:``}
+                        type="checkbox">
                     <label data-name="/$items/${change.index}">${change.value.label}</label>
-                    <button class="destroy" data-name="/$items/${change.index}" data-id="destroy"></button>
+                    <button class="destroy" data-name="/$items/${change.index}"
+                        data-id="destroy"></button>
                 </div>
             </li>
         </ul>
@@ -45,15 +49,15 @@
 
     export let todo = {
         components: {"xtern-component" : xtern},
-        data(){
+        data(dataReady){
             return this.createStore("todos", { 
                 name : "AK TODOS",
                 items:[{
                         label: "Testdaten",
                         checked: false
                       }]
-            })
-        },
+            }).load({id: 1}, dataReady);
+         },
         interactions(){
             return {
                 "/$todo" : {
