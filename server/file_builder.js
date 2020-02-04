@@ -35,14 +35,6 @@ async function replaceImports(script, extension) {
     return script.replace(importStatement, 'import \$1 from "\$3.' + extension + '";');
 }
 
-export async function merge() {
-
-}
-
-export async function transpile() {
-
-}
-
 async function getName(filepath) {
     return filepath.split("/").pop().split('.')[0];
 }
