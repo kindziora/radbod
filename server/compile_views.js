@@ -10,43 +10,6 @@ export class compileViews {
 
     }
 
-    compile(componentInfo) {
-
-        let name = Object.keys(componentInfo)[0];
-        let component = componentInfo[name];
-        let views = {};
-        views[name] = component.html.trim();
-
-        let buildApp = new lofo.app();
-
-        let compo = buildApp.createComponent(
-            name,
-            views,
-            component.data.call(buildApp.dataH),
-            component.interactions(),
-            component.components
-        );
-
-        let viewsFinal = {};
-        let strVws = [];
-        for (let i in compo.dom.element) {
-            let element = compo.dom.element[i];
-            if (element.template) {
-                viewsFinal[element.id] = element.template ? element.template : null;
-                strVws.push(`'${element.id}' : ${element.template.toString()}`);
-            }
-        }
-        viewsFinal[name] = compo.dom.template;
-        strVws.push(`'${name}' : ${compo.dom.template.toString()}`);
-        component['views'] = viewsFinal;
-        component['viewsTemplate'] = `{
-             ${strVws.join(`,
-        `).replace(/=""/g, '')} }`;
-        component.plain = compo.$el.shadowRoot.innerHTML;
-        return component;
-
-    }
-
     /**
      * 
      * @param {*} file 
@@ -149,43 +112,3 @@ export class compileViews {
 
 
 }
-
-/**
- *  componentInfo = JSON.parse(componentInfo, (k,v) => typeof v === "string"? ((m = /^(.*)\(\)/.exec(v)) !== null? eval("("+v+")") : v): v);
-
-
-
-                    let name = Object.keys(componentInfo)[0];
-                    let component = componentInfo[name];
-                    let views = {};
-                    views[name] = component.html.trim();
-
-                    let buildApp = new lofo.app();
-
-                    let compo = buildApp.createComponent(
-                        name,
-                        views,
-                        component.data.call(buildApp.dataH),
-                        component.interactions(),
-                        component.components
-                    );
-
-                    let viewsFinal = {};
-                    let strVws = [];
-                    for (let i in compo.dom.element) {
-                        let element = compo.dom.element[i];
-                        if (element.template) {
-                            viewsFinal[element.id] = element.template ? element.template : null;
-                            strVws.push(`'${element.id}' : ${element.template.toString()}`);
-                        }
-                    }
-                    viewsFinal[name] = compo.dom.template;
-                    strVws.push(`'${name}' : ${compo.dom.template.toString()}`);
-                    component['views'] = viewsFinal;
-                    component['viewsTemplate'] = `{
-                ${strVws.join(`,
-            `).replace(/=""/g, '')} }`;
-                    component.plain = compo.$el.shadowRoot.innerHTML;
-
-                    return component;
- */
