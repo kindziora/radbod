@@ -58,11 +58,16 @@ const enviroment = {
 
     fetchData(page.home, (data)=>{
     } , (stores)=>{
-        
-        
-        let renderedHTML = page.views.home.apply(null, stores.toArray());
+        let renderedHTML = '';
+        console.log(stores.store.toArray());
+
+        try{
+            renderedHTML = page.home.views.home.apply(null, [{value:""},...stores.store.toArray()]);
+        }catch(e){
+            console.log(renderedHTML,  e);
+
+        }
     
-        console.log(data, renderedHTML);
         
  
 
