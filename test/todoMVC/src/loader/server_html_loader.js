@@ -60,10 +60,11 @@ const enviroment = {
     } , (stores)=>{
         
         
+        let renderedHTML = page.views.home.apply(null, stores.toArray());
+    
+        console.log(data, renderedHTML);
         
-        
-        console.log(stores);
-
+ 
 
 
     }, count, met);
