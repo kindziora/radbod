@@ -58,11 +58,17 @@ const enviroment = {
 
     fetchData(page.home, (data)=>{
     } , (stores)=>{
+        
+        
+        
+        
         console.log(stores);
+
+
+
     }, count, met);
 
-    console.log(count);
-})();
+ })();
 
 
 
