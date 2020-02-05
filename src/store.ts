@@ -120,10 +120,14 @@ export class store {
         return this._storage = db;
     }
     
-    load(selector: Object, cb){
-        if(this.db())
-            this.db().find(selector, cb);
-        return this;
+    load(selector: Object, cb : Function){
+        if(this.db()){
+           return new Promise((resolve, reject) =>  this.db().find(selector, (data) => {
+                this.createStore(this.name, data);
+                cb(data);
+                resolve(data);
+            }));
+        }
     }
     
 }

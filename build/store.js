@@ -91,8 +91,12 @@ export class store {
         return this._storage = db;
     }
     load(selector, cb) {
-        if (this.db())
-            this.db().find(selector, cb);
-        return this;
+        if (this.db()) {
+            return new Promise((resolve, reject) => this.db().find(selector, (data) => {
+                this.createStore(this.name, data);
+                cb(data);
+                resolve(data);
+            }));
+        }
     }
 }
