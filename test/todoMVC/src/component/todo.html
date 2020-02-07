@@ -1,6 +1,6 @@
 <template language="js-template">
     <header class="header">
-        <h1>todos ${todos.name} ${xternal.name} </h1>
+        <h1>todos ${todos.name} ${todos.name} </h1>
         <input class="new-todo" data-name="/$todo" placeholder="What needs to be done?" autofocus />
     </header>
 
@@ -25,21 +25,22 @@
             <ul class="filters">
                 <li>
                     <a href="#/" class="selected">All</a>
-                </li>
+                </li> 
                 <li>
                     <a href="#/active">Active</a>
                 </li>
                 <li>
                     <a href="#/completed">Completed</a>
-                </li>
+                </li> 
             </ul>
             <button class="clear-completed">Clear completed</button>
         </footer>
     </section>
 </template>
-
+ 
 <style language="scss">
-    
+
+
 </style>
 
 <script language="js">
