@@ -72,18 +72,20 @@ export class compileViews {
                      
 
                     let buildApp = new window.radbod.app();
-
+                        
                     let views = {};
                     views[n] = component.html.trim();
+
+                    let store = component.data.call(buildApp.dataH);
 
                     let compo = buildApp.createComponent(
                         n,
                         views,
-                        component.data.call(buildApp.dataH),
+                        store,
                         component.interactions(),
                         component.components
                     );
-
+                         
                     let viewsFinal = {};
                     let strVws = [];
                     for (let i in compo.dom.element) {
@@ -114,7 +116,7 @@ export class compileViews {
 
         }
 
-        //await browser.close();
+    //    await browser.close();
 
     }
 

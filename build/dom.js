@@ -124,6 +124,11 @@ export class dom {
         }
         else {
             s = componentObject.data.call(this.store.dataH);
+            if (s instanceof store) {
+            }
+            else {
+                // s = this.store.dataH.createStore(name, s);
+            }
         }
         let storeArray = (_a = this.store.dataH) === null || _a === void 0 ? void 0 : _a.store.toArray();
         let stores = (_b = this.store.dataH) === null || _b === void 0 ? void 0 : _b.store.keys();
@@ -138,6 +143,7 @@ export class dom {
             $el.innerHTML = componentObject.html.trim();
             // shadowRoot.innerHTML = componentObject.html.trim();
         }
+        console.log(s, componentObject.views, name, componentObject);
         let ddom = new dom($el, componentObject.components || {}, s, componentObject.views);
         ddom.name = name;
         $el.setAttribute("data-name", name);

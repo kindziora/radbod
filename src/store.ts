@@ -85,13 +85,15 @@ export class store {
 
         if(typeof data !=="object"){
 
-            console.log(arguments.callee,"store data is not an object", typeof data, data);
+            console.log("store data is not an object", typeof data, data);
             
             data = {};
         }
 
         this.dataH.pxy[`$${component}`] = this._data = createProxy(data); //fjp.default.deepClone(data);
         
+
+        return this;
     }
 
     /**

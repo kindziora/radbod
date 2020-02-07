@@ -26,7 +26,7 @@ export class app {
         */
     createComponent(name: string, views: { [index: string]: string }, data: Object | store, actions: object, injections: object = {}) {
         let s;
-
+        
         if (data instanceof store) {
             s = data;
         } else {
@@ -40,6 +40,7 @@ export class app {
         } else {
             el.innerHTML = views?.[name];
         }
+        //console.log(s, views);
 
         let ddom = new dom(el, injections, s, views);
         ddom.name = name;

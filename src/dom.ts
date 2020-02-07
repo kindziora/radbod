@@ -142,10 +142,15 @@ export class dom {
         } else if (typeof data !== "undefined") {
             s = this.store.dataH.createStore(name, data);
         } else {
+            
             s = componentObject.data.call(this.store.dataH);
+            if (s instanceof store) {
+            }else{
+               // s = this.store.dataH.createStore(name, s);
+            }
         }
         let storeArray = this.store.dataH?.store.toArray();
-
+        
         let stores = this.store.dataH?.store.keys();
         /*
         window.customElements.define(name, class extends HTMLDivElement {});
@@ -157,7 +162,9 @@ export class dom {
             $el.innerHTML = componentObject.html.trim();
            // shadowRoot.innerHTML = componentObject.html.trim();
         }
-       
+        
+        console.log(s, componentObject.views, name, componentObject);
+
         let ddom = new dom($el, componentObject.components || {}, s, componentObject.views);
         ddom.name = name;
         $el.setAttribute("data-name", name);
@@ -254,12 +261,12 @@ export class dom {
     loadElements() {
         let element: NodeListOf<Element> = this._area.querySelectorAll(this._identifier) as NodeListOf<Element>;
          
-       try {
+        try {
 
             element.forEach(($el: Element, currentIndex: number) => this.loadElement($el, currentIndex));
        } catch (e) {
             console.log(e);
-        }
+        } 
 
     }
 

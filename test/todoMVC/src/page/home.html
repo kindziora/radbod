@@ -1,6 +1,6 @@
 
 <template language="js-template">
-    <h1>Hallo ${home.name}</h1>
+    <h1>Hallo ${todos.name}</h1>
     <section class="todoapp">
         <todo-component data-name="/$items"></todo-component>
     </section>
@@ -24,7 +24,7 @@
     export let home = {
         components: {"todo-component" : todo},
         data(){
-            return this.createStore("home", {name : "AK"});
+            return this.createStore("home", {name : "AK home"});
         },
         interactions(){
             return { }

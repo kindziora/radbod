@@ -9,12 +9,10 @@ const base = "/home/akindziora/projekte/radbod/test/todoMVC/public/build/dev/";
 const enviroment = {
     data_loader : {
         find(options, cb){
-            setTimeout(() => cb({name: "test"}), 1000);
+            setTimeout(() => cb({name: "test load asynchronous"}), 30);
         }
     }
-
 };
-
 
 (async () => {
 
@@ -51,22 +49,29 @@ const enviroment = {
         return ++cnt;
     }
 
-    let page = await import(base + "page/home.js");
     let dataH = new dataHandler(new eventHandler(), enviroment);
+    
+    let page = await import(base + "page/home.js");
+
     let count = countForData(page.home, 0);
     let met = {cnt:0};
+
+
 
     fetchData(page.home, (data) => {
     } , (stores)=>{
         let renderedHTML = '';
-        console.log(stores.store.toArray());
 
+        let storeData = stores.store.toArray();
+
+        console.log(storeData);
         try{
-            renderedHTML = page.home.views.home.apply(null, [{value:""},...stores.store.toArray()]);
+            renderedHTML = page.home.views.home.apply(null, [{value:""},...storeData]);
         }catch(e){
             console.log(renderedHTML,  e);
-
         }
+
+        console.log(renderedHTML);
 
     }, count, met);
 

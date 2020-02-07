@@ -33,6 +33,7 @@ export class app {
         else {
             el.innerHTML = (_c = views) === null || _c === void 0 ? void 0 : _c[name];
         }
+        //console.log(s, views);
         let ddom = new dom(el, injections, s, views);
         ddom.name = name;
         el.setAttribute("data-name", name);

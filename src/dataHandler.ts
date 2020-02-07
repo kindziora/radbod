@@ -18,9 +18,11 @@ export class dataHandler {
             let arr = [];
             for(let i in this.store){
                 if(typeof this.store[i] === "object")
-                    arr.push(this.store[i]);
+                    arr.push(this.store[i].data);
             }
-            return arr.sort();
+            let e = arr.sort() || [];
+            
+            return e;
         };
         this.store.keys = () => {
             let arr = [];
