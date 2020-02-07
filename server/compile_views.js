@@ -33,8 +33,8 @@ export class compileViews {
         let rbd = await fs.readFile("./dist/radbod.js", 'utf8');
 
         const browser = await puppeteer.launch({
-         //   headless:false,
-            args: ["--disable-web-security", `--user-data-dir=data`],
+            headless:false,
+            args: ["--disable-web-security"],
            
         });
         const page = await browser.newPage();
@@ -114,7 +114,7 @@ export class compileViews {
 
         }
 
-        await browser.close();
+        //await browser.close();
 
     }
 

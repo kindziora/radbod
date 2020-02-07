@@ -59,7 +59,10 @@ export class store {
             };
             return new Proxy(data, handler);
         };
-        data = (typeof data === "object") ? data : {};
+        if (typeof data !== "object") {
+            console.log(arguments.callee, "store data is not an object", typeof data, data);
+            data = {};
+        }
         this.dataH.pxy[`$${component}`] = this._data = createProxy(data); //fjp.default.deepClone(data);
     }
     /**
@@ -96,7 +99,7 @@ export class store {
             return new Promise((resolve, reject) => this.db().find(selector, (data) => {
                 if (typeof data === "object")
                     this.createStore(this.name, data);
-                cb(data);
+                cb.call(this.dataH, data);
                 resolve(data);
             }));
         }

@@ -254,10 +254,10 @@ export class dom {
     loadElements() {
         let element: NodeListOf<Element> = this._area.querySelectorAll(this._identifier) as NodeListOf<Element>;
          
-        try {
+       try {
 
             element.forEach(($el: Element, currentIndex: number) => this.loadElement($el, currentIndex));
-        } catch (e) {
+       } catch (e) {
             console.log(e);
         }
 

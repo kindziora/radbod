@@ -8,7 +8,7 @@
          style : '',
         components: {"todo-component" : todo},
         data(){
-            return {name : "AK"}
+            return this.createStore("home", {name : "AK"});
         },
         interactions(){
             return { }

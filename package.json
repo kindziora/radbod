@@ -10,7 +10,7 @@
     "test": "test"
   },
   "scripts": {
-    "dev": "npx webpack --entry ./build/app.js --output-filename radbod.js --mode development --output-library radbod",
+    "dev": "npx webpack --watch --entry ./build/app.js --output-filename radbod.js --mode development --output-library radbod",
     "prod": "npx webpack --entry ./build/app.js --output-filename radbod.js --output-library radbod"
   },
   "repository": {
