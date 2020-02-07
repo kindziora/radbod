@@ -82,6 +82,9 @@ export class store {
 
             return new Proxy(data, handler);
         }
+
+        data = (typeof data ==="object") ? data : {};
+
         this.dataH.pxy[`$${component}`] = this._data = createProxy(data); //fjp.default.deepClone(data);
         
     }
@@ -123,7 +126,8 @@ export class store {
     load(selector: Object, cb : Function){
         if(this.db()){
            return new Promise((resolve, reject) =>  this.db().find(selector, (data) => {
-                this.createStore(this.name, data);
+                if(typeof data ==="object")
+                    this.createStore(this.name, data);
                 cb(data);
                 resolve(data);
             }));

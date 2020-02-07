@@ -56,7 +56,7 @@ const enviroment = {
     let count = countForData(page.home, 0);
     let met = {cnt:0};
 
-    fetchData(page.home, (data)=>{
+    fetchData(page.home, (data) => {
     } , (stores)=>{
         let renderedHTML = '';
         console.log(stores.store.toArray());
@@ -67,10 +67,6 @@ const enviroment = {
             console.log(renderedHTML,  e);
 
         }
-    
-        
- 
-
 
     }, count, met);
 
