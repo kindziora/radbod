@@ -26,11 +26,7 @@ async function run() {
 
   if (typeof data_loader === "function")
     app.use(data_loader);
-
-  app.get('/test', function (req, res) {
-    res.send('Hello World!')
-  })
-
+  
   //SSR IMPLEMENTATION
 
   // make the server listen to requests

@@ -2,7 +2,7 @@ import { dataHandler } from '../../../../build/dataHandler.js';
 import { eventHandler } from '../../../../build/eventHandler.js';
 
 import path from 'path';
-import { networkInterfaces } from 'os';
+import { routes } from '../../config/routes.js';
 
 const __dirname = path.resolve();
 const base = "/home/akindziora/projekte/radbod/test/todoMVC/public/build/dev/";
@@ -19,7 +19,6 @@ const enviroment = {
         }
     }
 };
-
 
 export const html_loader = asyncHandler(async function (req, res, next) {
 
@@ -58,12 +57,14 @@ export const html_loader = asyncHandler(async function (req, res, next) {
 
     let dataH = new dataHandler(new eventHandler(), enviroment);
 
+    let path = req.path;
+    
+    console.log(path);
+
     let page = await import(base + "page/home.js");
 
     let count = countForData(page.home, 0);
     let met = { cnt: 0 };
-
-
 
     fetchData(page.home, (data) => {
     }, (stores) => {
