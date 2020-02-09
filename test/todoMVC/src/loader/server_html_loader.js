@@ -2,7 +2,7 @@ import { dataHandler } from '../../../../build/dataHandler.js';
 import { eventHandler } from '../../../../build/eventHandler.js';
 
 import path from 'path';
-import { routes } from '../../config/routes.js';
+import { getFile } from '../../config/routes.js';
 
 const __dirname = path.resolve();
 const base = "/home/akindziora/projekte/radbod/test/todoMVC/public/build/dev/";
@@ -57,16 +57,18 @@ export const html_loader = asyncHandler(async function (req, res, next) {
 
     let dataH = new dataHandler(new eventHandler(), enviroment);
 
-    let path = req.path;
+    let path = req.path.split("/").filter(e=>e.trim()!=="").join("/");
     
-    console.log(path);
+    let f = getFile(path);
 
-    let page = await import(base + "page/home.js");
+    console.log(path, f);
 
-    let count = countForData(page.home, 0);
+    let page = await import(base + "page/" + f + ".js");
+
+    let count = countForData(page[f], 0);
     let met = { cnt: 0 };
 
-    fetchData(page.home, (data) => {
+    fetchData(page[f], (data) => {
     }, (stores) => {
         let renderedHTML = '';
 
@@ -75,7 +77,7 @@ export const html_loader = asyncHandler(async function (req, res, next) {
         console.log(storeData);
 
         try {
-            renderedHTML = page.home.views.home.apply(null, [{ value: "" }, ...storeData]);
+            renderedHTML = page[f].views[f].apply(null, [{ value: "" }, ...storeData]);
         } catch (e) {
             console.log(renderedHTML, e);
         }
