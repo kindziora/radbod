@@ -57,7 +57,7 @@ export const html_loader = asyncHandler(async function (req, res, next) {
 
     let dataH = new dataHandler(new eventHandler(), enviroment);
 
-    let path = req.path.split("/").filter(e=>e.trim()!=="").join("/");
+    let path = req.path;
     
     let f = getFile(path);
 
