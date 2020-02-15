@@ -1,10 +1,8 @@
 
 
     export let xtern = {
-         views : {
-                'xtern' : (change,xternal)=>`<h2>externe daten</h2> <div> xtern ${ todos.name } </div>` },
-        plain: '',
-         style : '',
+         html : "<h2>externe daten</h2> <div> xtern ${ todos.name } </div>",
+         style : "",
         components: {},
         data(){
             return this.createStore("xternal", { 

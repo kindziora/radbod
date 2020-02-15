@@ -81,6 +81,9 @@ export const html_loader = asyncHandler(async function (req, res, next) {
         } catch (e) {
             console.log(renderedHTML, e);
         }
+
+        renderedHTML
+
         res.send(renderedHTML);
 
         next();

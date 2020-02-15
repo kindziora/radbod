@@ -1,8 +1,8 @@
 <template language="js-template">
+
    <!-- Google Tag Manager -->
-   <script>
-  ${head.ga}
-</script>
+<script>${head.ga}</script>
+
 <!-- End Google Tag Manager -->
 <meta name="robots" content="index, follow">
 <meta name="robots" content="all">
@@ -61,19 +61,16 @@ ${head.jsonld}
 </style>
 
 <script language="js">
-
-    function getGoogleAnalytics(){
-        return `google analytics js`;
-    }
+    import {functions as f} from "./../functions";
 
     export let head = {
         components: {},
         data(){
             return this.createStore("head", { 
-               "ga" : getGoogleAnalytics(),
+               "ga" : f.getGoogleAnalytics(),
                "jsonld" : "",
-               "manifest" : manifest,
-               "env" : getEnvironment()
+               "manifest" : f.getManifest(),
+               "env" : f.getEnvironment()
 
             })
         },

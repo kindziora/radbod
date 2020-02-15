@@ -13,7 +13,14 @@ const style = /<style.*>([^]+)?<\/style>/igm;
 let options = { buildPath: "public/build/dev" };
 
 export async function extract(content) {
-    return { html: Array.from(content.matchAll(template))[0][1], js: Array.from(content.matchAll(script))[0][1], css: Array.from(content.matchAll(style))[0][1] };
+
+    let html = Array.from(content.matchAll(template))[0][1];
+    content = content.replace(html, "");
+    let js = Array.from(content.matchAll(script))[0][1];
+    content = content.replace(js, "");
+    let css = Array.from(content.matchAll(style))[0][1];
+    
+    return { html, js, css};
 }
 
 /**
@@ -65,8 +72,8 @@ export async function buildFile(file, opts) {
     let slang = Array.from(content.matchAll(scriptLang))[0][1];
 
     let inject = `
-         html : '${html.replace(/\s/ig, " ").replace(/  +/ig, " ").trim()}',
-         style : '${css.replace(/\s/ig, " ").replace(/  +/ig, " ").trim()}',`;
+         html : ${JSON.stringify(html.replace(/\s/ig, " ").replace(/  +/ig, " ").trim())},
+         style : ${JSON.stringify(css.replace(/\s/ig, " ").replace(/  +/ig, " ").trim())},`;
 
     let replacedImports = await replaceImports(js, slang);
     let newFile = await injectCode(replacedImports, inject);

@@ -74,7 +74,7 @@ export class compileViews {
                     let buildApp = new window.radbod.app();
                         
                     let views = {};
-                    views[n] = component.html.trim();
+                    views[n] = JSON.parse(component.html).trim();
 
                     let store = component.data.call(buildApp.dataH);
 

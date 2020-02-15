@@ -1,7 +1,7 @@
 <template language="js-template">
     <!DOCTYPE html>
     <html lang="${index.env.language}">
-        <head data-name="/$head"></head>
+        <head-component data-name="/$head"></head-component>
         <body>
             <!-- Google Tag Manager (noscript) -->
             <noscript>
@@ -35,15 +35,16 @@
 
 <script language="js">
     import {head} from "./component/head";
+    import {functions as f} from "./functions";
 
     export let index = {
         components: {"head-component" : head},
         data(params){
             return this.createStore("index", {
-                js : getJS(),
-                html: getHTML(),
-                config : getConfig(),
-                env : getEnvironment()
+                js : f.getJS(),
+                html: f.getHTML(),
+                config : f.getConfig(),
+                env : f.getEnvironment()
             })
         },
         interactions(){
