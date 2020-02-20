@@ -59,6 +59,8 @@ Street
 </div>`;
 let m;
 
+let text = {};
+
 while ((m = regex.exec(str)) !== null) {
     // This is necessary to avoid infinite loops with zero-width matches
     if (m.index === regex.lastIndex) {
@@ -68,7 +70,7 @@ while ((m = regex.exec(str)) !== null) {
     // The result can be accessed through the `m`-variable.
     m.forEach((match, groupIndex) => {
         if(groupIndex==1 && match.trim()!=="")
-        console.log(`${match.trim()}`);
+        text[match.trim()] = match.trim();
     });
 }
 
@@ -76,3 +78,5 @@ console.log(str.replace(regex, function(match, string){
     let cleared = string.replace(/\r?\n|\r/gm, "").trim();
     return cleared !=="" ? match.replace(string.replace(/\r?\n|\r/gm, "").trim(), "${_t('" + string.replace(/\r?\n|\r/gm, "").trim() + "')}") : match;
 } ));
+
+console.log(text);
