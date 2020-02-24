@@ -1,7 +1,10 @@
+
+import path from 'path';
+
 import { dataHandler } from '../../../../build/dataHandler.js';
 import { eventHandler } from '../../../../build/eventHandler.js';
 
-import path from 'path';
+
 import { getFile } from '../../config/routes.js';
 
 const __dirname = path.resolve();

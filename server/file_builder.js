@@ -72,8 +72,8 @@ export async function buildFile(file, opts) {
     let slang = Array.from(content.matchAll(scriptLang))[0][1];
 
     let inject = `
-         html : ${JSON.stringify(html.replace(/\s/ig, " ").replace(/  +/ig, " ").trim())},
-         style : ${JSON.stringify(css.replace(/\s/ig, " ").replace(/  +/ig, " ").trim())},`;
+         html : '${JSON.stringify(html.replace(/\s/ig, " ").replace(/  +/ig, " ").replace(/'/g, '"').trim())}',
+         style : '${JSON.stringify(css.replace(/\s/ig, " ").replace(/  +/ig, " ").replace(/'/g, '"').trim())}',`;
 
     let replacedImports = await replaceImports(js, slang);
     let newFile = await injectCode(replacedImports, inject);
