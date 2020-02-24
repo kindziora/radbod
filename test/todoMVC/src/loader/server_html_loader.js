@@ -5,7 +5,7 @@ import path from 'path';
 import { getFile } from '../../config/routes.js';
 
 const __dirname = path.resolve();
-const base = "../../public/build/dev/";
+const base = __dirname + "/test/todoMVC/public/build/dev/";
 
 const asyncHandler = fn => (req, res, next) =>
     Promise
@@ -62,8 +62,10 @@ export const html_loader = asyncHandler(async function (req, res, next) {
     let f = getFile(path);
 
     console.log(path, f);
+    console.log(base + "page/" + f + ".js");
 
     let page = await import(base + "page/" + f + ".js");
+
 
     let count = countForData(page[f], 0);
     let met = { cnt: 0 };
@@ -79,7 +81,9 @@ export const html_loader = asyncHandler(async function (req, res, next) {
         try {
             renderedHTML = page[f].views[f].apply(null, [{ value: "" }, ...storeData]);
         } catch (e) {
+
             console.log(renderedHTML, e);
+
         }
         res.send(renderedHTML);
 

@@ -80,7 +80,6 @@ export async function writeTranslationFile(str, translationFilePath) {
   }
 
   await fs.mkdir(translationFilePathA.join("/"), { recursive: true });
-
   await fs.writeFile(translationFilePath, JSON.parse(stringify));
 
 }
