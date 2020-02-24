@@ -1,13 +1,13 @@
 
 import path from 'path';
+const __dirname = path.resolve();
 
-import { dataHandler } from '../../../../build/dataHandler.js';
-import { eventHandler } from '../../../../build/eventHandler.js';
+import { dataHandler } from __dirname + '/public/build/dataHandler.js';
+import { eventHandler } from __dirname + '/public/build/eventHandler.js';
 
 
 import { getFile } from '../../config/routes.js';
 
-const __dirname = path.resolve();
 const base = __dirname + "/test/todoMVC/public/build/dev/";
 
 const asyncHandler = fn => (req, res, next) =>
