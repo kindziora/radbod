@@ -10,7 +10,7 @@
     "test": "test"
   },
   "scripts": {
-    "dev": "npx webpack --watch --entry ./build/app.js --output-filename radbod.js --mode development --output-library radbod & nodemon -e html,js -w ./test/todoMVC/src/ server/build.js /home/akindziora/projekte/radbod/test/todoMVC/src /home/akindziora/projekte/radbod/test/todoMVC/public/build/dev",
+    "dev": "npx webpack --watch --entry ./build/app.js --output-filename radbod.js --mode development --output-library radbod & nodemon -e html,js -w ./test/todoMVC/src/ server/build.js ./test/todoMVC/src ./test/todoMVC/public/build/dev & nodemon -e js -w ./test/todoMVC/public/build/dev server/run.js 8801",
     "prod": "npx webpack --entry ./build/app.js --output-filename radbod.js --output-library radbod"
   },
   "repository": {
