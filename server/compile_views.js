@@ -2,7 +2,7 @@ import { getFiles } from './files.js';
 import puppeteer from "puppeteer";
 import { promises as fs } from 'fs';
 
-const htmlProperty = /html.*:.*'.*'(\s+|)+,/gmi;
+const htmlProperty = /"html":".*?",/gmi;
 
 export class compileViews {
 
@@ -33,7 +33,7 @@ export class compileViews {
         let rbd = await fs.readFile("./dist/radbod.js", 'utf8');
 
         const browser = await puppeteer.launch({
-           // headless:false,
+            headless:false,
             args: ["--disable-web-security"],
            
         });
@@ -60,6 +60,9 @@ export class compileViews {
                     let component = JSON.parse(componentSerialized, 
                         (k, v) => typeof v === "string" ? 
                         (/(.*)\(/.exec(v) !== null ? ((v)=>{
+
+                            console.log(v);
+
                             let ret = "";
                             try{
                                 ret = eval(`(function ${v} )`);
@@ -77,7 +80,7 @@ export class compileViews {
                     
                     console.log(component.html);
 
-                    views[n] = JSON.parse(component.html.trim());
+                    views[n] = component.html;
 
                     let store = component.data.call(buildApp.dataH);
 
@@ -119,7 +122,7 @@ export class compileViews {
 
         }
 
-        await browser.close();
+     //   await browser.close();
 
     }
 

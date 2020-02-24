@@ -70,10 +70,12 @@ export async function buildFile(file, opts) {
     
     let { html, js, css } = await extract(content);
     let slang = Array.from(content.matchAll(scriptLang))[0][1];
-
+    let strP = JSON.stringify({
+        html: html.replace(/\s/ig, " ").replace(/  +/ig, " ").replace(/'/g, '"').trim(),
+        style: css.replace(/\s/ig, " ").replace(/  +/ig, " ").replace(/'/g, '"').trim()
+    });
     let inject = `
-         html : '${JSON.stringify(html.replace(/\s/ig, " ").replace(/  +/ig, " ").replace(/'/g, '"').trim())}',
-         style : '${JSON.stringify(css.replace(/\s/ig, " ").replace(/  +/ig, " ").replace(/'/g, '"').trim())}',`;
+        ${strP.substring(1, strP.length-1)},`;
 
     let replacedImports = await replaceImports(js, slang);
     let newFile = await injectCode(replacedImports, inject);
