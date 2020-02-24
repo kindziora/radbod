@@ -1,7 +1,8 @@
 const regex = /[>|}]([\s\S]*?)[<|$]/igm;
 
 import { promises as fs } from 'fs';
-import YandexTranslate from 'yandex-translate-async';
+import defltYdx from 'yandex-translate-async';
+let YandexTranslate = defltYdx.default;
 
 const yc = new YandexTranslate({
   apiKey:

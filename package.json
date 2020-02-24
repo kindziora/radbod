@@ -34,7 +34,8 @@
     "systemjs": "^6.1.7",
     "typescript": "^3.7.4",
     "webpack": "^4.41.5",
-    "webpack-cli": "^3.3.10"
+    "webpack-cli": "^3.3.10",
+    "yandex-translate-async": "^1.1.2"
   },
   "dependencies": {
     "puppeteer": "^2.1.0"
