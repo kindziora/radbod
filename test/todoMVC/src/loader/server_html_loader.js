@@ -5,7 +5,7 @@ import path from 'path';
 import { getFile } from '../../config/routes.js';
 
 const __dirname = path.resolve();
-const base = "/home/akindziora/projekte/radbod/test/todoMVC/public/build/dev/";
+const base = "../../public/build/dev/";
 
 const asyncHandler = fn => (req, res, next) =>
     Promise

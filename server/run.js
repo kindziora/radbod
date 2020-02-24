@@ -10,7 +10,7 @@ async function run() {
   // server configuration
   //node ./node_modules/kjs/server/run.js html_loader.js data_loader.js 8800 browser;../dist
 
-  const PORT = parseInt(process.argv[4] || 8080);
+  const PORT = parseInt(process.argv[2] || 8080);
 
   let { html_loader } = await import("../test/todoMVC/src/loader/server_html_loader.js");
   //process.argv[2] ? await import(process.argv[2]) : false;
