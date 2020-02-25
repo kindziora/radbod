@@ -33,9 +33,9 @@ export class compileViews {
         let rbd = await fs.readFile("./dist/radbod.js", 'utf8');
 
         const browser = await puppeteer.launch({
-        //    headless:false,
+            headless: false,
             args: ["--disable-web-security"],
-           
+
         });
         const page = await browser.newPage();
 
@@ -46,75 +46,78 @@ export class compileViews {
         for await (const file of getFiles(folder || './test/todoMVC/public/build/dev/')) {
 
             console.log("BUILD VIEW: " + file);
-             
+
             try {
                 let component = await import(file);
 
                 let content = await fs.readFile(file, 'utf8');
                 let n = Object.keys(component)[0];
                 component = component[n];
-//if(!component.html)return;
-                // Get the "viewport" of the page, as reported by the page.
-                const cmp = await page.evaluate((n, componentSerialized) => {
+                
+                if (component.html || component.views) {
+                    // Get the "viewport" of the page, as reported by the page.
+                    const cmp = await page.evaluate((n, componentSerialized) => {
 
-                    let component = JSON.parse(componentSerialized, 
-                        (k, v) => typeof v === "string" ? 
-                        (/(.*)\(/.exec(v) !== null ? ((v)=>{
+                        let component = JSON.parse(componentSerialized,
+                            (k, v) => typeof v === "string" ?
+                                (/(.*)\(/.exec(v) !== null ? ((v) => {
 
-                            console.log(v);
+                                    console.log(v);
 
-                            let ret = "";
-                            try{
-                                ret = eval(`(function ${v} )`);
-                            }catch(e) {
-                                ret = eval(`(${v} )`);
+                                    let ret = "";
+                                    try {
+                                        ret = eval(`(function ${v} )`);
+                                    } catch (e) {
+                                        ret = eval(`(${v} )`);
+                                    }
+
+                                    return ret
+                                })(v) : v) : v);
+
+
+                        let buildApp = new window.radbod.app();
+
+                        let views = {};
+
+                        console.log("NAME:", n, component);
+
+                        views[n] = component.html;
+
+                        let store = component.data ? component.data.call(buildApp.dataH) : {};
+
+                        let compo = buildApp.createComponent(
+                            n,
+                            views,
+                            store,
+                            component.interactions(),
+                            component.components
+                        );
+
+                        let viewsFinal = {};
+                        let strVws = [];
+                        for (let i in compo.dom.element) {
+                            let element = compo.dom.element[i];
+                            if (element.template) {
+                                viewsFinal[element.id] = element.template ? element.template : null;
+                                strVws.push(`'${element.id}' : ${element.template.toString()}`);
                             }
-
-                            return ret
-                        })(v) : v) : v);
-                     
-
-                    let buildApp = new window.radbod.app();
-                        
-                    let views = {};
-                    
-                    console.log(n, component);
-
-                    views[n] = component.html;
-
-                    let store = component.data ? component.data.call(buildApp.dataH):{};
-
-                    let compo = buildApp.createComponent(
-                        n,
-                        views,
-                        store,
-                        component.interactions(),
-                        component.components
-                    );
-                         
-                    let viewsFinal = {};
-                    let strVws = [];
-                    for (let i in compo.dom.element) {
-                        let element = compo.dom.element[i];
-                        if (element.template) {
-                            viewsFinal[element.id] = element.template ? element.template : null;
-                            strVws.push(`'${element.id}' : ${element.template.toString()}`);
                         }
-                    }
-                    viewsFinal[n] = compo.dom.template;
-                    strVws.push(`'${n}' : ${compo.dom.template.toString()}`);
-                    component['views'] = viewsFinal;
-                    component['viewsTemplate'] = `{
-                ${strVws.join(`,
-            `).replace(/=""/g, '')} }`;
+                        viewsFinal[n] = compo.dom.template;
+                        strVws.push(`'${n}' : ${compo.dom.template.toString()}`);
+                        component['views'] = viewsFinal;
+                        component['viewsTemplate'] = `{
+${strVws.join(`,
+`).replace(/=""/g, '')} }`;
 
-                    component.plain = compo.$el.innerHTML;
+                        component.plain = compo.$el.innerHTML;
 
-                    return component;
+                        return component;
 
-                }, n, JSON.stringify(component, (k, v) => typeof v === "function" ? v.toString() : v));
+                    }, n, JSON.stringify(component, (k, v) => typeof v === "function" ? v.toString() : v));
 
-                await this.writeToJSFile(file, content, cmp);
+                    await this.writeToJSFile(file, content, cmp);
+                }
+
 
             } catch (e) {
                 console.log(e);
@@ -122,7 +125,7 @@ export class compileViews {
 
         }
 
-        await browser.close();
+        //  await browser.close();
 
     }
 
