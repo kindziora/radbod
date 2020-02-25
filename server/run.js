@@ -2,7 +2,6 @@ import express from 'express';
 import path from 'path';
 const __dirname = path.resolve();
 
-
 async function run() {
   // create new express app and save it as "app"
   const app = express();

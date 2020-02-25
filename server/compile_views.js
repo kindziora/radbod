@@ -18,7 +18,7 @@ export class compileViews {
      */
     async writeToJSFile(file, content, component) {
         let newFileData = content.replace(htmlProperty, `views : ${component.viewsTemplate},
-        plain: '${component.plain}',`);
+        `);
 
         return await fs.writeFile(file, newFileData);
     }
@@ -35,7 +35,6 @@ export class compileViews {
         const browser = await puppeteer.launch({
           //  headless: false,
             args: ["--disable-web-security"],
-
         });
         const page = await browser.newPage();
 
@@ -60,7 +59,7 @@ export class compileViews {
 
                         let component = JSON.parse(componentSerialized,
                             (k, v) => typeof v === "string" ?
-                                (/(.*)\(/.exec(v) !== null ? ((v) => {
+                                (/(.*)\(/.exec(v) !== null && k !=="html" ? ((v) => {
 
                                     console.log(v);
 
@@ -108,9 +107,7 @@ export class compileViews {
                         component['viewsTemplate'] = `{
 ${strVws.join(`,
 `).replace(/=""/g, '')} }`;
-
-                        component.plain = compo.$el.innerHTML;
-
+                        
                         return component;
 
                     }, n, JSON.stringify(component, (k, v) => typeof v === "function" ? v.toString() : v));

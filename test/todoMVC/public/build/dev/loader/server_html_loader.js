@@ -4,9 +4,9 @@ const __dirname = path.resolve();
 
 import { dataHandler } from '/home/akindziora/Downloads/projekte/radbod/build/dataHandler.js';
 import { eventHandler } from '/home/akindziora/Downloads/projekte/radbod/build/eventHandler.js';
-
-
 import { getFile } from '/home/akindziora/Downloads/projekte/radbod/test/todoMVC/config/routes.js';
+import {_t} from './_t.js';
+
 
 const base = __dirname + "/test/todoMVC/public/build/dev/";
 
@@ -69,8 +69,6 @@ export const html_loader = asyncHandler(async function (req, res, next) {
 
     let page = await import(base + "page/" + f + ".js");
 
-   
-
     let count = countForData(page[f], 0);
     let met = { cnt: 0 };
 
@@ -82,16 +80,13 @@ export const html_loader = asyncHandler(async function (req, res, next) {
 
         console.log(storeData);
 
-        try {
-
-            renderedHTML = page[f].views[f].apply(null, [{ value: "" }, ...storeData]);
+        try { 
+            renderedHTML = page[f].views[f].apply(null, [{ value: "" }, ...storeData, _t]);
         } catch (e) {
 
             console.log(renderedHTML, e);
 
         }
-
-        renderedHTML
 
         res.send(renderedHTML);
 

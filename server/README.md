@@ -18,3 +18,6 @@ loading files via the html_loader middleware
 
 
 
+## Development
+
+ `npm run dev`

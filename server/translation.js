@@ -2,6 +2,7 @@ const regex = /[>|}]([\s\S]*?)[<|$]/igm;
 
 import { promises as fs } from 'fs';
 import defltYdx from 'yandex-translate-async';
+const htmlProperty = /"html":".*?",/gmi;
 
 let YandexTranslate = defltYdx.default;
 
@@ -9,6 +10,37 @@ const yc = new YandexTranslate({
   apiKey:
     '<< YOUR YANDEX API KEY HERE >>'
 });
+
+
+async function writeToJSFile(file, content, enriched) {
+  let newFileData = content.replace(htmlProperty, `html : ${enriched},
+  `);
+
+  return await fs.writeFile(file, newFileData);
+}
+
+export async function internationalize(folder) {
+
+  for await (const file of getFiles(folder || './test/todoMVC/public/build/dev/')) {
+
+    try {
+      let component = await import(file);
+
+      let content = await fs.readFile(file, 'utf8');
+      let n = Object.keys(component)[0];
+      component = component[n];
+
+      if (component.html || component.views) {
+        await writeToJSFile(file, component.html, inject_translateFunc(component.html));
+      }
+
+    } catch (e) {
+      console.log(e);
+    }
+
+  }
+
+}
 
 export function extract_text(str) {
   let m;
