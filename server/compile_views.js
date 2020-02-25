@@ -33,7 +33,7 @@ export class compileViews {
         let rbd = await fs.readFile("./dist/radbod.js", 'utf8');
 
         const browser = await puppeteer.launch({
-            headless: false,
+          //  headless: false,
             args: ["--disable-web-security"],
 
         });
@@ -53,7 +53,7 @@ export class compileViews {
                 let content = await fs.readFile(file, 'utf8');
                 let n = Object.keys(component)[0];
                 component = component[n];
-                
+
                 if (component.html || component.views) {
                     // Get the "viewport" of the page, as reported by the page.
                     const cmp = await page.evaluate((n, componentSerialized) => {
@@ -125,7 +125,7 @@ ${strVws.join(`,
 
         }
 
-        //  await browser.close();
+        await browser.close();
 
     }
 
