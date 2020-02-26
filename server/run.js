@@ -11,7 +11,7 @@ async function run() {
 
   const PORT = parseInt(process.argv[2] || 8080);
 
-  let { html_loader } = await import(process.argv[3] || "/home/akindziora/Downloads/projekte/radbod/test/todoMVC/public/build/dev/loader/server_html_loader.js");
+  let { html_loader } = await import(process.argv[3]);
   //process.argv[2] ? await import(process.argv[2]) : false;
   //let { data_loader } = process.argv[3] ? await import(process.argv[3]) : false;
 

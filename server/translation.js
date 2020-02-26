@@ -1,4 +1,5 @@
 const regex = /[>|}]([\s\S]*?)[<|$]/igm;
+import { getFiles } from './files.js';
 
 import { promises as fs } from 'fs';
 import defltYdx from 'yandex-translate-async';
@@ -13,16 +14,22 @@ const yc = new YandexTranslate({
 
 
 async function writeToJSFile(file, content, enriched) {
-  let newFileData = content.replace(htmlProperty, `html : ${enriched},
-  `);
+  let strP = JSON.stringify({ html : enriched});
 
+  let inject = `${strP.substring(1, strP.length-1)},`;
+
+  let newFileData = content.replace(htmlProperty, inject);
+
+  console.log(newFileData);
+  
   return await fs.writeFile(file, newFileData);
 }
 
 export async function internationalize(folder) {
 
   for await (const file of getFiles(folder || './test/todoMVC/public/build/dev/')) {
-
+     if(!/\.js$/.test(file))continue;
+     console.log("internationalize", file);
     try {
       let component = await import(file);
 
@@ -31,7 +38,7 @@ export async function internationalize(folder) {
       component = component[n];
 
       if (component.html || component.views) {
-        await writeToJSFile(file, component.html, inject_translateFunc(component.html));
+        await writeToJSFile(file, content, inject_translateFunc(component.html));
       }
 
     } catch (e) {

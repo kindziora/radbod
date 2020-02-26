@@ -1,14 +1,26 @@
-
 import path from 'path';
-const __dirname = path.resolve();
-
-import { dataHandler } from '/home/akindziora/Downloads/projekte/radbod/build/dataHandler.js';
-import { eventHandler } from '/home/akindziora/Downloads/projekte/radbod/build/eventHandler.js';
-import { getFile } from '/home/akindziora/Downloads/projekte/radbod/test/todoMVC/config/routes.js';
 import {_t} from './_t.js';
+const __dirname = path.resolve();
+let base;
+let config;
+let dataHandler;
+let eventHandler;
+let getFile;
 
+( async ()=> {
+      base = __dirname + "/test/todoMVC/public/build/dev/";
+    
+      config = await import(__dirname + "/test/todoMVC/config/env.js");
+    
+      dataHandler = await import(`${config.settings.radbod_build}/dataHandler.js`);
+      dataHandler = dataHandler.dataHandler;
+      eventHandler = await import(`${config.settings.radbod_build}/eventHandler.js`);
+      eventHandler = eventHandler.eventHandler;
 
-const base = __dirname + "/test/todoMVC/public/build/dev/";
+      getFile = await import(__dirname + "/test/todoMVC/config/routes.js");
+      getFile = getFile.getFile;
+    
+})();
 
 const asyncHandler = fn => (req, res, next) =>
     Promise
@@ -25,6 +37,7 @@ const enviroment = {
 
 export const html_loader = asyncHandler(async function (req, res, next) {
 
+    
     function fetchData(component, cb, allready, total, meta) {
 
         let callback = function (meta) {
@@ -80,8 +93,8 @@ export const html_loader = asyncHandler(async function (req, res, next) {
 
         console.log(storeData);
 
-        try { 
-            renderedHTML = page[f].views[f].apply(null, [{ value: "" }, ...storeData, _t]);
+        try {  
+            renderedHTML = eval(`(${page[f].views[f].toString()})`).apply(null, [{ value: "" }, ...storeData]);
         } catch (e) {
 
             console.log(renderedHTML, e);
