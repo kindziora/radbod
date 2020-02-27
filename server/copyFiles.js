@@ -8,7 +8,8 @@ export async function copyFiles(folder, options) {
 
         if (filename.split(".")[1] === options.extension) {
             await fs.mkdir(folderPath.join("/"), { recursive: true });
-            await fs.copyFile(file, file.replace("src", options.buildPath || "public/build/dev"));
+            if(filename.indexOf("server_") ===-1)
+                await fs.copyFile(file, file.replace("src", options.buildPath || "public/build/dev"));
         }
         
     }

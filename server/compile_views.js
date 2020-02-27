@@ -52,8 +52,6 @@ export class compileViews {
                 let content = await fs.readFile(file, 'utf8');
                 let n = Object.keys(component)[0];
                 component = component[n];
-                console.log("component:", component);
-
 
                 if (component.html || component.views) {
                     // Get the "viewport" of the page, as reported by the page.

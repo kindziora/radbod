@@ -90,10 +90,18 @@ export const html_loader = asyncHandler(async function (req, res, next) {
         let renderedHTML = '';
 
         let storeData = stores.store.toArray();
+        let language  = "en_EN";
+      
 
-        console.log(storeData);
+        if(page[f].translations){
+           let translations = page[f].translations(language || "en_EN");
+           console.log("translations", translations);
+        }
 
         try {  
+
+           
+
             renderedHTML = eval(`(${page[f].views[f].toString()})`).apply(null, [{ value: "" }, ...storeData]);
         } catch (e) {
 

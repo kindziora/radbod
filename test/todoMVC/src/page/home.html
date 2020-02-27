@@ -20,7 +20,9 @@
 
 <script language="js">
     import {todo} from '../component/todo';
-     
+    import {translations} from './i18n/home';
+
+
     export let home = { 
         components: {"todo-component" : todo},
         data(){
@@ -28,6 +30,9 @@
         },
         interactions(){
             return { }
+        },
+        translations(params){
+            return translations[params.language];
         }
     }
 </script>

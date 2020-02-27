@@ -1,4 +1,6 @@
 const regex = /[>|}]([\s\w]*?)[<|$]/igm;
+const fetchTranslationCalls = /\${_t\(([\s\S]*?)\)/igm;
+
 import { getFiles } from './files.js';
 
 import { promises as fs } from 'fs';
@@ -13,6 +15,7 @@ const yc = new YandexTranslate({
 });
 
 
+
 async function writeToJSFile(file, content, enriched) {
   let strP = JSON.stringify({ html : enriched});
 
@@ -20,8 +23,15 @@ async function writeToJSFile(file, content, enriched) {
 
   let newFileData = content.replace(htmlProperty, inject);
 
-  console.log(newFileData);
+  let matches = Array.from(newFileData.matchAll(fetchTranslationCalls))
+  .map((e)=>e[1][0] ==="'" ||e[1][0] ==='"' ? e[1].substr(1, e[1].length-2): e[1][0]);
   
+  let text = {};
+
+  for(let m = 0; m < matches.length;m++){
+    text[matches[m]] = matches[m];
+  }
+ 
   return await fs.writeFile(file, newFileData);
 }
 
@@ -31,7 +41,7 @@ export async function internationalize(folder) {
      if(!/\.js$/.test(file))continue;
      console.log("internationalize", file);
     try {
-      let component = await import(file);
+      let component = await import(file + "?=c" + new Date());
 
       let content = await fs.readFile(file, 'utf8');
       let n = Object.keys(component)[0];
@@ -40,6 +50,7 @@ export async function internationalize(folder) {
       if (component.html || component.views) {
         await writeToJSFile(file, content, inject_translateFunc(component.html));
       }
+     
 
     } catch (e) {
       console.log(e);
