@@ -1,4 +1,4 @@
-const regex = /[>|}]([\s\S]*?)[<|$]/igm;
+const regex = /[>|}]([\s\w]*?)[<|$]/igm;
 import { getFiles } from './files.js';
 
 import { promises as fs } from 'fs';
