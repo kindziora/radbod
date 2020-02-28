@@ -1,0 +1,1 @@
+export const translations = {"en_EN":{"todos":"todos","Mark all as complete":"Mark all as complete","All":"All","Active":"Active","Completed":"Completed","Clear completed":"Clear completed"}}

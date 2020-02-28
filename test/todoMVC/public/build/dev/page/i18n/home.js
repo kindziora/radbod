@@ -1,11 +1,1 @@
-export const translations = {
-    en_EN: { 
-        
-    },
-    es_ES: {
-
-    },
-    de_DE: {
-
-    }
-}
+export const translations = {"en_EN":{"Hallo":"Hallo","Written by":"Written by","Luke Edwards":"Luke Edwards","Refactored by":"Refactored by","Aaron Muir Hamilton":"Aaron Muir Hamilton","Part of":"Part of","TodoMVC":"TodoMVC","\\":"\\"}}

@@ -100,8 +100,6 @@ export const html_loader = asyncHandler(async function (req, res, next) {
 
         try {  
 
-           
-
             renderedHTML = eval(`(${page[f].views[f].toString()})`).apply(null, [{ value: "" }, ...storeData]);
         } catch (e) {
 

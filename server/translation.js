@@ -14,7 +14,52 @@ const yc = new YandexTranslate({
     '<< YOUR YANDEX API KEY HERE >>'
 });
 
+export async function createFolderAndFiles(file) {
+   
+  let folder = file.split("/");
+  let fname = folder.pop().replace(".html", ".js"); 
+  let content;
 
+  await fs.mkdir(folder.join("/") + "/i18n/", { recursive: true });
+
+  try{
+   content = await fs.readFile(folder.join("/") + "/i18n/" + fname, 'utf8');
+
+  }catch(e){
+    console.log(e); 
+    await fs.writeFile(folder.join("/") + "/i18n/" + fname, `export const translations = ${JSON.stringify({en_EN : {}})}`);
+  }
+
+}
+
+/**
+ * Performs a deep merge of `source` into `target`.
+ * Mutates `target` only but not its objects and arrays.
+ *
+ * @author inspired by [jhildenbiddle](https://stackoverflow.com/a/48218209).
+ */
+function mergeDeep(target, source) {
+  const isObject = (obj) => obj && typeof obj === 'object';
+
+  if (!isObject(target) || !isObject(source)) {
+    return source;
+  }
+
+  Object.keys(source).forEach(key => {
+    const targetValue = target[key];
+    const sourceValue = source[key];
+
+    if (Array.isArray(targetValue) && Array.isArray(sourceValue)) {
+      target[key] = targetValue.concat(sourceValue);
+    } else if (isObject(targetValue) && isObject(sourceValue)) {
+      target[key] = mergeDeep(Object.assign({}, targetValue), sourceValue);
+    } else {
+      target[key] = sourceValue;
+    }
+  });
+
+  return target;
+}
 
 async function writeToJSFile(file, content, enriched) {
   let strP = JSON.stringify({ html : enriched});
@@ -26,19 +71,50 @@ async function writeToJSFile(file, content, enriched) {
   let matches = Array.from(newFileData.matchAll(fetchTranslationCalls))
   .map((e)=>e[1][0] ==="'" ||e[1][0] ==='"' ? e[1].substr(1, e[1].length-2): e[1][0]);
   
-  let text = {};
+  let text = {en_EN : {}};
 
   for(let m = 0; m < matches.length;m++){
-    text[matches[m]] = matches[m];
+    text.en_EN[matches[m]] = matches[m];
   }
- 
+
+  let filenameParts = file.replace("public/build/dev/", "src/").split("/");
+  let filename = filenameParts.pop().replace(".js", ".json");
+  let transFile = filenameParts.join("/") + "/i18n/" + filename;
+
+  let existingTranslation = {en_EN : {}};
+  
+  try{
+    let content = await fs.readFile(transFile, 'utf8');
+    
+    existingTranslation = JSON.parse(content);
+   
+
+  }catch(e){
+    console.log(e); 
+  }
+  console.log(text);
+  text = mergeDeep(text, existingTranslation);
+  console.log(text);
+  await fs.mkdir(transFile.replace("src/", "public/build/dev/").replace(filename, ""), { recursive: true });
+
+  await fs.writeFile(transFile.replace("src/", "public/build/dev/").replace(".json", ".js"), `export const translations = ${JSON.stringify(text)}`);
+  
+
+  let folder = transFile.split("/");
+  folder.pop();
+
+  await fs.mkdir(folder.join("/"), { recursive: true });
+
+  await fs.writeFile(transFile, JSON.stringify(text, null, 1));
+
   return await fs.writeFile(file, newFileData);
 }
 
 export async function internationalize(folder) {
 
   for await (const file of getFiles(folder || './test/todoMVC/public/build/dev/')) {
-     if(!/\.js$/.test(file))continue;
+     if(!/\.js$/.test(file) || file.indexOf("i18n") >-1)continue;
+
      console.log("internationalize", file);
     try {
       let component = await import(file + "?=c" + new Date());

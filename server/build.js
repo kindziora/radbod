@@ -7,6 +7,7 @@ import { internationalize } from './translation.js';
 (async () => {
 
     await copyFiles(process.argv[2], {extension : "js"});
+    
     await buildSFC(process.argv[2]);
     
     await internationalize(process.argv[3]); 
