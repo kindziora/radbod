@@ -1,3 +1,3 @@
 export const settings = {
-   radbod_build: "/home/akindziora/Downloads/projekte/radbod/build"
+   radbod_build: "/home/akindziora/projekte/radbod/build/"
 }

@@ -1,11 +1,15 @@
 import path from 'path';
-import {_t} from './_t.js';
+import {i18n} from './_t.js';
+
 const __dirname = path.resolve();
 let base;
 let config;
 let dataHandler;
 let eventHandler;
 let getFile;
+let mergeDeep;
+let translations;
+let internationalize = new i18n();
 
 ( async ()=> {
       base = __dirname + "/test/todoMVC/public/build/dev/";
@@ -16,9 +20,21 @@ let getFile;
       dataHandler = dataHandler.dataHandler;
       eventHandler = await import(`${config.settings.radbod_build}/eventHandler.js`);
       eventHandler = eventHandler.eventHandler;
+      
+      mergeDeep = await import(__dirname + `/server/merge.js`);
+
+      mergeDeep = mergeDeep.mergeDeep;
 
       getFile = await import(__dirname + "/test/todoMVC/config/routes.js");
       getFile = getFile.getFile;
+
+      translations = await import(__dirname + '/test/todoMVC/public/build/dev/i18n/app_translations.js');
+      translations = translations.translations;
+
+     
+
+      internationalize.addTranslation(translations);
+
     
 })();
 
@@ -85,26 +101,18 @@ export const html_loader = asyncHandler(async function (req, res, next) {
     let count = countForData(page[f], 0);
     let met = { cnt: 0 };
 
+
     fetchData(page[f], (data) => {
     }, (stores) => {
         let renderedHTML = '';
 
         let storeData = stores.store.toArray();
-        let language  = "en_EN";
-      
-
-        if(page[f].translations){
-           let translations = page[f].translations(language || "en_EN");
-           console.log("translations", translations);
-        }
-
-        try {  
-
-            renderedHTML = eval(`(${page[f].views[f].toString()})`).apply(null, [{ value: "" }, ...storeData]);
+        let _t = (text,lang) => internationalize._t(text,lang);
+        
+        try {
+           renderedHTML = eval(`(${page[f].views[f].toString()})`).apply(null, [{ value: "" }, ...storeData]);
         } catch (e) {
-
             console.log(renderedHTML, e);
-
         }
 
         res.send(renderedHTML);

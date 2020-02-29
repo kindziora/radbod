@@ -3,8 +3,10 @@
     <h1>Hallo ${todos.name}</h1>
     <section class="todoapp">
         <todo-component data-name="/$items"></todo-component>
-    </section>
-    
+    </section> 
+    <input data-name="$home/name" />
+    <div data-name="$home/name" ></div>
+
     <footer class="info"> 
         <p>Double-click to edit a todo</p>
         <p>Written by <a href="http://twitter.com/lukeed05">Luke Edwards</a></p>
@@ -31,8 +33,8 @@
         interactions(){
             return { }
         },
-        translations(params){
-            return translations[params.language];
+        translations(language){
+            return translations[language];
         }
     }
 </script> 

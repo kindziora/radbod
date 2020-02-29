@@ -44,8 +44,6 @@ export class compileViews {
 
         for await (const file of getFiles(folder || './test/todoMVC/public/build/dev/')) {
 
-
-
             if (file.split(".")[1] !== "js") continue;
 
             console.log("BUILD VIEW: " + file);

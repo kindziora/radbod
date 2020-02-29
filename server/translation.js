@@ -3,6 +3,8 @@ const fetchTranslationCalls = /\${_t\(([\s\S]*?)\)/igm;
 
 import { getFiles } from './files.js';
 
+import {mergeDeep} from './merge.js';
+
 import { promises as fs } from 'fs';
 import defltYdx from 'yandex-translate-async';
 const htmlProperty = /"html":".*?",/gmi;
@@ -13,6 +15,33 @@ const yc = new YandexTranslate({
   apiKey:
     '<< YOUR YANDEX API KEY HERE >>'
 });
+
+/**
+ * 
+ * @param {*} folder 
+ */
+export async function loadAllTranslations(folder){
+let translations = {};
+  for await (const file of getFiles(folder || './test/todoMVC/src/')) {
+     if(/\.json$/.test(file) && file.indexOf("i18n") >-1){
+      let content = await fs.readFile(file, 'utf8');
+      let existingTranslation = JSON.parse(content);
+      
+      translations = mergeDeep(translations, existingTranslation);
+    }
+
+  }
+  
+  return translations;
+}
+
+export async function writeTranslationBundle(folder, bundleName) {
+ let translations = await loadAllTranslations(folder.replace("public/build/dev", "src"));
+ await fs.mkdir(folder+ "/i18n/", { recursive: true });
+
+ await fs.writeFile(folder+ "/i18n/" + bundleName, `export const translations = ${JSON.stringify(translations)}`);
+
+}
 
 export async function createFolderAndFiles(file) {
    
@@ -32,34 +61,6 @@ export async function createFolderAndFiles(file) {
 
 }
 
-/**
- * Performs a deep merge of `source` into `target`.
- * Mutates `target` only but not its objects and arrays.
- *
- * @author inspired by [jhildenbiddle](https://stackoverflow.com/a/48218209).
- */
-function mergeDeep(target, source) {
-  const isObject = (obj) => obj && typeof obj === 'object';
-
-  if (!isObject(target) || !isObject(source)) {
-    return source;
-  }
-
-  Object.keys(source).forEach(key => {
-    const targetValue = target[key];
-    const sourceValue = source[key];
-
-    if (Array.isArray(targetValue) && Array.isArray(sourceValue)) {
-      target[key] = targetValue.concat(sourceValue);
-    } else if (isObject(targetValue) && isObject(sourceValue)) {
-      target[key] = mergeDeep(Object.assign({}, targetValue), sourceValue);
-    } else {
-      target[key] = sourceValue;
-    }
-  });
-
-  return target;
-}
 
 async function writeToJSFile(file, content, enriched) {
   let strP = JSON.stringify({ html : enriched});
@@ -133,6 +134,8 @@ export async function internationalize(folder) {
     }
 
   }
+
+ await writeTranslationBundle(folder, "app_translations.js");
 
 }
 
