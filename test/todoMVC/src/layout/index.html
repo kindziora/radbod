@@ -1,7 +1,6 @@
-<comment_template language="js-template">
+<template language="js-template">
     <!DOCTYPE html>
     <html lang="${index.env.language}">
-        <head-component data-name="/$head"></head-component>
         <body>
             <!-- Google Tag Manager (noscript) -->
             <noscript>
@@ -11,14 +10,14 @@
             </noscript>
             <!-- End Google Tag Manager (noscript) -->
             <noscript>
-                <a href="${ index.config.host }${index.config.webserver_port}/">${
+                <a>${
                     _t('please enable your javascript...') }</a>
             </noscript>
 
             <progress class="progress loading is-info" data-name="progress"
                 value="0" max="100" style="width: 100%;"></progress>
 
-            <app class="section" id="section" style="display:none;"
+            <app class="section" id="section" style="display:block;"
                 data-defaultvalues="model">
                 ${index.html}
             </app>
@@ -26,7 +25,7 @@
         </body>
     </html>
 
-</comment_template>
+</template>
 
 
 <style language="scss">
@@ -34,18 +33,10 @@
 </style>
 
 <script language="js">
-    import {head} from "./component/head";
-    import {functions as f} from "./functions";
-
+ 
     export let index = {
-        components: {"head-component" : head},
-        data(params){
-            return this.createStore("index", {
-                js : f.getJS(),
-                html: f.getHTML(),
-                config : f.getConfig(),
-                env : f.getEnvironment()
-            })
+         data(params){
+             return {};
         },
         interactions(){
             return { }

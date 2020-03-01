@@ -31,11 +31,8 @@ let internationalize = new i18n();
       translations = await import(__dirname + '/test/todoMVC/public/build/dev/i18n/app_translations.js');
       translations = translations.translations;
 
-     
-
       internationalize.addTranslation(translations);
 
-    
 })();
 
 const asyncHandler = fn => (req, res, next) =>
@@ -97,20 +94,22 @@ export const html_loader = asyncHandler(async function (req, res, next) {
     console.log(base + "page/" + f + ".js");
 
     let page = await import(base + "page/" + f + ".js");
+    let layout  = await import(base + "layout/index.js");
 
     let count = countForData(page[f], 0);
     let met = { cnt: 0 };
-
 
     fetchData(page[f], (data) => {
     }, (stores) => {
         let renderedHTML = '';
 
-        let storeData = stores.store.toArray();
         let _t = (text,lang) => internationalize._t(text,lang);
-        
+        let storeData = stores.store.toArray();
         try {
-           renderedHTML = eval(`(${page[f].views[f].toString()})`).apply(null, [{ value: "" }, ...storeData]);
+           let pageHTML = eval(`(${page[f].views[f].toString()})`).apply(null, [{ value: "" }, ...storeData]);
+           let layoutStore = stores.createStore("index", {html : pageHTML});
+           renderedHTML = eval(`(${layout.index.views.index.toString()})`).apply(null, [{ value: "" }, layoutStore.data]);
+ 
         } catch (e) {
             console.log(renderedHTML, e);
         }

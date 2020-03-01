@@ -34,6 +34,7 @@ export class compileViews {
 
         const browser = await puppeteer.launch({
           //  headless: false,
+           // devtools: true,
             args: ["--disable-web-security"],
         });
         const page = await browser.newPage();
@@ -58,6 +59,7 @@ export class compileViews {
                 if (component.html || component.views) {
                     // Get the "viewport" of the page, as reported by the page.
                     const cmp = await page.evaluate((n, componentSerialized) => {
+ 
 
                         let component = JSON.parse(componentSerialized,
                             (k, v) => typeof v === "string" ?
@@ -85,7 +87,6 @@ export class compileViews {
                         views[n] = component.html;
 
                         let store = component.data ? component.data.call(buildApp.dataH) : {};
-
                         let compo = buildApp.createComponent(
                             n,
                             views,

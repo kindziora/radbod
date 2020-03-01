@@ -93,9 +93,9 @@ async function writeToJSFile(file, content, enriched) {
   }catch(e){
     console.log(e); 
   }
-  console.log(text);
+ 
   text = mergeDeep(text, existingTranslation);
-  console.log(text);
+ 
   await fs.mkdir(transFile.replace("src/", "public/build/dev/").replace(filename, ""), { recursive: true });
 
   await fs.writeFile(transFile.replace("src/", "public/build/dev/").replace(".json", ".js"), `export const translations = ${JSON.stringify(text)}`);
