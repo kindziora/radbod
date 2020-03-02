@@ -8,6 +8,9 @@ import {
     settings
 } from "../../config/env.js";
 
+import { promises as fs } from 'fs';
+
+
 let internationalize = new i18n();
 internationalize.addTranslation(translations);
 
@@ -69,7 +72,8 @@ export const html_loader = asyncHandler(async function (req, res, next) {
     console.log(settings.project_path + "public/build/dev/page/" + f + ".js");
 
     let page = await import(settings.project_path + "public/build/dev/page/" + f + ".js");
-    let layout = await import(settings.project_path + "public/build/dev/layout/index.js");
+    
+    let layout = await fs.readFile(settings.project_path + "src/layout/index.html", 'utf8');
 
     let count = countForData(page[f], 0);
     let met = { cnt: 0 };
@@ -82,8 +86,9 @@ export const html_loader = asyncHandler(async function (req, res, next) {
         let storeData = stores.store.toArray();
         try {
             let pageHTML = eval(`(${page[f].views[f].toString()})`).apply(null, [{ value: "" }, ...storeData]);
-            let layoutStore = stores.createStore("index", { html: pageHTML });
-            renderedHTML = eval(`(${layout.index.views.index.toString()})`).apply(null, [{ value: "" }, layoutStore.data]);
+            let layoutStore = stores.createStore("index", { html: pageHTML, env: {language :"en_EN"}, js : [], head: "" });
+
+            renderedHTML = eval("(( index )=>`" + layout + "`)").apply(null, [layoutStore.data]);
 
         } catch (e) {
             console.log(renderedHTML, e);
