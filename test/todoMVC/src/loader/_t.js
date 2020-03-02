@@ -1,5 +1,6 @@
-import {mergeDeep} from "/home/akindziora/projekte/radbod/server/merge.js";
  
+import {mergeDeep} from "../../config/env.js";
+
 export class i18n {
 
     constructor(){
