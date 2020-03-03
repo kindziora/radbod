@@ -1,1 +1,1 @@
-export const translations = {"en_EN":{"Hallo not FOUND":"Hallo not FOUND","Written by":"Written by","Luke Edwards":"Luke Edwards","Refactored by":"Refactored by","Aaron Muir Hamilton":"Aaron Muir Hamilton","Part of":"Part of","TodoMVC":"TodoMVC","rain":"pain"}}
+export const translations = {"en_EN":{"Hallo not FOUND":"Hallo not FOUND","Written by":"Written by","Luke Edwards":"Luke Edwards","Refactored by":"Refactored by","Aaron Muir Hamilton":"Aaron Muir Hamilton","Part of":"Part of","TodoMVC":"TodoMVC"}}

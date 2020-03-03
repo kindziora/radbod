@@ -15,7 +15,7 @@ async function run() {
   //process.argv[2] ? await import(process.argv[2]) : false;
   //let { data_loader } = process.argv[3] ? await import(process.argv[3]) : false;
 
-  let statics = (process.argv[5] || "").split(';');
+  let statics = (process.argv[5] || "test/todoMVC/public/build/dev").split(';');
   for (let s of statics)
     app.use(express.static(path.join(__dirname, s)));
 

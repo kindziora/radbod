@@ -27,41 +27,54 @@ const enviroment = {
     }
 };
 
-export const html_loader = asyncHandler(async function (req, res, next) {
+function fetchData(component, cb, allready, total, meta, dataH) {
 
-
-    function fetchData(component, cb, allready, total, meta) {
-
-        let callback = function (meta) {
-            return (data) => {
-                cb(data);
-                meta.cnt++;
-                if (meta.cnt >= total) {
-                    allready(dataH);
-                }
-            }
-        };
-
-        let result = component.data.call(dataH, callback(meta), {});
-
-        if (typeof result.then !== "function") {
+    let callback = function (meta) {
+        return (data) => {
+            cb(data);
             meta.cnt++;
+            meta.loaded.push(component);
+            if (meta.cnt >= total) {
+                allready(dataH, meta);
+            }
         }
+    };
 
-        for (let i in component.components) {
-            fetchData(component.components[i], cb, allready, total, meta);
-        }
+    let result = component.data.call(dataH, callback(meta), {});
 
-        if (meta.cnt >= total) {
-            allready(dataH);
-        }
+    if (typeof result.then !== "function") {
+        meta.cnt++;
+        meta.loaded.push(component);
     }
 
-    function countForData(component, cnt) {
-        for (let i in component.components)
-            cnt = countForData(component.components[i], cnt);
-        return ++cnt;
+    for (let i in component.components) {
+        fetchData(component.components[i], cb, allready, total, meta, dataH);
     }
+
+    if (meta.cnt >= total) {
+        allready(dataH, meta);
+    }
+}
+
+function countForData(component, cnt) {
+    for (let i in component.components)
+        cnt = countForData(component.components[i], cnt);
+    return ++cnt;
+}
+
+function getModules(meta){
+    let mod = (e)=> `<script type="module" src="${e.path}"></script>`;
+    meta.loaded.push({path:"/app.js"});
+    return meta.loaded.map(mod).join("\n\r");
+}
+
+ 
+
+function getCSS(meta){
+    
+}
+
+export const html_loader = asyncHandler(async function (req, res, next) {
 
     let dataH = new dataHandler(new eventHandler(), enviroment);
 
@@ -76,17 +89,31 @@ export const html_loader = asyncHandler(async function (req, res, next) {
     let layout = await fs.readFile(settings.project_path + "src/layout/index.html", 'utf8');
 
     let count = countForData(page[f], 0);
-    let met = { cnt: 0 };
+    let met = { cnt: 0, loaded: [] };
+
+    let RADBODINLINE = await fs.readFile(settings.radbod_build.replace("build", "dist") + "/radbod.js", 'utf8');
 
     fetchData(page[f], (data) => {
-    }, (stores) => {
+
+        console.log(data);
+
+    }, (stores, meta) => { 
+
         let renderedHTML = '';
 
         let _t = (text, lang) => internationalize._t(text, lang);
         let storeData = stores.store.toArray();
         try {
             let pageHTML = eval(`(${page[f].views[f].toString()})`).apply(null, [{ value: "" }, ...storeData]);
-            let layoutStore = stores.createStore("index", { html: pageHTML, env: {language :"en_EN"}, js : [], head: "" });
+
+            let layoutStore = stores.createStore("index", {
+                 html: pageHTML,
+                 js : getModules(meta),
+                 css : getCSS(meta),
+                 env: {language :"en_EN"},
+                 head: "",
+                 radbod : RADBODINLINE
+            });
 
             renderedHTML = eval("(( index )=>`" + layout + "`)").apply(null, [layoutStore.data]);
 
@@ -98,6 +125,6 @@ export const html_loader = asyncHandler(async function (req, res, next) {
 
         next();
 
-    }, count, met);
+    }, count, met, dataH);
 
 });

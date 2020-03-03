@@ -67,21 +67,25 @@ export async function buildFile(file, opts) {
         console.log("no template tag in single file component: ", file)
         return;
     };
-    
-    let { html, js, css } = await extract(content);
     let slang = Array.from(content.matchAll(scriptLang))[0][1];
+
+    let fileBuilt = await getBuildLocation(file);
+    fileBuilt = fileBuilt.replace("html", slang);
+
+    let { html, js, css } = await extract(content);
     let strP = JSON.stringify({
         html: html.replace(/\s/ig, " ").replace(/  +/ig, " ").replace(/'/g, '"').trim(),
-        style: css.replace(/\s/ig, " ").replace(/  +/ig, " ").replace(/'/g, '"').trim()
+        style: css.replace(/\s/ig, " ").replace(/  +/ig, " ").replace(/'/g, '"').trim(),
+        path: fileBuilt.split(options.buildPath)[1]
     });
     let inject = `
-        ${strP.substring(1, strP.length-1)},`;
+        ${strP.substring(1, strP.length-1)},
+        `;
 
     let replacedImports = await replaceImports(js, slang);
     let newFile = await injectCode(replacedImports, inject);
 
-    let fileBuilt = await getBuildLocation(file);
-    fileBuilt = fileBuilt.replace("html", slang);
+  
 
     let bpath = fileBuilt.split("/");
     bpath.pop();
