@@ -2,4 +2,4 @@
 coverage
 node_modules
 data
-test/todoMVC/config/env.js
+./test/todoMVC/config/env.js
