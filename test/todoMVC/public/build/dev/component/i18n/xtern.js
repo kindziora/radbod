@@ -1,1 +1,0 @@
-export const translations = {"en_EN":{"externe daten":"externe daten","xtern":"xtern"}}
