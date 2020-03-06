@@ -20,7 +20,7 @@ export class kelement {
                 let stores = (_e = (_d = (_c = this.dom.store) === null || _c === void 0 ? void 0 : _c.dataH) === null || _d === void 0 ? void 0 : _d.store.keys()) === null || _e === void 0 ? void 0 : _e.join(',');
                 console.log('(change, ' + stores + ' ) => `' + ((_f = this.$el.innerHTML) === null || _f === void 0 ? void 0 : _f.trim()) + '`');
                 if (this.$el.innerHTML.trim() !== "")
-                    this.setTemplate(eval('(change, ' + stores + ' ) => `' + ((_g = this.$el.innerHTML) === null || _g === void 0 ? void 0 : _g.trim()) + '`'));
+                    this.setTemplate(eval('(change, ' + stores + ') => `' + ((_g = this.$el.innerHTML) === null || _g === void 0 ? void 0 : _g.trim()) + '`'));
             }
         }
     }
