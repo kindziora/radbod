@@ -107,6 +107,7 @@ export class elist extends kelement {
             for (let e in (_d = (_c = this.dom.store) === null || _c === void 0 ? void 0 : _c.dataH) === null || _d === void 0 ? void 0 : _d.store) {
                 params.push((_f = (_e = this.dom.store) === null || _e === void 0 ? void 0 : _e.dataH) === null || _f === void 0 ? void 0 : _f.store[e].data);
             }
+            params.push(this.dom._t);
             return this.template.apply(this, params);
         }
         else {

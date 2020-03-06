@@ -13,6 +13,7 @@ import { select } from './dom/list/select.js';
 import { textarea } from './dom/element/textarea.js';
 import { component } from "./component.js";
 import { store, op } from './store.js';
+import { i18n } from './i18n.js';
 
 
 export class dom {
@@ -35,11 +36,16 @@ export class dom {
     public store: store;
     public $el: HTMLElement;
 
-    constructor(area: HTMLElement, types: { [index: string]: any }, s: store, views?: { [index: string]: Function }) {
+    public _t: Function;
+
+
+    constructor(area: HTMLElement, types: { [index: string]: any }, s: store, views?: { [index: string]: Function }, _t: Function) {
 
         this._area = area as HTMLElement;
         this.$el = this._area;
         this.views = views;
+        this._t = _t;
+
         this.setId();
         if (area.hasAttribute('data-name')) {
             this.name = area.getAttribute('data-name');
@@ -67,6 +73,8 @@ export class dom {
         for (let e in this.store.dataH?.store) {
             params.push(this.store.dataH?.store[e].data);
         }
+
+        params.push(this._t);
 
         this._area.innerHTML = this.template.apply(this, params);
         this.loadElements();
@@ -152,12 +160,17 @@ export class dom {
         let storeArray = this.store.dataH?.store.toArray();
         
         let stores = this.store.dataH?.store.keys();
-        /*
-        window.customElements.define(name, class extends HTMLDivElement {});
-        const shadowRoot = $el.shadowRoot || $el.attachShadow({ mode: 'open' });
-*/
-        if (componentObject?.views?.[name]) {
-            $el.innerHTML = componentObject.views[name].apply(s, [{ value: "" }, ...storeArray]);
+
+        let internationalize = new i18n();
+        internationalize.addTranslation(componentObject.translations? componentObject.translations():{});
+
+        let _t = (text:string, lang?:string) => internationalize._t(text, lang);
+
+
+        if (componentObject?.views?.[name]) { 
+    
+        
+            $el.innerHTML = componentObject.views[name].apply(s, [{ value: "" }, ...storeArray, _t ]);
         } else {
             $el.innerHTML = componentObject.html.trim();
            // shadowRoot.innerHTML = componentObject.html.trim();
@@ -165,14 +178,14 @@ export class dom {
         
         console.log(s, componentObject.views, name, componentObject);
 
-        let ddom = new dom($el, componentObject.components || {}, s, componentObject.views);
+        let ddom = new dom($el, componentObject.components || {}, s, componentObject.views, _t);
         ddom.name = name;
         $el.setAttribute("data-name", name);
         
         let newcomponent = new component(ddom, s, componentObject.interactions());
 
         if (typeof componentObject?.views?.[name] !== "function") {
-            newcomponent.dom.setTemplate(eval('(change,' + stores?.join(',') + ')=>`' + newcomponent.dom._area.innerHTML + '`'));
+            newcomponent.dom.setTemplate(eval('(change,' + stores?.join(',') + ',_t)=>`' + newcomponent.dom._area.innerHTML + '`'));
         } else {
             newcomponent.dom.setTemplate(componentObject?.views[name]);
         }
@@ -191,7 +204,7 @@ export class dom {
 
         return this.elementTypes[fieldTypeName].prototype === "component" ?
             this.createComponent($el, fieldTypeName) :
-            new this.elementTypes[fieldTypeName]($el, this._area, currentIndex, this, this.views);
+            new this.elementTypes[fieldTypeName]($el, this._area, currentIndex, this, this.views, this._t);
     }
     /**
      * 

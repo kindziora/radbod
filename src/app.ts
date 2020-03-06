@@ -3,6 +3,7 @@ import { dom } from './dom.js';
 import { eventHandler } from './eventHandler.js';
 import { dataHandler } from './dataHandler.js';
 import { store } from './store.js';
+import { i18n } from './i18n.js';
 
 export class app {
     public dataH: dataHandler;
@@ -24,7 +25,7 @@ export class app {
         * @param actions 
         * @param injections 
         */
-    createComponent(name: string, views: { [index: string]: string }, data: Object | store, actions: object, injections: object = {}) {
+    createComponent(name: string, views: { [index: string]: string }, data: Object | store, actions: object, injections: object = {}, translations : object = {}) {
         let s;
         
         if (data instanceof store) {
@@ -35,14 +36,21 @@ export class app {
        
         let el = document.createElement("component");
 
+        let storeArray = this.dataH?.store.toArray();
+        
+        let internationalize = new i18n();
+        internationalize.addTranslation(translations);
+
+        let _t = (text:string, lang?:string) => internationalize._t(text, lang);
+
         if (typeof views?.[name] === "function") {
-            el.innerHTML = views?.[name](data);
+
+            el.innerHTML = views?.[name]?.apply(s, [{ value: "" }, ...storeArray, _t ]);
         } else {
             el.innerHTML = views?.[name];
-        }
-        //console.log(s, views);
+        } 
 
-        let ddom = new dom(el, injections, s, views);
+        let ddom = new dom(el, injections, s, views, _t);
         ddom.name = name;
         el.setAttribute("data-name", name);
 
@@ -50,7 +58,7 @@ export class app {
         
         if (typeof views?.[name] !== "function") { 
             let stores = this.dataH?.store.keys()?.join(',');
-            this.components[name].dom.setTemplate(eval('(change,' + stores + ')=>`' + this.components[name].dom._area.innerHTML + '`'));
+            this.components[name].dom.setTemplate(eval('(change,' + stores + ', _t)=>`' + this.components[name].dom._area.innerHTML + '`'));
         } else {
             this.components[name].dom.setTemplate(views?.[name]);
         }

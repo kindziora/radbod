@@ -117,6 +117,8 @@ export class elist extends kelement {
             for (let e in this.dom.store?.dataH?.store) {
                 params.push(this.dom.store?.dataH?.store[e].data);
             }
+            params.push(this.dom._t);
+
             return this.template.apply(this, params);
         } else {
             return `<div data-type="list-item" data-index="${pointer}" data-name="${change.path}">${change.value}</div>`;
