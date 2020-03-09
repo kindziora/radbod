@@ -30,13 +30,12 @@ export class app {
      * @param callback 
      */
     mountComponent(name: string, componentObject: Object, callback: Function) {
-
-
+        
         console.log("COMPOS", this.loadStores(componentObject, (stores, data)=>{
             
             componentObject.views[name] = this.replaceFunctionHeader(componentObject?.views[name].toString(), ["change", ...stores.store.keys(),"_t"]);
             componentObject.views[name] = eval(`(${componentObject.views[name]})`);
-            
+
             let compo = this.createComponent(name, componentObject.views, componentObject.data.call(this.dataH), componentObject.interactions(), componentObject.components, componentObject.translations());
 
             callback(stores, data, compo);

@@ -169,10 +169,15 @@ export class dom {
 
         if (componentObject?.views?.[name]) { 
     
-        
             $el.innerHTML = componentObject.views[name].apply(s, [{ value: "" }, ...storeArray, _t ]);
         } else {
-            $el.innerHTML = componentObject.html.trim();
+            if(!componentObject.html){
+                name = name.split("-")[0];
+                $el.innerHTML = componentObject.views[name].apply(s, [{ value: "" }, ...storeArray, _t ]);
+            }else{
+                $el.innerHTML = componentObject.html.trim();
+            }
+
            // shadowRoot.innerHTML = componentObject.html.trim();
         }
         
