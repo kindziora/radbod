@@ -96,7 +96,7 @@ export class app {
             this.fetchData(component.components[i], cb, allready, total, meta);
         }
         if (meta.cnt >= total) {
-            allready(this.store.dataH, meta);
+            allready(this.dataH, meta);
         }
     }
     countForData(component, cnt) {

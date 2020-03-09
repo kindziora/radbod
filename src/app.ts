@@ -125,7 +125,7 @@ export class app {
         }
 
         if (meta.cnt >= total) {
-            allready(this.store.dataH, meta);
+            allready(this.dataH, meta);
         }
     }
 
