@@ -21,10 +21,12 @@ export class app {
     createComponent(name: string, componentObject: Object, callback: Function) {
 
         console.log("COMPOS", this.loadStores(componentObject, (stores, data)=>{
-            callback(stores, data);
+            
+            let compo = this.createComponent(name, componentObject.views, componentObject.data(), componentObject.interactions(), componentObject.components, componentObject.translations());
+
+            callback(stores, data, compo);
         }));
 
-        return this.createComponent(name, componentObject.views, componentObject.data(), componentObject.interactions(), componentObject.components, componentObject.translations());
     }
 
     /** 
