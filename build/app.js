@@ -10,7 +10,13 @@ export class app {
         this.environment = environment;
         this.dataH = new dataHandler(new eventHandler(), environment);
     }
-    createComponent(name, componentObject, callback) {
+    /**
+     *
+     * @param name
+     * @param componentObject
+     * @param callback
+     */
+    mountComponent(name, componentObject, callback) {
         console.log("COMPOS", this.loadStores(componentObject, (stores, data) => {
             let compo = this.createComponent(name, componentObject.views, componentObject.data.call(this.dataH), componentObject.interactions(), componentObject.components, componentObject.translations());
             callback(stores, data, compo);

@@ -17,8 +17,13 @@ export class app {
         this.dataH = new dataHandler(new eventHandler(), environment);
 
     }
-
-    createComponent(name: string, componentObject: Object, callback: Function) {
+    /**
+     * 
+     * @param name 
+     * @param componentObject 
+     * @param callback 
+     */
+    mountComponent(name: string, componentObject: Object, callback: Function) {
 
         console.log("COMPOS", this.loadStores(componentObject, (stores, data)=>{
             
