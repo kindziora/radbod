@@ -6,7 +6,7 @@ export class store {
 
     private _data: { [index: string]: Object } = {};
     public events: eventHandler | undefined;
-    private dataH: dataHandler | undefined;
+    public dataH: dataHandler | undefined;
     public component: string;
     public name: string;
     private patchQueue: Array<op> = [];

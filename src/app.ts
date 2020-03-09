@@ -56,6 +56,8 @@ export class app {
 
         this.components[name] = new component(ddom, s, actions);
         
+        console.log("COMPOS", this.components[name].loadStores());
+
         if (typeof views?.[name] !== "function") { 
             let stores = this.dataH?.store.keys()?.join(',');
             this.components[name].dom.setTemplate(eval('(change,' + stores + ', _t)=>`' + this.components[name].dom._area.innerHTML + '`'));
