@@ -12,7 +12,7 @@ export class app {
     }
     createComponent(name, componentObject, callback) {
         console.log("COMPOS", this.loadStores(componentObject, (stores, data) => {
-            let compo = this.createComponent(name, componentObject.views, componentObject.data(), componentObject.interactions(), componentObject.components, componentObject.translations());
+            let compo = this.createComponent(name, componentObject.views, componentObject.data.call(this.dataH), componentObject.interactions(), componentObject.components, componentObject.translations());
             callback(stores, data, compo);
         }));
     }
