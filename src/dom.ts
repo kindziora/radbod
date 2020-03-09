@@ -152,9 +152,11 @@ export class dom {
         } else {
             
             s = componentObject.data.call(this.store.dataH);
+
             if (s instanceof store) {
+
             }else{
-               // s = this.store.dataH.createStore(name, s);
+                s = this.store.dataH.createStore(name, s);
             }
         }
         let storeArray = this.store.dataH?.store.toArray();
