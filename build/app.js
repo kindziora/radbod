@@ -87,7 +87,7 @@ export class app {
                 }
             };
         };
-        let result = component.data.call(this.store.dataH, callback(meta, this.store.dataH), {});
+        let result = component.data.call(this.dataH, callback(meta, this.dataH), {});
         if (typeof result.then !== "function") {
             meta.cnt++;
             meta.loaded.push(component);
