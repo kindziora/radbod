@@ -11,7 +11,7 @@ export class app {
         this.dataH = new dataHandler(new eventHandler(), environment);
     }
     createComponent(name, componentObject) {
-        console.log("COMPOS", this.loadStores());
+        console.log("COMPOS", this.loadStores(componentObject));
         this.createComponent(name, componentObject.views, componentObject.data(), componentObject.interactions(), componentObject.components, componentObject.translations());
     }
     /**

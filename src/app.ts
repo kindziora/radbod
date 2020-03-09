@@ -20,7 +20,7 @@ export class app {
 
     createComponent(name: string, componentObject: Object) {
 
-        console.log("COMPOS", this.loadStores());
+        console.log("COMPOS", this.loadStores(componentObject));
 
         this.createComponent(name, componentObject.views, componentObject.data(), componentObject.interactions(), componentObject.components, componentObject.translations());
 
