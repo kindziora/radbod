@@ -88,7 +88,7 @@ export class app {
             };
         };
         let result = component.data.call(this.dataH, callback(meta, this.dataH), {});
-        if (result && typeof result.then !== "function") {
+        if (!result || typeof result.then !== "function") {
             meta.cnt++;
             meta.loaded.push(component);
         }
