@@ -42,6 +42,7 @@ export class app {
         ddom.name = name;
         el.setAttribute("data-name", name);
         this.components[name] = new component(ddom, s, actions);
+        console.log("COMPOS", this.components[name].loadStores());
         if (typeof ((_f = views) === null || _f === void 0 ? void 0 : _f[name]) !== "function") {
             let stores = (_h = (_g = this.dataH) === null || _g === void 0 ? void 0 : _g.store.keys()) === null || _h === void 0 ? void 0 : _h.join(',');
             this.components[name].dom.setTemplate(eval('(change,' + stores + ', _t)=>`' + this.components[name].dom._area.innerHTML + '`'));

@@ -70,4 +70,35 @@ export class component {
         this.dom.render(changes);
         this.bindEvents();
     }
+    fetchData(component, cb, allready, total, meta) {
+        let callback = function (meta, dataH) {
+            return (data) => {
+                cb(data);
+                meta.cnt++;
+                meta.loaded.push(component);
+                if (meta.cnt >= total) {
+                    allready(dataH, meta);
+                }
+            };
+        };
+        let result = component.data.call(this.store.dataH, callback(meta, this.store.dataH), {});
+        if (typeof result.then !== "function") {
+            meta.cnt++;
+            meta.loaded.push(component);
+        }
+        for (let i in component.components) {
+            fetchData(component.components[i], cb, allready, total, meta);
+        }
+        if (meta.cnt >= total) {
+            allready(this.store.dataH, meta);
+        }
+    }
+    countForData(component, cnt) {
+        for (let i in component.components)
+            cnt = this.countForData(component.components[i], cnt);
+        return ++cnt;
+    }
+    loadStores() {
+        return this.dom.elementTypes;
+    }
 }
