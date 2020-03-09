@@ -10,6 +10,10 @@ export class app {
         this.environment = environment;
         this.dataH = new dataHandler(new eventHandler(), environment);
     }
+    createComponent(name, componentObject) {
+        console.log("COMPOS", this.loadStores());
+        this.createComponent(name, componentObject.views, componentObject.data(), componentObject.interactions(), componentObject.components, componentObject.translations());
+    }
     /**
         *
         * @param name
@@ -42,7 +46,6 @@ export class app {
         ddom.name = name;
         el.setAttribute("data-name", name);
         this.components[name] = new component(ddom, s, actions);
-        console.log("COMPOS", this.components[name].loadStores());
         if (typeof ((_f = views) === null || _f === void 0 ? void 0 : _f[name]) !== "function") {
             let stores = (_h = (_g = this.dataH) === null || _g === void 0 ? void 0 : _g.store.keys()) === null || _h === void 0 ? void 0 : _h.join(',');
             this.components[name].dom.setTemplate(eval('(change,' + stores + ', _t)=>`' + this.components[name].dom._area.innerHTML + '`'));
@@ -50,7 +53,6 @@ export class app {
         else {
             this.components[name].dom.setTemplate((_j = views) === null || _j === void 0 ? void 0 : _j[name]);
         }
-        return this.components[name];
     }
     /**
      *
@@ -64,5 +66,39 @@ export class app {
      * @param url
      */
     render(url) {
+    }
+    fetchData(component, cb, allready, total, meta) {
+        let callback = function (meta, dataH) {
+            return (data) => {
+                cb(data);
+                meta.cnt++;
+                meta.loaded.push(component);
+                if (meta.cnt >= total) {
+                    allready(dataH, meta);
+                }
+            };
+        };
+        let result = component.data.call(this.store.dataH, callback(meta, this.store.dataH), {});
+        if (typeof result.then !== "function") {
+            meta.cnt++;
+            meta.loaded.push(component);
+        }
+        for (let i in component.components) {
+            this.fetchData(component.components[i], cb, allready, total, meta);
+        }
+        if (meta.cnt >= total) {
+            allready(this.store.dataH, meta);
+        }
+    }
+    countForData(component, cnt) {
+        for (let i in component.components)
+            cnt = this.countForData(component.components[i], cnt);
+        return ++cnt;
+    }
+    loadStores(componentObject, cb) {
+        let count = this.countForData(componentObject, 0);
+        let met = { cnt: 0, loaded: [] };
+        this.fetchData(componentObject, (data) => {
+        }, cb, count, met, this.dataH);
     }
 }
