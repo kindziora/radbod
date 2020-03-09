@@ -10,9 +10,11 @@ export class app {
         this.environment = environment;
         this.dataH = new dataHandler(new eventHandler(), environment);
     }
-    createComponent(name, componentObject) {
-        console.log("COMPOS", this.loadStores(componentObject));
-        this.createComponent(name, componentObject.views, componentObject.data(), componentObject.interactions(), componentObject.components, componentObject.translations());
+    createComponent(name, componentObject, callback) {
+        console.log("COMPOS", this.loadStores(componentObject, (stores, data) => {
+            callback(stores, data);
+        }));
+        return this.createComponent(name, componentObject.views, componentObject.data(), componentObject.interactions(), componentObject.components, componentObject.translations());
     }
     /**
         *
@@ -53,6 +55,7 @@ export class app {
         else {
             this.components[name].dom.setTemplate((_j = views) === null || _j === void 0 ? void 0 : _j[name]);
         }
+        return this.components[name];
     }
     /**
      *

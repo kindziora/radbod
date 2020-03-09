@@ -18,12 +18,13 @@ export class app {
 
     }
 
-    createComponent(name: string, componentObject: Object) {
+    createComponent(name: string, componentObject: Object, callback: Function) {
 
-        console.log("COMPOS", this.loadStores(componentObject));
+        console.log("COMPOS", this.loadStores(componentObject, (stores, data)=>{
+            callback(stores, data);
+        }));
 
-        this.createComponent(name, componentObject.views, componentObject.data(), componentObject.interactions(), componentObject.components, componentObject.translations());
-
+        return this.createComponent(name, componentObject.views, componentObject.data(), componentObject.interactions(), componentObject.components, componentObject.translations());
     }
 
     /** 
@@ -72,7 +73,7 @@ export class app {
             this.components[name].dom.setTemplate(views?.[name]);
         }
 
-         
+         return this.components[name];
     }
 
     /**
