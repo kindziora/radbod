@@ -143,8 +143,8 @@ export class dom {
     createComponent($el: Element, fieldTypeName: string, data?: Object | store) {
         let s;
         let componentObject: Object = this.elementTypes[fieldTypeName];
-        let name = fieldTypeName;
-
+        let name = fieldTypeName.split("-")[0];
+        
         if (data instanceof store) {
             s = data;
         } else if (typeof data !== "undefined") {
@@ -173,8 +173,7 @@ export class dom {
     
             $el.innerHTML = componentObject.views[name].apply(s, [{ value: "" }, ...storeArray, _t ]);
         } else {
-            if(!componentObject.html){
-                name = name.split("-")[0];
+            if(!componentObject.html){ 
                 $el.innerHTML = componentObject.views[name].apply(s, [{ value: "" }, ...storeArray, _t ]);
             }else{
                 $el.innerHTML = componentObject.html.trim();

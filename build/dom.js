@@ -118,7 +118,7 @@ export class dom {
         var _a, _b, _c, _d, _e, _f, _g, _h;
         let s;
         let componentObject = this.elementTypes[fieldTypeName];
-        let name = fieldTypeName;
+        let name = fieldTypeName.split("-")[0];
         if (data instanceof store) {
             s = data;
         }
@@ -143,7 +143,6 @@ export class dom {
         }
         else {
             if (!componentObject.html) {
-                name = name.split("-")[0];
                 $el.innerHTML = componentObject.views[name].apply(s, [{ value: "" }, ...storeArray, _t]);
             }
             else {
