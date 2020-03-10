@@ -96,11 +96,12 @@ export class app {
             meta.cnt++;
             meta.loaded.push(component);
         }
-        for (let i in component.components) {
-            this.fetchData(component.components[i], cb, allready, total, meta);
-        }
         if (meta.cnt >= total) {
             allready(this.dataH, meta);
+            return;
+        }
+        for (let i in component.components) {
+            this.fetchData(component.components[i], cb, allready, total, meta);
         }
     }
     countForData(component, cnt) {

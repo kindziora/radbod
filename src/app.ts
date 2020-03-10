@@ -126,13 +126,16 @@ export class app {
             meta.loaded.push(component);
         }
 
+        if (meta.cnt >= total) {
+            allready(this.dataH, meta);
+            return;
+        }
+
         for (let i in component.components) {
             this.fetchData(component.components[i], cb, allready, total, meta);
         }
 
-        if (meta.cnt >= total) {
-            allready(this.dataH, meta);
-        }
+      
     }
 
     private countForData(component: object, cnt: number) {
