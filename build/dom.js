@@ -46,15 +46,11 @@ export class dom {
      * @param data
      */
     render(data) {
-        var _a, _b;
+        var _a;
         this.element = {};
         this.elementByName = {};
-        let params = [data];
-        for (let e in (_a = this.store.dataH) === null || _a === void 0 ? void 0 : _a.store) {
-            params.push((_b = this.store.dataH) === null || _b === void 0 ? void 0 : _b.store[e].data);
-        }
-        params.push(this._t);
-        this._area.innerHTML = this.template.apply(this, params);
+        let storeObject = (_a = this.store.dataH) === null || _a === void 0 ? void 0 : _a.store.toObject();
+        this._area.innerHTML = this.template.call(this, Object.assign(Object.assign({ change: data }, storeObject), { _t: this._t }));
         this.loadElements();
     }
     /**
@@ -115,7 +111,7 @@ export class dom {
      * @param data
      */
     createComponent($el, fieldTypeName, data) {
-        var _a, _b, _c, _d, _e, _f, _g, _h;
+        var _a, _b, _c, _d, _e, _f, _g;
         let s;
         let componentObject = this.elementTypes[fieldTypeName];
         let name = fieldTypeName.split("-")[0];
@@ -133,17 +129,17 @@ export class dom {
                 s = this.store.dataH.createStore(name, s || {});
             }
         }
-        let storeArray = (_a = this.store.dataH) === null || _a === void 0 ? void 0 : _a.store.toArray();
-        let stores = (_b = this.store.dataH) === null || _b === void 0 ? void 0 : _b.store.keys();
+        let storeObject = (_a = this.store.dataH) === null || _a === void 0 ? void 0 : _a.store.toObject();
+        let args = (_b = this.store.dataH) === null || _b === void 0 ? void 0 : _b.store.keys();
         let internationalize = new i18n();
         internationalize.addTranslation(componentObject.translations ? componentObject.translations() : {});
         let _t = (text, lang) => internationalize._t(text, lang);
         if ((_d = (_c = componentObject) === null || _c === void 0 ? void 0 : _c.views) === null || _d === void 0 ? void 0 : _d[name]) {
-            $el.innerHTML = componentObject.views[name].apply(s, [{ value: "" }, ...storeArray, _t]);
+            $el.innerHTML = componentObject.views[name].call(s, Object.assign(Object.assign({ change: { value: "" } }, storeObject), { _t }));
         }
         else {
             if (!componentObject.html) {
-                $el.innerHTML = componentObject.views[name].apply(s, [{ value: "" }, ...storeArray, _t]);
+                $el.innerHTML = componentObject.views[name].call(s, Object.assign(Object.assign({ change: { value: "" } }, storeObject), { _t }));
             }
             else {
                 $el.innerHTML = componentObject.html.trim();
@@ -156,10 +152,10 @@ export class dom {
         $el.setAttribute("data-name", name);
         let newcomponent = new component(ddom, s, componentObject.interactions());
         if (typeof ((_f = (_e = componentObject) === null || _e === void 0 ? void 0 : _e.views) === null || _f === void 0 ? void 0 : _f[name]) !== "function") {
-            newcomponent.dom.setTemplate(eval('(change,' + ((_g = stores) === null || _g === void 0 ? void 0 : _g.join(',')) + ',_t)=>`' + newcomponent.dom._area.innerHTML + '`'));
+            newcomponent.dom.setTemplate(eval('(args)=> { let {change, ' + args + ', _t} = args; return `' + newcomponent.dom._area.innerHTML + '`}'));
         }
         else {
-            newcomponent.dom.setTemplate((_h = componentObject) === null || _h === void 0 ? void 0 : _h.views[name]);
+            newcomponent.dom.setTemplate((_g = componentObject) === null || _g === void 0 ? void 0 : _g.views[name]);
         }
         return newcomponent;
     }

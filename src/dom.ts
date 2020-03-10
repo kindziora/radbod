@@ -69,14 +69,8 @@ export class dom {
         this.element = {};
         this.elementByName = {};
 
-        let params = [data];
-        for (let e in this.store.dataH?.store) {
-            params.push(this.store.dataH?.store[e].data);
-        }
-
-        params.push(this._t);
-
-        this._area.innerHTML = this.template.apply(this, params);
+        let storeObject = this.store.dataH?.store.toObject();  
+        this._area.innerHTML = this.template.call(this, {change: data, ...storeObject, _t: this._t});
         this.loadElements();
     }
 
@@ -159,9 +153,9 @@ export class dom {
                 s = this.store.dataH.createStore(name, s ||{});
             }
         }
-        let storeArray = this.store.dataH?.store.toArray();
+        let storeObject = this.store.dataH?.store.toObject();
         
-        let stores = this.store.dataH?.store.keys();
+        let args = this.store.dataH?.store.keys();
 
         let internationalize = new i18n();
         internationalize.addTranslation(componentObject.translations? componentObject.translations():{});
@@ -171,10 +165,10 @@ export class dom {
 
         if (componentObject?.views?.[name]) { 
     
-            $el.innerHTML = componentObject.views[name].apply(s, [{ value: "" }, ...storeArray, _t ]);
+            $el.innerHTML = componentObject.views[name].call(s, {change:{ value: "" }, ...storeObject, _t });
         } else {
             if(!componentObject.html){ 
-                $el.innerHTML = componentObject.views[name].apply(s, [{ value: "" }, ...storeArray, _t ]);
+                $el.innerHTML = componentObject.views[name].call(s, {change:{ value: "" }, ...storeObject, _t });
             }else{
                 $el.innerHTML = componentObject.html.trim();
             }
@@ -190,8 +184,8 @@ export class dom {
         
         let newcomponent = new component(ddom, s, componentObject.interactions());
 
-        if (typeof componentObject?.views?.[name] !== "function") {
-            newcomponent.dom.setTemplate(eval('(change,' + stores?.join(',') + ',_t)=>`' + newcomponent.dom._area.innerHTML + '`'));
+        if (typeof componentObject?.views?.[name] !== "function") { 
+            newcomponent.dom.setTemplate(eval('(args)=> { let {change, ' + args +', _t} = args; return `' + newcomponent.dom._area.innerHTML + '`}'));
         } else {
             newcomponent.dom.setTemplate(componentObject?.views[name]);
         }

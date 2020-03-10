@@ -32,10 +32,7 @@ export class app {
     mountComponent(name: string, componentObject: Object, callback: Function) {
         
         console.log("COMPOS", this.loadStores(componentObject, (stores, data)=>{
-            
-          //  componentObject.views[name] = this.replaceFunctionHeader(componentObject?.views[name].toString(), ["change", ...stores.store.keys(),"_t"]);
-          //  componentObject.views[name] = eval(`${componentObject.views[name]}`);
-
+        
             let compo = this.createComponent(name, componentObject.views, componentObject.data.call(this.dataH), componentObject.interactions(), componentObject.components, componentObject.translations());
 
             callback(stores, data, compo);
@@ -62,7 +59,7 @@ export class app {
 
         let el = document.createElement("component");
 
-        let storeArray = this.dataH?.store.toArray();
+        let storeObject = this.dataH?.store.toObject();
 
         let internationalize = new i18n();
         internationalize.addTranslation(translations);
@@ -71,7 +68,7 @@ export class app {
 
         if (typeof views?.[name] === "function") {
 
-            el.innerHTML = views?.[name]?.apply(s, [{ value: "" }, ...storeArray, _t]);
+            el.innerHTML = views?.[name]?.call(s, {change:{ value: "" }, ...storeObject, _t});
         } else {
             el.innerHTML = views?.[name];
         }
@@ -83,8 +80,8 @@ export class app {
         this.components[name] = new component(ddom, s, actions);
 
         if (typeof views?.[name] !== "function") {
-            let stores = this.dataH?.store.keys()?.join(',');
-            this.components[name].dom.setTemplate(eval('(change,' + stores + ', _t)=>`' + this.components[name].dom._area.innerHTML + '`'));
+            let args = this.dataH?.store.keys()?.join(','); 
+            this.components[name].dom.setTemplate(eval('(args)=> { let {change, ' + args +', _t} = args; return `' + this.components[name].dom._area.innerHTML + '`}'));
         } else {
             this.components[name].dom.setTemplate(views?.[name]);
         }

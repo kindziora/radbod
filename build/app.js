@@ -22,8 +22,6 @@ export class app {
      */
     mountComponent(name, componentObject, callback) {
         console.log("COMPOS", this.loadStores(componentObject, (stores, data) => {
-            //  componentObject.views[name] = this.replaceFunctionHeader(componentObject?.views[name].toString(), ["change", ...stores.store.keys(),"_t"]);
-            //  componentObject.views[name] = eval(`${componentObject.views[name]}`);
             let compo = this.createComponent(name, componentObject.views, componentObject.data.call(this.dataH), componentObject.interactions(), componentObject.components, componentObject.translations());
             callback(stores, data, compo);
         }));
@@ -46,12 +44,12 @@ export class app {
             s = this.dataH.createStore(name, data);
         }
         let el = document.createElement("component");
-        let storeArray = (_a = this.dataH) === null || _a === void 0 ? void 0 : _a.store.toArray();
+        let storeObject = (_a = this.dataH) === null || _a === void 0 ? void 0 : _a.store.toObject();
         let internationalize = new i18n();
         internationalize.addTranslation(translations);
         let _t = (text, lang) => internationalize._t(text, lang);
         if (typeof ((_b = views) === null || _b === void 0 ? void 0 : _b[name]) === "function") {
-            el.innerHTML = (_d = (_c = views) === null || _c === void 0 ? void 0 : _c[name]) === null || _d === void 0 ? void 0 : _d.apply(s, [{ value: "" }, ...storeArray, _t]);
+            el.innerHTML = (_d = (_c = views) === null || _c === void 0 ? void 0 : _c[name]) === null || _d === void 0 ? void 0 : _d.call(s, Object.assign(Object.assign({ change: { value: "" } }, storeObject), { _t }));
         }
         else {
             el.innerHTML = (_e = views) === null || _e === void 0 ? void 0 : _e[name];
@@ -61,8 +59,8 @@ export class app {
         el.setAttribute("data-name", name);
         this.components[name] = new component(ddom, s, actions);
         if (typeof ((_f = views) === null || _f === void 0 ? void 0 : _f[name]) !== "function") {
-            let stores = (_h = (_g = this.dataH) === null || _g === void 0 ? void 0 : _g.store.keys()) === null || _h === void 0 ? void 0 : _h.join(',');
-            this.components[name].dom.setTemplate(eval('(change,' + stores + ', _t)=>`' + this.components[name].dom._area.innerHTML + '`'));
+            let args = (_h = (_g = this.dataH) === null || _g === void 0 ? void 0 : _g.store.keys()) === null || _h === void 0 ? void 0 : _h.join(',');
+            this.components[name].dom.setTemplate(eval('(args)=> { let {change, ' + args + ', _t} = args; return `' + this.components[name].dom._area.innerHTML + '`}'));
         }
         else {
             this.components[name].dom.setTemplate((_j = views) === null || _j === void 0 ? void 0 : _j[name]);
