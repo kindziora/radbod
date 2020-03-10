@@ -11,8 +11,9 @@ import { select } from './dom/list/select.js';
 import { textarea } from './dom/element/textarea.js';
 import { component } from "./component.js";
 import { store } from './store.js';
+import { i18n } from './i18n.js';
 export class dom {
-    constructor(area, types, s, views) {
+    constructor(area, types, s, views, _t) {
         var _a;
         this._area = {};
         this._identifier = '[data-name]';
@@ -25,6 +26,7 @@ export class dom {
         this._area = area;
         this.$el = this._area;
         this.views = views;
+        this._t = _t;
         this.setId();
         if (area.hasAttribute('data-name')) {
             this.name = area.getAttribute('data-name');
@@ -44,14 +46,11 @@ export class dom {
      * @param data
      */
     render(data) {
-        var _a, _b;
+        var _a;
         this.element = {};
         this.elementByName = {};
-        let params = [data];
-        for (let e in (_a = this.store.dataH) === null || _a === void 0 ? void 0 : _a.store) {
-            params.push((_b = this.store.dataH) === null || _b === void 0 ? void 0 : _b.store[e].data);
-        }
-        this._area.innerHTML = this.template.apply(this, params);
+        let storeObject = (_a = this.store.dataH) === null || _a === void 0 ? void 0 : _a.store.toObject();
+        this._area.innerHTML = this.template.call(this, Object.assign(Object.assign({ change: data }, storeObject), { _t: this._t }));
         this.loadElements();
     }
     /**
@@ -112,10 +111,10 @@ export class dom {
      * @param data
      */
     createComponent($el, fieldTypeName, data) {
-        var _a, _b, _c, _d, _e, _f, _g, _h;
+        var _a, _b, _c, _d, _e, _f, _g;
         let s;
         let componentObject = this.elementTypes[fieldTypeName];
-        let name = fieldTypeName;
+        let name = fieldTypeName.split("-")[0];
         if (data instanceof store) {
             s = data;
         }
@@ -127,32 +126,36 @@ export class dom {
             if (s instanceof store) {
             }
             else {
-                // s = this.store.dataH.createStore(name, s);
+                s = this.store.dataH.createStore(name, s || {});
             }
         }
-        let storeArray = (_a = this.store.dataH) === null || _a === void 0 ? void 0 : _a.store.toArray();
-        let stores = (_b = this.store.dataH) === null || _b === void 0 ? void 0 : _b.store.keys();
-        /*
-        window.customElements.define(name, class extends HTMLDivElement {});
-        const shadowRoot = $el.shadowRoot || $el.attachShadow({ mode: 'open' });
-*/
+        let storeObject = (_a = this.store.dataH) === null || _a === void 0 ? void 0 : _a.store.toObject();
+        let args = (_b = this.store.dataH) === null || _b === void 0 ? void 0 : _b.store.keys();
+        let internationalize = new i18n();
+        internationalize.addTranslation(componentObject.translations ? componentObject.translations() : {});
+        let _t = (text, lang) => internationalize._t(text, lang);
         if ((_d = (_c = componentObject) === null || _c === void 0 ? void 0 : _c.views) === null || _d === void 0 ? void 0 : _d[name]) {
-            $el.innerHTML = componentObject.views[name].apply(s, [{ value: "" }, ...storeArray]);
+            $el.innerHTML = componentObject.views[name].call(s, Object.assign(Object.assign({ change: { value: "" } }, storeObject), { _t }));
         }
         else {
-            $el.innerHTML = componentObject.html.trim();
+            if (!componentObject.html) {
+                $el.innerHTML = componentObject.views[name].call(s, Object.assign(Object.assign({ change: { value: "" } }, storeObject), { _t }));
+            }
+            else {
+                $el.innerHTML = componentObject.html.trim();
+            }
             // shadowRoot.innerHTML = componentObject.html.trim();
         }
         console.log(s, componentObject.views, name, componentObject);
-        let ddom = new dom($el, componentObject.components || {}, s, componentObject.views);
+        let ddom = new dom($el, componentObject.components || {}, s, componentObject.views, _t);
         ddom.name = name;
         $el.setAttribute("data-name", name);
         let newcomponent = new component(ddom, s, componentObject.interactions());
         if (typeof ((_f = (_e = componentObject) === null || _e === void 0 ? void 0 : _e.views) === null || _f === void 0 ? void 0 : _f[name]) !== "function") {
-            newcomponent.dom.setTemplate(eval('(change,' + ((_g = stores) === null || _g === void 0 ? void 0 : _g.join(',')) + ')=>`' + newcomponent.dom._area.innerHTML + '`'));
+            newcomponent.dom.setTemplate(eval('(args)=> { let {change, ' + args + ', _t} = args; return `' + newcomponent.dom._area.innerHTML + '`}'));
         }
         else {
-            newcomponent.dom.setTemplate((_h = componentObject) === null || _h === void 0 ? void 0 : _h.views[name]);
+            newcomponent.dom.setTemplate((_g = componentObject) === null || _g === void 0 ? void 0 : _g.views[name]);
         }
         return newcomponent;
     }
@@ -165,7 +168,7 @@ export class dom {
         let fieldTypeName = this.mapField($el.tagName.toLowerCase(), $el);
         return this.elementTypes[fieldTypeName].prototype === "component" ?
             this.createComponent($el, fieldTypeName) :
-            new this.elementTypes[fieldTypeName]($el, this._area, currentIndex, this, this.views);
+            new this.elementTypes[fieldTypeName]($el, this._area, currentIndex, this, this.views, this._t);
     }
     /**
      *

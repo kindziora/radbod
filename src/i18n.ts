@@ -1,7 +1,9 @@
  
-import {mergeDeep} from "../../config/env.js";
+import {mergeDeep} from "./merge.js";
 
 export class i18n {
+
+    private translation: Object;
 
     constructor(){
         this.translation = {en_EN : {}};
@@ -11,15 +13,11 @@ export class i18n {
      * 
      * @param {*} translationData 
      */
-    addTranslation(translationData){
+    addTranslation(translationData: Object){
         this.translation = mergeDeep(this.translation, translationData);
     }
 
-    _t(text, language){
-        if(typeof language ==="undefined"){
-            language = "en_EN";
-        }
-        
+    _t(text: string, language:string = "en_EN"): string{
         if(this && typeof this.translation[language] !=="undefined" && typeof this.translation[language][text] !=="undefined"){    
             return this.translation[language][text];
         }

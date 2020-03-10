@@ -13,6 +13,7 @@ import { select } from './dom/list/select.js';
 import { textarea } from './dom/element/textarea.js';
 import { component } from "./component.js";
 import { store, op } from './store.js';
+import { i18n } from './i18n.js';
 
 
 export class dom {
@@ -35,11 +36,16 @@ export class dom {
     public store: store;
     public $el: HTMLElement;
 
-    constructor(area: HTMLElement, types: { [index: string]: any }, s: store, views?: { [index: string]: Function }) {
+    public _t: Function;
+
+
+    constructor(area: HTMLElement, types: { [index: string]: any }, s: store, views?: { [index: string]: Function }, _t: Function) {
 
         this._area = area as HTMLElement;
         this.$el = this._area;
         this.views = views;
+        this._t = _t;
+
         this.setId();
         if (area.hasAttribute('data-name')) {
             this.name = area.getAttribute('data-name');
@@ -63,12 +69,8 @@ export class dom {
         this.element = {};
         this.elementByName = {};
 
-        let params = [data];
-        for (let e in this.store.dataH?.store) {
-            params.push(this.store.dataH?.store[e].data);
-        }
-
-        this._area.innerHTML = this.template.apply(this, params);
+        let storeObject = this.store.dataH?.store.toObject();  
+        this._area.innerHTML = this.template.call(this, {change: data, ...storeObject, _t: this._t});
         this.loadElements();
     }
 
@@ -135,7 +137,7 @@ export class dom {
     createComponent($el: Element, fieldTypeName: string, data?: Object | store) {
         let s;
         let componentObject: Object = this.elementTypes[fieldTypeName];
-        let name = fieldTypeName;
+        let name = fieldTypeName.split("-")[0];
 
         if (data instanceof store) {
             s = data;
@@ -144,35 +146,46 @@ export class dom {
         } else {
             
             s = componentObject.data.call(this.store.dataH);
+
             if (s instanceof store) {
+
             }else{
-               // s = this.store.dataH.createStore(name, s);
+                s = this.store.dataH.createStore(name, s ||{});
             }
         }
-        let storeArray = this.store.dataH?.store.toArray();
+        let storeObject = this.store.dataH?.store.toObject();
         
-        let stores = this.store.dataH?.store.keys();
-        /*
-        window.customElements.define(name, class extends HTMLDivElement {});
-        const shadowRoot = $el.shadowRoot || $el.attachShadow({ mode: 'open' });
-*/
-        if (componentObject?.views?.[name]) {
-            $el.innerHTML = componentObject.views[name].apply(s, [{ value: "" }, ...storeArray]);
+        let args = this.store.dataH?.store.keys();
+
+        let internationalize = new i18n();
+        internationalize.addTranslation(componentObject.translations? componentObject.translations():{});
+
+        let _t = (text:string, lang?:string) => internationalize._t(text, lang);
+
+
+        if (componentObject?.views?.[name]) { 
+    
+            $el.innerHTML = componentObject.views[name].call(s, {change:{ value: "" }, ...storeObject, _t });
         } else {
-            $el.innerHTML = componentObject.html.trim();
+            if(!componentObject.html){ 
+                $el.innerHTML = componentObject.views[name].call(s, {change:{ value: "" }, ...storeObject, _t });
+            }else{
+                $el.innerHTML = componentObject.html.trim();
+            }
+
            // shadowRoot.innerHTML = componentObject.html.trim();
         }
         
         console.log(s, componentObject.views, name, componentObject);
 
-        let ddom = new dom($el, componentObject.components || {}, s, componentObject.views);
+        let ddom = new dom($el, componentObject.components || {}, s, componentObject.views, _t);
         ddom.name = name;
         $el.setAttribute("data-name", name);
         
         let newcomponent = new component(ddom, s, componentObject.interactions());
 
-        if (typeof componentObject?.views?.[name] !== "function") {
-            newcomponent.dom.setTemplate(eval('(change,' + stores?.join(',') + ')=>`' + newcomponent.dom._area.innerHTML + '`'));
+        if (typeof componentObject?.views?.[name] !== "function") { 
+            newcomponent.dom.setTemplate(eval('(args)=> { let {change, ' + args +', _t} = args; return `' + newcomponent.dom._area.innerHTML + '`}'));
         } else {
             newcomponent.dom.setTemplate(componentObject?.views[name]);
         }
@@ -191,7 +204,7 @@ export class dom {
 
         return this.elementTypes[fieldTypeName].prototype === "component" ?
             this.createComponent($el, fieldTypeName) :
-            new this.elementTypes[fieldTypeName]($el, this._area, currentIndex, this, this.views);
+            new this.elementTypes[fieldTypeName]($el, this._area, currentIndex, this, this.views, this._t);
     }
     /**
      * 

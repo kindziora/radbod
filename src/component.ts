@@ -1,6 +1,7 @@
 import { dom } from './dom.js';
 import { store, op } from './store.js';
 import { actions } from './actions.js';
+import { dataHandler } from './dataHandler.js';
 
 export class component {
     public dom: dom;
@@ -10,7 +11,7 @@ export class component {
 
     public id: String;
     public $el: HTMLElement;
- 
+
     /**
      * 
      * @param dom 
@@ -25,7 +26,7 @@ export class component {
         this.$el = dom._area;
 
         this.bindEvents();
-    } 
+    }
 
     getName() {
         return this.name;
@@ -97,5 +98,5 @@ export class component {
         this.dom.render(changes);
         this.bindEvents();
     }
-
+    
 }

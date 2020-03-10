@@ -14,6 +14,15 @@ export class dataHandler {
         this.events = eventH;
         this.environment = environment;
 
+        this.store.toObject = () => {
+            let arr = {};
+            for(let i in this.store){
+                if(typeof this.store[i] === "object")
+                    arr[i] = this.store[i].data;
+            } 
+            return  arr || {};
+        };
+
         this.store.toArray = () => {
             let arr = [];
             for(let i in this.store){

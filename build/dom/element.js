@@ -7,7 +7,7 @@ export class kelement {
      * @param dom
      */
     constructor(el, $scope, counter, dom, views) {
-        var _a, _b, _c, _d, _e, _f, _g;
+        var _a, _b, _c, _d, _e;
         this._isListItem = false;
         this.$el = el;
         this.$scope = $scope;
@@ -17,10 +17,10 @@ export class kelement {
         if (!this.$el.hasAttribute("data-view")) {
             this.$el.setAttribute("data-view", this.id);
             if (!((_b = views) === null || _b === void 0 ? void 0 : _b[this.id])) {
-                let stores = (_e = (_d = (_c = this.dom.store) === null || _c === void 0 ? void 0 : _c.dataH) === null || _d === void 0 ? void 0 : _d.store.keys()) === null || _e === void 0 ? void 0 : _e.join(',');
-                console.log('(change, ' + stores + ' ) => `' + ((_f = this.$el.innerHTML) === null || _f === void 0 ? void 0 : _f.trim()) + '`');
-                if (this.$el.innerHTML.trim() !== "")
-                    this.setTemplate(eval('(change, ' + stores + ' ) => `' + ((_g = this.$el.innerHTML) === null || _g === void 0 ? void 0 : _g.trim()) + '`'));
+                let args = (_d = (_c = this.dom.store) === null || _c === void 0 ? void 0 : _c.dataH) === null || _d === void 0 ? void 0 : _d.store.keys();
+                if (this.$el.innerHTML.trim() !== "") {
+                    this.setTemplate(eval('(args)=> { let {change, ' + args + ', _t} = args; return `' + ((_e = this.$el.innerHTML) === null || _e === void 0 ? void 0 : _e.trim()) + '`}'));
+                }
             }
         }
     }
@@ -54,8 +54,8 @@ export class kelement {
     render(change) {
         var _a, _b;
         if (this.template) {
-            let stores = (_b = (_a = this.dom.store) === null || _a === void 0 ? void 0 : _a.dataH) === null || _b === void 0 ? void 0 : _b.store.toArray();
-            this.$el.innerHTML = this.template.apply(this, [change, ...stores]);
+            let stores = (_b = (_a = this.dom.store) === null || _a === void 0 ? void 0 : _a.dataH) === null || _b === void 0 ? void 0 : _b.store.toObject();
+            this.$el.innerHTML = this.template.call(this, Object.assign(Object.assign({ change }, stores), { _t: this.dom._t }));
         }
         else {
             this.$el.innerHTML = change.value;

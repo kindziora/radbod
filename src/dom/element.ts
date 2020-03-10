@@ -9,7 +9,6 @@ export class kelement {
     public dom: dom;
     private _isListItem: boolean = false;
     private _listContainer: kelement | null;
-
     public template: Function;
 
     /**
@@ -24,7 +23,7 @@ export class kelement {
         this.$scope = $scope;
         this.dom = dom;
         this.setId(this.$el.getAttribute('data-id') || null, counter);
-
+       
         this.setTemplate(views?.[this.id]);
 
         if(!this.$el.hasAttribute("data-view")){
@@ -32,10 +31,11 @@ export class kelement {
 
             if(!views?.[this.id]){ 
 
-                let stores = this.dom.store?.dataH?.store.keys()?.join(',');
-                console.log('(change, ' + stores + ' ) => `'+ this.$el.innerHTML?.trim() +'`');
-                if(this.$el.innerHTML.trim() !=="")
-                    this.setTemplate(eval('(change, ' + stores + ') => `'+ this.$el.innerHTML?.trim() +'`')); 
+                let args = this.dom.store?.dataH?.store.keys();
+
+                if(this.$el.innerHTML.trim() !==""){
+                     this.setTemplate(eval('(args)=> { let {change, ' + args +', _t} = args; return `'+ this.$el.innerHTML?.trim() +'`}')); 
+                }
             }
                 
         }
@@ -78,9 +78,9 @@ export class kelement {
      */
     render(change: op){
         if(this.template){ 
-            let stores = this.dom.store?.dataH?.store.toArray();
+            let stores = this.dom.store?.dataH?.store.toObject();
             
-            this.$el.innerHTML = this.template.apply(this, [change, ...stores]);
+            this.$el.innerHTML = this.template.call(this, {change, ...stores, _t : this.dom._t});
         }else{
             this.$el.innerHTML = change.value; 
         }

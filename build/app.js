@@ -3,11 +3,28 @@ import { dom } from './dom.js';
 import { eventHandler } from './eventHandler.js';
 import { dataHandler } from './dataHandler.js';
 import { store } from './store.js';
+import { i18n } from './i18n.js';
 export class app {
     constructor(environment) {
         this.components = {};
         this.environment = environment;
         this.dataH = new dataHandler(new eventHandler(), environment);
+    }
+    replaceFunctionHeader(funcString, newFunctionHeader) {
+        const functionHeader = /\([\w,\s]+\)+(\s+|)=>/m;
+        return funcString.replace(functionHeader, `(${newFunctionHeader})=>`);
+    }
+    /**
+     *
+     * @param name
+     * @param componentObject
+     * @param callback
+     */
+    mountComponent(name, componentObject, callback) {
+        console.log("COMPOS", this.loadStores(componentObject, (stores, data) => {
+            let compo = this.createComponent(name, componentObject.views, componentObject.data.call(this.dataH), componentObject.interactions(), componentObject.components, componentObject.translations());
+            callback(stores, data, compo);
+        }));
     }
     /**
         *
@@ -17,8 +34,8 @@ export class app {
         * @param actions
         * @param injections
         */
-    createComponent(name, views, data, actions, injections = {}) {
-        var _a, _b, _c, _d, _e, _f, _g;
+    createComponent(name, views, data, actions, injections = {}, translations = {}) {
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
         let s;
         if (data instanceof store) {
             s = data;
@@ -27,23 +44,26 @@ export class app {
             s = this.dataH.createStore(name, data);
         }
         let el = document.createElement("component");
-        if (typeof ((_a = views) === null || _a === void 0 ? void 0 : _a[name]) === "function") {
-            el.innerHTML = (_b = views) === null || _b === void 0 ? void 0 : _b[name](data);
+        let storeObject = (_a = this.dataH) === null || _a === void 0 ? void 0 : _a.store.toObject();
+        let internationalize = new i18n();
+        internationalize.addTranslation(translations);
+        let _t = (text, lang) => internationalize._t(text, lang);
+        if (typeof ((_b = views) === null || _b === void 0 ? void 0 : _b[name]) === "function") {
+            el.innerHTML = (_d = (_c = views) === null || _c === void 0 ? void 0 : _c[name]) === null || _d === void 0 ? void 0 : _d.call(s, Object.assign(Object.assign({ change: { value: "" } }, storeObject), { _t }));
         }
         else {
-            el.innerHTML = (_c = views) === null || _c === void 0 ? void 0 : _c[name];
+            el.innerHTML = (_e = views) === null || _e === void 0 ? void 0 : _e[name];
         }
-        //console.log(s, views);
-        let ddom = new dom(el, injections, s, views);
+        let ddom = new dom(el, injections, s, views, _t);
         ddom.name = name;
         el.setAttribute("data-name", name);
         this.components[name] = new component(ddom, s, actions);
-        if (typeof ((_d = views) === null || _d === void 0 ? void 0 : _d[name]) !== "function") {
-            let stores = (_f = (_e = this.dataH) === null || _e === void 0 ? void 0 : _e.store.keys()) === null || _f === void 0 ? void 0 : _f.join(',');
-            this.components[name].dom.setTemplate(eval('(change,' + stores + ')=>`' + this.components[name].dom._area.innerHTML + '`'));
+        if (typeof ((_f = views) === null || _f === void 0 ? void 0 : _f[name]) !== "function") {
+            let args = (_h = (_g = this.dataH) === null || _g === void 0 ? void 0 : _g.store.keys()) === null || _h === void 0 ? void 0 : _h.join(',');
+            this.components[name].dom.setTemplate(eval('(args)=> { let {change, ' + args + ', _t} = args; return `' + this.components[name].dom._area.innerHTML + '`}'));
         }
         else {
-            this.components[name].dom.setTemplate((_g = views) === null || _g === void 0 ? void 0 : _g[name]);
+            this.components[name].dom.setTemplate((_j = views) === null || _j === void 0 ? void 0 : _j[name]);
         }
         return this.components[name];
     }
@@ -59,5 +79,40 @@ export class app {
      * @param url
      */
     render(url) {
+    }
+    fetchData(component, cb, allready, total, meta) {
+        let callback = function (meta, dataH) {
+            return (data) => {
+                cb(data);
+                meta.cnt++;
+                meta.loaded.push(component);
+                if (meta.cnt >= total) {
+                    allready(dataH, meta);
+                }
+            };
+        };
+        let result = component.data.call(this.dataH, callback(meta, this.dataH), {});
+        if (!result || typeof result.then !== "function") {
+            meta.cnt++;
+            meta.loaded.push(component);
+        }
+        if (meta.cnt >= total) {
+            allready(this.dataH, meta);
+            return;
+        }
+        for (let i in component.components) {
+            this.fetchData(component.components[i], cb, allready, total, meta);
+        }
+    }
+    countForData(component, cnt) {
+        for (let i in component.components)
+            cnt = this.countForData(component.components[i], cnt);
+        return ++cnt;
+    }
+    loadStores(componentObject, cb) {
+        let count = this.countForData(componentObject, 0);
+        let met = { cnt: 0, loaded: [] };
+        this.fetchData(componentObject, (data) => {
+        }, cb, count, met, this.dataH);
     }
 }
