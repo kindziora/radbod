@@ -22,9 +22,8 @@ export class app {
      */
     mountComponent(name, componentObject, callback) {
         console.log("COMPOS", this.loadStores(componentObject, (stores, data) => {
-            var _a;
-            componentObject.views[name] = this.replaceFunctionHeader((_a = componentObject) === null || _a === void 0 ? void 0 : _a.views[name].toString(), ["change", ...stores.store.keys(), "_t"]);
-            componentObject.views[name] = eval(`${componentObject.views[name]}`);
+            //  componentObject.views[name] = this.replaceFunctionHeader(componentObject?.views[name].toString(), ["change", ...stores.store.keys(),"_t"]);
+            //  componentObject.views[name] = eval(`${componentObject.views[name]}`);
             let compo = this.createComponent(name, componentObject.views, componentObject.data.call(this.dataH), componentObject.interactions(), componentObject.components, componentObject.translations());
             callback(stores, data, compo);
         }));
