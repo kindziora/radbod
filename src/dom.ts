@@ -144,7 +144,7 @@ export class dom {
         let s;
         let componentObject: Object = this.elementTypes[fieldTypeName];
         let name = fieldTypeName.split("-")[0];
-        
+
         if (data instanceof store) {
             s = data;
         } else if (typeof data !== "undefined") {
@@ -156,7 +156,7 @@ export class dom {
             if (s instanceof store) {
 
             }else{
-                s = this.store.dataH.createStore(name, s);
+                s = this.store.dataH.createStore(name, s ||{});
             }
         }
         let storeArray = this.store.dataH?.store.toArray();

@@ -130,7 +130,7 @@ export class dom {
             if (s instanceof store) {
             }
             else {
-                s = this.store.dataH.createStore(name, s);
+                s = this.store.dataH.createStore(name, s || {});
             }
         }
         let storeArray = (_a = this.store.dataH) === null || _a === void 0 ? void 0 : _a.store.toArray();
