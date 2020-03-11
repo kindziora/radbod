@@ -31,9 +31,16 @@ export class app {
      */
     mountComponent(name: string, componentObject: Object, callback: Function) {
         
-        console.log("COMPOS", this.loadStores(componentObject, (stores, data)=>{
+        console.log("COMPOS", this.loadStores(componentObject, (stores, data) => {
         
-            let compo = this.createComponent(name, componentObject.views, componentObject.data.call(this.dataH), componentObject.interactions(), componentObject.components, componentObject.translations());
+            let compo = this.createComponent(name, 
+                componentObject.views,
+                componentObject.data.call(this.dataH),
+                componentObject.interactions(), 
+                componentObject.components, 
+                componentObject.translations(),
+                componentObject.style
+            );
 
             callback(stores, data, compo);
         }));
@@ -48,7 +55,7 @@ export class app {
         * @param actions 
         * @param injections 
         */
-    createComponent(name: string, views: { [index: string]: string }, data: Object | store, actions: object, injections: object = {}, translations: object = {}) {
+    createComponent(name: string, views: { [index: string]: string }, data: Object | store, actions: object, injections: object = {}, translations: object = {}, style?:object) {
         let s;
 
         if (data instanceof store) {
@@ -77,6 +84,9 @@ export class app {
         ddom.name = name;
         el.setAttribute("data-name", name);
 
+        let stEl = document.createElement('style');
+        stEl.innerHTML = style;
+        
         this.components[name] = new component(ddom, s, actions);
 
         if (typeof views?.[name] !== "function") {
