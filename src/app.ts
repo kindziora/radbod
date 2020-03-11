@@ -86,6 +86,7 @@ export class app {
 
         let stEl = document.createElement('style');
         stEl.innerHTML = style;
+        el.append(stEl);
         
         this.components[name] = new component(ddom, s, actions);
 
