@@ -22,7 +22,7 @@ export class app {
      */
     mountComponent(name, componentObject, callback) {
         console.log("COMPOS", this.loadStores(componentObject, (stores, data) => {
-            let compo = this.createComponent(name, componentObject.views, componentObject.data.call(this.dataH), componentObject.interactions(), componentObject.components, componentObject.translations());
+            let compo = this.createComponent(name, componentObject.views, componentObject.data.call(this.dataH), componentObject.interactions(), componentObject.components, componentObject.translations(), componentObject.style);
             callback(stores, data, compo);
         }));
     }
@@ -34,7 +34,7 @@ export class app {
         * @param actions
         * @param injections
         */
-    createComponent(name, views, data, actions, injections = {}, translations = {}) {
+    createComponent(name, views, data, actions, injections = {}, translations = {}, style) {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j;
         let s;
         if (data instanceof store) {
@@ -57,6 +57,9 @@ export class app {
         let ddom = new dom(el, injections, s, views, _t);
         ddom.name = name;
         el.setAttribute("data-name", name);
+        let stEl = document.createElement('style');
+        stEl.innerHTML = style;
+        el.append(stEl);
         this.components[name] = new component(ddom, s, actions);
         if (typeof ((_f = views) === null || _f === void 0 ? void 0 : _f[name]) !== "function") {
             let args = (_h = (_g = this.dataH) === null || _g === void 0 ? void 0 : _g.store.keys()) === null || _h === void 0 ? void 0 : _h.join(',');
