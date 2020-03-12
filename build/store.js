@@ -63,7 +63,12 @@ export class store {
             console.log("store data is not an object", typeof data, data);
             data = {};
         }
-        this.dataH.pxy[`$${component}`] = this._data = createProxy(data); //fjp.default.deepClone(data);
+        if (typeof this.dataH.pxy[`$${component}`] === "undefined") {
+            this.dataH.pxy[`$${component}`] = this._data = createProxy(data); //fjp.default.deepClone(data);
+        }
+        else {
+            Object.assign(this.dataH.pxy[`$${component}`], data);
+        }
         return this;
     }
     /**
