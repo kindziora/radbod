@@ -16,7 +16,7 @@ export class dom {
     constructor(area, types, s, views, _t) {
         var _a;
         this._area = {};
-        this._identifier = '[data-name]';
+        this._identifier = ':scope *';
         this.element = {};
         this.elementByName = {};
         this.elementTypes = { input, text, radio, checkbox, range, file, button, list: elist, select, textarea, kelement };
