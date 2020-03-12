@@ -43,7 +43,6 @@ export class app {
         else {
             s = this.dataH.createStore(name, data);
         }
-        //sdsd
         let el = document.createElement("component");
         let storeObject = (_a = this.dataH) === null || _a === void 0 ? void 0 : _a.store.toObject();
         let internationalize = new i18n();
@@ -58,9 +57,11 @@ export class app {
         let ddom = new dom(el, injections, s, views, _t);
         ddom.name = name;
         el.setAttribute("data-name", name);
-        let stEl = document.createElement('style');
-        stEl.innerHTML = style;
-        el.append(stEl);
+        if (style) {
+            let stEl = document.createElement('style');
+            stEl.innerHTML = style;
+            el.append(stEl);
+        }
         this.components[name] = new component(ddom, s, actions);
         if (typeof ((_f = views) === null || _f === void 0 ? void 0 : _f[name]) !== "function") {
             let args = (_h = (_g = this.dataH) === null || _g === void 0 ? void 0 : _g.store.keys()) === null || _h === void 0 ? void 0 : _h.join(',');

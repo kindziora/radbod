@@ -63,7 +63,7 @@ export class app {
         } else {
             s = this.dataH.createStore(name, data);
         }
-        //sdsd
+        
         let el = document.createElement("component");
         let storeObject = this.dataH?.store.toObject();
 
@@ -83,9 +83,11 @@ export class app {
         ddom.name = name;
         el.setAttribute("data-name", name);
 
-        let stEl = document.createElement('style');
-        stEl.innerHTML = style;
-        el.append(stEl);
+        if(style) {
+            let stEl = document.createElement('style');
+            stEl.innerHTML = style;
+            el.append(stEl);
+        }
         
         this.components[name] = new component(ddom, s, actions);
 
@@ -96,7 +98,7 @@ export class app {
             this.components[name].dom.setTemplate(views?.[name]);
         }
 
-         return this.components[name];
+        return this.components[name];
     }
 
     /**
