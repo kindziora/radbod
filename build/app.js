@@ -27,13 +27,13 @@ export class app {
         }));
     }
     /**
-        *
-        * @param name
-        * @param html
-        * @param data
-        * @param actions
-        * @param injections
-        */
+    *
+    * @param name
+    * @param html
+    * @param data
+    * @param actions
+    * @param injections
+    */
     createComponent(name, views, data, actions, injections = {}, translations = {}, style) {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j;
         let s;
@@ -43,6 +43,7 @@ export class app {
         else {
             s = this.dataH.createStore(name, data);
         }
+        //sdsd
         let el = document.createElement("component");
         let storeObject = (_a = this.dataH) === null || _a === void 0 ? void 0 : _a.store.toObject();
         let internationalize = new i18n();

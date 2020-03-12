@@ -46,15 +46,15 @@ export class app {
         }));
 
     }
-
+ 
     /** 
-        * 
-        * @param name 
-        * @param html 
-        * @param data 
-        * @param actions 
-        * @param injections 
-        */
+    * 
+    * @param name 
+    * @param html 
+    * @param data 
+    * @param actions 
+    * @param injections 
+    */ 
     createComponent(name: string, views: { [index: string]: string }, data: Object | store, actions: object, injections: object = {}, translations: object = {}, style?:object) {
         let s;
 
@@ -63,9 +63,8 @@ export class app {
         } else {
             s = this.dataH.createStore(name, data);
         }
-
+        //sdsd
         let el = document.createElement("component");
-
         let storeObject = this.dataH?.store.toObject();
 
         let internationalize = new i18n();
