@@ -51,7 +51,7 @@ export class kelement {
     }
 
     setId(namesp: string | null, counter: number) {
-        let id: string = namesp || "element" + "-" + counter;
+        let id: string = namesp || this.$scope.getAttribute('data-id') + "-element" + "-" + counter;
         this.$el.setAttribute("data-id", id);
         this.id = id;
     }
