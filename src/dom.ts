@@ -265,8 +265,14 @@ export class dom {
             .replace(/\/\//g, "/")
             .replace(/\/$/, '');
 
-        let names = Array.from(tpNode.innerHTML.matchAll(/\${([\w\.\[\]]*)}/ig), transForm);
 
+        let tpl = Array.from(t_el.template.toString().matchAll(/return `(.*)`/gm))[0];
+        let names = [];
+
+        if(tpl && tpl[1]){
+            names = Array.from(tpl[1].matchAll(/\${([\w\.\[\]]*)}/ig), transForm);
+        }
+          
         //  console.log(tpNode.outerHTML);
 
         return names;
