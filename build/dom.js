@@ -195,9 +195,9 @@ export class dom {
     loadElement($el, currentIndex) {
         this.counter++;
         let t_el = this.createElement($el, this.counter); //decorate and extend dom element
+        this.detectType(t_el);
+        this.addElement(t_el);
         if (t_el.getName()) {
-            this.detectType(t_el);
-            this.addElement(t_el);
             this.addElementByName(t_el, t_el.getName());
         }
         else {

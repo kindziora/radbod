@@ -235,9 +235,10 @@ export class dom {
         this.counter++;
 
         let t_el: kelement = this.createElement($el, this.counter); //decorate and extend dom element
-        if(t_el.getName()){
-            this.detectType(t_el);
-            this.addElement(t_el);
+        this.detectType(t_el);
+        this.addElement(t_el);
+        
+        if(t_el.getName()){ 
             this.addElementByName(t_el, <string>t_el.getName());
         }else{
             this.detectOrphanVariables(t_el)
