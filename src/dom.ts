@@ -266,7 +266,7 @@ export class dom {
             .replace(/\/$/, '');
 
 
-        let tpl = Array.from(t_el.template.toString().matchAll(/return `(.*)`/gm))[0];
+        let tpl = Array.from(t_el.template.toString().matchAll(/return `(\$.*)`/gm))[0];
         let names = [];
 
         if(tpl && tpl[1]){
