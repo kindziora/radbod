@@ -220,7 +220,7 @@ export class dom {
             .replace(/\.|\[|\]|\'|\"/g, '/')
             .replace(/\/\//g, "/")
             .replace(/\/$/, '');
-        let tpl = Array.from(t_el.template.toString().matchAll(/return `(\$.*)`/gm))[0];
+        let tpl = Array.from((t_el.template ? t_el.template.toString() : t_el.$el.innerHTML).matchAll(/return `(\$.*)`/gm))[0];
         let names = [];
         if (tpl && tpl[1]) {
             names = Array.from(tpl[1].matchAll(/\${([\w\.\[\]]*)}/ig), transForm);
