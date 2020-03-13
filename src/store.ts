@@ -60,10 +60,11 @@ export class store {
                      */
 
                     if (oTarget[sKey] !== vValue) {
+                        oTarget[sKey] = vValue; 
+
                         let tmpChain = this.changeStore(component, diff); 
                     }
                      
-                    oTarget[sKey] = vValue; 
 
                     return true;
                 },

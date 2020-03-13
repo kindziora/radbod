@@ -39,9 +39,9 @@ export class store {
                      * @todo set value and use this.pxy[px] for $ connected values
                      */
                     if (oTarget[sKey] !== vValue) {
+                        oTarget[sKey] = vValue;
                         let tmpChain = this.changeStore(component, diff);
                     }
-                    oTarget[sKey] = vValue;
                     return true;
                 },
                 deleteProperty: (oTarget, sKey) => {
