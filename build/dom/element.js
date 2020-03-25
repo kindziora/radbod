@@ -31,7 +31,7 @@ export class kelement {
         return this.$el.getAttribute('data-name');
     }
     setId(namesp, counter) {
-        let id = namesp || this.$scope.getAttribute('data-id') + "-element" + "-" + counter;
+        let id = namesp || this.$scope.getAttribute('data-id') + "-e" + "-" + counter;
         this.$el.setAttribute("data-id", id);
         this.id = id;
     }

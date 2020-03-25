@@ -51,11 +51,11 @@ export class kelement {
     }
 
     setId(namesp: string | null, counter: number) {
-        let id: string = namesp || this.$scope.getAttribute('data-id') + "-element" + "-" + counter;
+        let id: string = namesp || this.$scope.getAttribute('data-id') + "-e" + "-" + counter;
         this.$el.setAttribute("data-id", id);
         this.id = id;
     }
-
+ 
     update(changes: Array<op>) {
 
         for (let i: number = 0; i < changes.length; i++) {
