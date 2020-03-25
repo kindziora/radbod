@@ -26,9 +26,9 @@ export class dom {
     public elementTypes: { [index: string]: any } = { input, text, radio, checkbox, range, file, button, list: elist, select, textarea, kelement };
 
     public counter: number = 0;
-    public id: string = "component-0";
+    public id: string = "c-0";
 
-    public name: string = "component-x";
+    public name: string = "c-x";
     public template: Function;
 
     public views?: { [index: string]: Function };
@@ -46,12 +46,12 @@ export class dom {
         this.views = views;
         this._t = _t;
 
-        this.setId();
         if (area.hasAttribute('data-name')) {
             this.name = area.getAttribute('data-name');
         } else {
             this.name = area?.tagName;
         }
+        this.setId();
         this.store = s;
         this.addTypes(types);
         this.loadElements();
@@ -87,7 +87,7 @@ export class dom {
 
     private setId() {
         this.counter++;
-        let id: string = "component-" + this.counter;
+        let id: string = this.name || "c" + "-" + this.counter;
         this._area.setAttribute("data-id", id);
         this.id = id;
     }

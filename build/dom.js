@@ -21,19 +21,19 @@ export class dom {
         this.elementByName = {};
         this.elementTypes = { input, text, radio, checkbox, range, file, button, list: elist, select, textarea, kelement };
         this.counter = 0;
-        this.id = "component-0";
-        this.name = "component-x";
+        this.id = "c-0";
+        this.name = "c-x";
         this._area = area;
         this.$el = this._area;
         this.views = views;
         this._t = _t;
-        this.setId();
         if (area.hasAttribute('data-name')) {
             this.name = area.getAttribute('data-name');
         }
         else {
             this.name = (_a = area) === null || _a === void 0 ? void 0 : _a.tagName;
         }
+        this.setId();
         this.store = s;
         this.addTypes(types);
         this.loadElements();
@@ -65,7 +65,7 @@ export class dom {
     }
     setId() {
         this.counter++;
-        let id = "component-" + this.counter;
+        let id = this.name || "c" + "-" + this.counter;
         this._area.setAttribute("data-id", id);
         this.id = id;
     }
