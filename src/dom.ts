@@ -183,6 +183,7 @@ export class dom {
         $el.setAttribute("data-name", name);
         
         let newcomponent = new component(ddom, s, componentObject.interactions());
+        newcomponent.setId(name);
 
         if (typeof componentObject?.views?.[name] !== "function") { 
             newcomponent.dom.setTemplate(eval('(args)=> { let {change, ' + args +', _t} = args; return `' + newcomponent.dom._area.innerHTML + '`}'));
