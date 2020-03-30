@@ -108,5 +108,8 @@ export class store {
                 resolve(data);
             }));
         }
+        else {
+            return this.data;
+        }
     }
 }

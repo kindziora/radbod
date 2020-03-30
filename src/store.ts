@@ -142,6 +142,8 @@ export class store {
                 cb.call(this.dataH, data);
                 resolve(data);
             }));
+        }else {
+            return this.data;
         }
     }
     
