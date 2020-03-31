@@ -17,6 +17,7 @@ export class dom {
         var _a;
         this._area = {};
         this._identifier = ':scope *';
+        this.componentList = [];
         this.element = {};
         this.elementByName = {};
         this.elementTypes = { input, text, radio, checkbox, range, file, button, list: elist, select, textarea, kelement };

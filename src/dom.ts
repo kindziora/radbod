@@ -19,7 +19,7 @@ import { i18n } from './i18n.js';
 export class dom {
     public _area: HTMLElement = {} as HTMLElement;
     private _identifier: string = ':scope *';
-    public componentList: Array<string>;
+    public componentList: Array<string> = [];
     public element: { [index: string]: kelement } = {};
     public elementByName: { [index: string]: Array<kelement> } = {};
 
