@@ -232,8 +232,7 @@ export class dom {
         return names;
     }
     loadElements() {
-        let ignore = this.componentList.join(",");
-        let element = this._area.querySelectorAll(this._identifier + ignore ? `:not(${ignore})` : "");
+        let element = this._area.querySelectorAll(this._identifier);
         try {
             element.forEach(($el, currentIndex) => this.loadElement($el, currentIndex));
         }
