@@ -282,7 +282,9 @@ export class dom {
 
 
     loadElements() {
-        let element: NodeListOf<Element> = this._area.querySelectorAll(this._identifier) as NodeListOf<Element>;
+        let ignore = this.elementTypes.filter((e,i)=>e.prototype ==="component" ? i: false ).join(",");
+
+        let element: NodeListOf<Element> = this._area.querySelectorAll(this._identifier + ignore ? `:not(${ignore})`: "") as NodeListOf<Element>;
          
         try {
 

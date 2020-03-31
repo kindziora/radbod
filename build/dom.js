@@ -230,7 +230,8 @@ export class dom {
         return names;
     }
     loadElements() {
-        let element = this._area.querySelectorAll(this._identifier);
+        let ignore = this.elementTypes.filter((e, i) => e.prototype === "component" ? i : false).join(",");
+        let element = this._area.querySelectorAll(this._identifier + ignore ? `:not(${ignore})` : "");
         try {
             element.forEach(($el, currentIndex) => this.loadElement($el, currentIndex));
         }
