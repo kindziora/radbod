@@ -19,7 +19,7 @@ import { i18n } from './i18n.js';
 export class dom {
     public _area: HTMLElement = {} as HTMLElement;
     private _identifier: string = ':scope *';
-
+    public componentList: Array<string>;
     public element: { [index: string]: kelement } = {};
     public elementByName: { [index: string]: Array<kelement> } = {};
 
@@ -138,7 +138,7 @@ export class dom {
         let s;
         let componentObject: Object = this.elementTypes[fieldTypeName];
         let name = fieldTypeName.split("-")[0];
-
+        this.componentList.push(fieldTypeName);
         if (data instanceof store) {
             s = data;
         } else if (typeof data !== "undefined") {
@@ -282,8 +282,7 @@ export class dom {
 
 
     loadElements() {
-        let ignore = this.elementTypes.filter((e,i)=>e.prototype ==="component" ? i: false ).join(",");
-
+        let ignore: string = this.componentList.join(",");
         let element: NodeListOf<Element> = this._area.querySelectorAll(this._identifier + ignore ? `:not(${ignore})`: "") as NodeListOf<Element>;
          
         try {

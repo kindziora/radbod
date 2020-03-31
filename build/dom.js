@@ -115,6 +115,7 @@ export class dom {
         let s;
         let componentObject = this.elementTypes[fieldTypeName];
         let name = fieldTypeName.split("-")[0];
+        this.componentList.push(fieldTypeName);
         if (data instanceof store) {
             s = data;
         }
@@ -230,7 +231,7 @@ export class dom {
         return names;
     }
     loadElements() {
-        let ignore = this.elementTypes.filter((e, i) => e.prototype === "component" ? i : false).join(",");
+        let ignore = this.componentList.join(",");
         let element = this._area.querySelectorAll(this._identifier + ignore ? `:not(${ignore})` : "");
         try {
             element.forEach(($el, currentIndex) => this.loadElement($el, currentIndex));
