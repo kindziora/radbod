@@ -61,6 +61,7 @@ export class dom {
         for (let i in types) {
             types[i].prototype = "component";
             this.elementTypes[i] = types[i];
+            this.componentList.push(i);
         }
     }
     setId() {
@@ -115,7 +116,6 @@ export class dom {
         let s;
         let componentObject = this.elementTypes[fieldTypeName];
         let name = fieldTypeName.split("-")[0];
-        this.componentList.push(fieldTypeName);
         if (data instanceof store) {
             s = data;
         }
