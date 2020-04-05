@@ -12,7 +12,12 @@ export class kelement {
         this.$el = el;
         this.$scope = $scope;
         this.dom = dom;
-        this.setId(this.$el.getAttribute('data-id') || null, counter);
+        if (!this.$el.getAttribute("data-id")) {
+            this.setId(null, counter);
+        }
+        else {
+            this.id = this.$el.getAttribute('data-id');
+        }
         this.setTemplate((_a = views) === null || _a === void 0 ? void 0 : _a[this.id]);
         if (!this.$el.hasAttribute("data-view")) {
             this.$el.setAttribute("data-view", this.id);
