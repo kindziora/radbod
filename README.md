@@ -15,7 +15,7 @@ Minimalstic ES2015 MVVM Framework with zero dependencies. Just ~20KB.
 
 ## workflow
 
-1. `npm install kjs`
+1. `npm install radbod`
 2. you have a HTML template `<html>...<div>hello</div>...`
 3. add your ES2015 templating syntax `<html>...<div>hello ${messages.greeting[3]}</div>...`
 4. create a html_loader 
