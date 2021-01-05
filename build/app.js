@@ -21,8 +21,10 @@ export class app {
      * @param callback
      */
     mountComponent(name, componentObject, callback) {
-        console.log("COMPOS", this.loadStores(componentObject, (stores, data) => {
-            let compo = this.createComponent(name, componentObject.views, componentObject.data.call(this.dataH), componentObject.interactions(), componentObject.components, componentObject.translations(), componentObject.style);
+        console.log(`mount component: ${name}`, this.loadStores(componentObject, (stores, data) => {
+            let compo = this.createComponent(name, componentObject.views, componentObject.data.call(this.dataH, function (data) {
+                console.log(`DATA MAIN COMPONENT ${name}`, data);
+            }), componentObject.interactions(), componentObject.components, componentObject.translations(), componentObject.style);
             callback(stores, data, compo);
         }));
     }
@@ -118,6 +120,7 @@ export class app {
         let count = this.countForData(componentObject, 0);
         let met = { cnt: 0, loaded: [] };
         this.fetchData(componentObject, (data) => {
+            console.log("fetchData: ", componentObject.name, data);
         }, cb, count, met, this.dataH);
     }
 }

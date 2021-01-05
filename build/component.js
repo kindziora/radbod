@@ -23,8 +23,9 @@ export class component {
         this.id = id;
     }
     bindEvents() {
-        //this.update.bind(this);
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
+        //this.update.bind(this);
+        //wrong this context
         (_a = this.store.events) === null || _a === void 0 ? void 0 : _a.addEvent(this.name, "/", "change", this.update, this);
         (_b = this.store.events) === null || _b === void 0 ? void 0 : _b.addEvent(this.store.name, "/", "change", this.update, this);
         (_c = this.store.events) === null || _c === void 0 ? void 0 : _c.addEvent(this.name, "/", "change", (_e = (_d = this.interactions) === null || _d === void 0 ? void 0 : _d["/"]) === null || _e === void 0 ? void 0 : _e["change"], this);

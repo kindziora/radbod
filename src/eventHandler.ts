@@ -21,7 +21,7 @@ export interface meta { component: string, id: string, name: string };
 export class eventHandler {
 
     public event: Object = {};
-    public eventById: { [index: number]: Function } = {};
+    public eventById: { [index: string]: Function } = {};
 
     construct() {
 
@@ -31,9 +31,9 @@ export class eventHandler {
      * 
      * @param cb 
      */
-    addFunction(cb: Function, meta: meta, context): number {
+    addFunction(cb: Function, meta: meta, context): string {
       
-        let id: number = cyrb53(cb.toString());
+        let id: string = cyrb53(cb.toString()) + "_" + meta.component;
         /*
         this.eventById[id] = ((meta, eventHdlr) => (args:object = {}, returnValue = null) =>{
             return cb(args, returnValue, meta);
@@ -66,7 +66,7 @@ export class eventHandler {
     addEvent(component: string, id: string, name: string, cb: Function, context? : object) {
         if(typeof cb !=="function") return;
 
-        let callbackId: number = this.addFunction(cb, { component, id, name }, context);
+        let callbackId: string = this.addFunction(cb, { component, id, name }, context);
 
         if (typeof this.event[component] === "undefined") {
             this.event[component] = {};

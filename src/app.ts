@@ -31,11 +31,13 @@ export class app {
      */
     mountComponent(name: string, componentObject: Object, callback: Function) {
         
-        console.log("COMPOS", this.loadStores(componentObject, (stores, data) => {
+        console.log(`mount component: ${name}`, this.loadStores(componentObject, (stores, data) => {
         
             let compo = this.createComponent(name, 
                 componentObject.views,
-                componentObject.data.call(this.dataH),
+                componentObject.data.call(this.dataH, function(data) {
+                    console.log(`DATA MAIN COMPONENT ${name}`, data);
+                }),
                 componentObject.interactions(), 
                 componentObject.components, 
                 componentObject.translations(),
@@ -158,10 +160,11 @@ export class app {
 
     public loadStores(componentObject: object, cb: Function) {
 
-        let count = this.countForData(componentObject, 0);
-        let met = { cnt: 0, loaded: [] };
+        let count = this.countForData(componentObject, 0); 
+        let met = { cnt: 0, loaded: [] }; 
 
         this.fetchData(componentObject, (data) => {
+             console.log("fetchData: ", componentObject.name, data);
         }, cb, count, met, this.dataH);
     }
 

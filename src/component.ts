@@ -41,7 +41,7 @@ export class component {
 
     bindEvents() {
         //this.update.bind(this);
-
+ //wrong this context
         this.store.events?.addEvent(this.name, "/", "change", this.update, this);
         this.store.events?.addEvent(this.store.name, "/", "change", this.update, this);
 

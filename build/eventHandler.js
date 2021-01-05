@@ -27,7 +27,7 @@ export class eventHandler {
      * @param cb
      */
     addFunction(cb, meta, context) {
-        let id = cyrb53(cb.toString());
+        let id = cyrb53(cb.toString()) + "_" + meta.component;
         /*
         this.eventById[id] = ((meta, eventHdlr) => (args:object = {}, returnValue = null) =>{
             return cb(args, returnValue, meta);
