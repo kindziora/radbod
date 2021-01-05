@@ -104,8 +104,8 @@ export class store {
             return new Promise((resolve, reject) => this.db().find(selector, (data) => {
                 if (typeof data === "object")
                     this.createStore(this.name, data);
-                cb.call(this.dataH, data);
                 resolve(data);
+                cb.call(this.dataH, data);
             }));
         }
         else {
@@ -113,3 +113,4 @@ export class store {
         }
     }
 }
+store.prototype.find = store.prototype.load;

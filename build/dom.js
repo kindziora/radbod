@@ -124,7 +124,12 @@ export class dom {
             s = this.store.dataH.createStore(name, data);
         }
         else {
-            s = componentObject.data.call(this.store.dataH);
+            if (this.store.dataH.store[name]) {
+                s = this.store.dataH.store[name];
+            }
+            else {
+                s = componentObject.data.call(this.store.dataH);
+            }
             if (s instanceof store) {
             }
             else {

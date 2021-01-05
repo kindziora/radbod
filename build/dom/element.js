@@ -18,15 +18,17 @@ export class kelement {
         else {
             this.id = this.$el.getAttribute('data-id');
         }
-        this.setTemplate((_a = views) === null || _a === void 0 ? void 0 : _a[this.id]);
+        if (!((_a = views) === null || _a === void 0 ? void 0 : _a[this.id])) {
+            let args = (_c = (_b = this.dom.store) === null || _b === void 0 ? void 0 : _b.dataH) === null || _c === void 0 ? void 0 : _c.store.keys();
+            if (this.$el.innerHTML.trim() !== "") {
+                this.setTemplate(eval('(args)=> { let {change, ' + args + ', _t} = args; return `' + ((_d = this.$el.innerHTML) === null || _d === void 0 ? void 0 : _d.trim()) + '`}'));
+            }
+        }
+        else {
+            this.setTemplate((_e = views) === null || _e === void 0 ? void 0 : _e[this.id]);
+        }
         if (!this.$el.hasAttribute("data-view")) {
             this.$el.setAttribute("data-view", this.id);
-            if (!((_b = views) === null || _b === void 0 ? void 0 : _b[this.id])) {
-                let args = (_d = (_c = this.dom.store) === null || _c === void 0 ? void 0 : _c.dataH) === null || _d === void 0 ? void 0 : _d.store.keys();
-                if (this.$el.innerHTML.trim() !== "") {
-                    this.setTemplate(eval('(args)=> { let {change, ' + args + ', _t} = args; return `' + ((_e = this.$el.innerHTML) === null || _e === void 0 ? void 0 : _e.trim()) + '`}'));
-                }
-            }
         }
     }
     getValue() {

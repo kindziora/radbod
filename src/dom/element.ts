@@ -28,21 +28,19 @@ export class kelement {
         }else{
             this.id = this.$el.getAttribute('data-id');
         }
-        
-        this.setTemplate(views?.[this.id]);
+        if(!views?.[this.id]){ 
+
+            let args = this.dom.store?.dataH?.store.keys();
+
+            if(this.$el.innerHTML.trim() !==""){
+                 this.setTemplate(eval('(args)=> { let {change, ' + args +', _t} = args; return `'+ this.$el.innerHTML?.trim() +'`}')); 
+            }
+        }else{
+            this.setTemplate(views?.[this.id]);
+        }
 
         if(!this.$el.hasAttribute("data-view")){
-            this.$el.setAttribute("data-view", this.id);
-
-            if(!views?.[this.id]){ 
-
-                let args = this.dom.store?.dataH?.store.keys();
-
-                if(this.$el.innerHTML.trim() !==""){
-                     this.setTemplate(eval('(args)=> { let {change, ' + args +', _t} = args; return `'+ this.$el.innerHTML?.trim() +'`}')); 
-                }
-            }
-                
+            this.$el.setAttribute("data-view", this.id); 
         }
 
     }
