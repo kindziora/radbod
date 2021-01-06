@@ -13,7 +13,7 @@ export class elist extends kelement {
     }
 
     getNativeListItems(): HTMLCollection {
-        return this.$el ?.children as HTMLCollection;
+        return Array.from(this.$el ?.children as HTMLCollection);
     }
 
     getListItems(cached: boolean = false) {
@@ -24,7 +24,8 @@ export class elist extends kelement {
         let mappedItems: { [index: string]: kelement } = {};
         let items = this.getNativeListItems();
         for (let e in items) {
-            let id = items[e] ?.getAttribute("data-id");
+
+            let id = typeof items[e] !== "undefined" ? items[e]?.getAttribute("data-id"): "";
 
             if (id in this.dom.element) {
                 mappedItems[id] = this.dom.element[id];
@@ -82,7 +83,7 @@ export class elist extends kelement {
         } else {
             console.log("failed pointer from path", change.path);
         }
-        let addedEl = this.$scope.querySelector(`:scope data-name="${change.path}"`);
+        let addedEl = this.$scope.querySelector(`:scope [data-name="${CSS.escape(change.path)}"]`);
         let resultEL: kelement | null = null;
         if (addedEl) {
             resultEL = this.dom.loadElement(addedEl);

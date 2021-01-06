@@ -10,7 +10,7 @@ export class elist extends kelement {
     }
     getNativeListItems() {
         var _a;
-        return (_a = this.$el) === null || _a === void 0 ? void 0 : _a.children;
+        return Array.from((_a = this.$el) === null || _a === void 0 ? void 0 : _a.children);
     }
     getListItems(cached = false) {
         return cached ? this._listItems : this.mapListItems();
@@ -20,7 +20,7 @@ export class elist extends kelement {
         let mappedItems = {};
         let items = this.getNativeListItems();
         for (let e in items) {
-            let id = (_a = items[e]) === null || _a === void 0 ? void 0 : _a.getAttribute("data-id");
+            let id = typeof items[e] !== "undefined" ? (_a = items[e]) === null || _a === void 0 ? void 0 : _a.getAttribute("data-id") : "";
             if (id in this.dom.element) {
                 mappedItems[id] = this.dom.element[id];
                 this._listItems[id] = this.dom.element[id];
@@ -73,7 +73,7 @@ export class elist extends kelement {
         else {
             console.log("failed pointer from path", change.path);
         }
-        let addedEl = this.$scope.querySelector(`:scope data-name="${change.path}"`);
+        let addedEl = this.$scope.querySelector(`:scope [data-name="${CSS.escape(change.path)}"]`);
         let resultEL = null;
         if (addedEl) {
             resultEL = this.dom.loadElement(addedEl);

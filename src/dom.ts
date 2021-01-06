@@ -326,7 +326,7 @@ export class dom {
     getBestMatchingElements(path: string): Array<kelement> | [] {
         let elements: Array<kelement> = [];
         if (typeof this.elementByName[path] !== "undefined") {
-            elements = this.elementByName[path];
+            return this.elementByName[path];
         } else {
             let parentPath = path.split("/");
             if (parentPath.length > 1) {
