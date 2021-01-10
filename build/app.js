@@ -37,7 +37,7 @@ export class app {
     * @param injections
     */
     createComponent(name, views, data, actions, injections = {}, translations = {}, style) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+        var _a, _b, _c, _d;
         let s;
         if (data instanceof store) {
             s = data;
@@ -50,11 +50,11 @@ export class app {
         let internationalize = new i18n();
         internationalize.addTranslation(translations);
         let _t = (text, lang) => internationalize._t(text, lang);
-        if (typeof ((_b = views) === null || _b === void 0 ? void 0 : _b[name]) === "function") {
-            el.innerHTML = (_d = (_c = views) === null || _c === void 0 ? void 0 : _c[name]) === null || _d === void 0 ? void 0 : _d.call(s, Object.assign(Object.assign({ change: { value: "" } }, storeObject), { _t }));
+        if (typeof (views === null || views === void 0 ? void 0 : views[name]) === "function") {
+            el.innerHTML = (_b = views === null || views === void 0 ? void 0 : views[name]) === null || _b === void 0 ? void 0 : _b.call(s, Object.assign(Object.assign({ change: { value: "" } }, storeObject), { _t }));
         }
         else {
-            el.innerHTML = (_e = views) === null || _e === void 0 ? void 0 : _e[name];
+            el.innerHTML = views === null || views === void 0 ? void 0 : views[name];
         }
         let ddom = new dom(el, injections, s, views, _t);
         ddom.name = name;
@@ -65,12 +65,12 @@ export class app {
             el.append(stEl);
         }
         this.components[name] = new component(ddom, s, actions);
-        if (typeof ((_f = views) === null || _f === void 0 ? void 0 : _f[name]) !== "function") {
-            let args = (_h = (_g = this.dataH) === null || _g === void 0 ? void 0 : _g.store.keys()) === null || _h === void 0 ? void 0 : _h.join(',');
+        if (typeof (views === null || views === void 0 ? void 0 : views[name]) !== "function") {
+            let args = (_d = (_c = this.dataH) === null || _c === void 0 ? void 0 : _c.store.keys()) === null || _d === void 0 ? void 0 : _d.join(',');
             this.components[name].dom.setTemplate(eval('(args)=> { let {change, ' + args + ', _t} = args; return `' + this.components[name].dom._area.innerHTML + '`}'));
         }
         else {
-            this.components[name].dom.setTemplate((_j = views) === null || _j === void 0 ? void 0 : _j[name]);
+            this.components[name].dom.setTemplate(views === null || views === void 0 ? void 0 : views[name]);
         }
         return this.components[name];
     }

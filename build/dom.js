@@ -14,7 +14,6 @@ import { store } from './store.js';
 import { i18n } from './i18n.js';
 export class dom {
     constructor(area, types, s, views, _t) {
-        var _a;
         this._area = {};
         this._identifier = ':scope *';
         this.componentList = [];
@@ -32,7 +31,7 @@ export class dom {
             this.name = area.getAttribute('data-name');
         }
         else {
-            this.name = (_a = area) === null || _a === void 0 ? void 0 : _a.tagName;
+            this.name = area === null || area === void 0 ? void 0 : area.tagName;
         }
         this.setId();
         this.store = s;
@@ -77,7 +76,6 @@ export class dom {
      * @param $el
      */
     mapField(name, $element) {
-        var _a, _b;
         switch (name) {
             case "input":
                 if ($element.getAttribute('type'))
@@ -85,13 +83,13 @@ export class dom {
                 break;
             case "ul":
                 name = "list";
-                (_a = $element) === null || _a === void 0 ? void 0 : _a.setAttribute('data-type', "list");
+                $element === null || $element === void 0 ? void 0 : $element.setAttribute('data-type', "list");
                 break;
         }
         if (typeof this.elementTypes[name] === "undefined") { //unknown field type, back to default
             name = "kelement";
         }
-        if (((_b = $element) === null || _b === void 0 ? void 0 : _b.getAttribute('data-type')) == "list") {
+        if (($element === null || $element === void 0 ? void 0 : $element.getAttribute('data-type')) == "list") {
             name = "list";
         }
         return name;
@@ -113,7 +111,7 @@ export class dom {
      * @param data
      */
     createComponent($el, fieldTypeName, data) {
-        var _a, _b, _c, _d, _e, _f, _g;
+        var _a, _b, _c, _d;
         let s;
         let componentObject = this.elementTypes[fieldTypeName];
         let name = fieldTypeName.split("-")[0];
@@ -141,7 +139,7 @@ export class dom {
         let internationalize = new i18n();
         internationalize.addTranslation(componentObject.translations ? componentObject.translations() : {});
         let _t = (text, lang) => internationalize._t(text, lang);
-        if ((_d = (_c = componentObject) === null || _c === void 0 ? void 0 : _c.views) === null || _d === void 0 ? void 0 : _d[name]) {
+        if ((_c = componentObject === null || componentObject === void 0 ? void 0 : componentObject.views) === null || _c === void 0 ? void 0 : _c[name]) {
             $el.innerHTML = componentObject.views[name].call(s, Object.assign(Object.assign({ change: { value: "" } }, storeObject), { _t }));
         }
         else {
@@ -159,11 +157,11 @@ export class dom {
         $el.setAttribute("data-name", name);
         let newcomponent = new component(ddom, s, componentObject.interactions());
         newcomponent.setId(name);
-        if (typeof ((_f = (_e = componentObject) === null || _e === void 0 ? void 0 : _e.views) === null || _f === void 0 ? void 0 : _f[name]) !== "function") {
+        if (typeof ((_d = componentObject === null || componentObject === void 0 ? void 0 : componentObject.views) === null || _d === void 0 ? void 0 : _d[name]) !== "function") {
             newcomponent.dom.setTemplate(eval('(args)=> { let {change, ' + args + ', _t} = args; return `' + newcomponent.dom._area.innerHTML + '`}'));
         }
         else {
-            newcomponent.dom.setTemplate((_g = componentObject) === null || _g === void 0 ? void 0 : _g.views[name]);
+            newcomponent.dom.setTemplate(componentObject === null || componentObject === void 0 ? void 0 : componentObject.views[name]);
         }
         return newcomponent;
     }
@@ -183,11 +181,11 @@ export class dom {
      * @param t_el
      */
     detectType(t_el) {
-        var _a, _b, _c, _d, _e, _f, _g;
-        let last = (_c = (_b = (_a = t_el) === null || _a === void 0 ? void 0 : _a.getName()) === null || _b === void 0 ? void 0 : _b.split("/")) === null || _c === void 0 ? void 0 : _c.pop();
-        if (!isNaN(last) || ((_e = (_d = t_el) === null || _d === void 0 ? void 0 : _d.$el) === null || _e === void 0 ? void 0 : _e.getAttribute('data-type')) == "list-item") {
+        var _a, _b, _c, _d, _e;
+        let last = (_b = (_a = t_el === null || t_el === void 0 ? void 0 : t_el.getName()) === null || _a === void 0 ? void 0 : _a.split("/")) === null || _b === void 0 ? void 0 : _b.pop();
+        if (!isNaN(last) || ((_c = t_el === null || t_el === void 0 ? void 0 : t_el.$el) === null || _c === void 0 ? void 0 : _c.getAttribute('data-type')) == "list-item") {
             t_el.setIsListItem(true);
-            let id = (_g = (_f = t_el.$el) === null || _f === void 0 ? void 0 : _f.parentElement) === null || _g === void 0 ? void 0 : _g.getAttribute("data-id");
+            let id = (_e = (_d = t_el.$el) === null || _d === void 0 ? void 0 : _d.parentElement) === null || _e === void 0 ? void 0 : _e.getAttribute("data-id");
             if (id) {
                 if (this.element[id]) {
                     t_el.setListContainer(this.element[id]);
