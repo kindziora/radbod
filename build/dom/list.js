@@ -76,9 +76,9 @@ export class elist extends kelement {
         let addedEl = this.$scope.querySelector(`:scope [data-name="${CSS.escape(change.path)}"]`);
         let resultEL = null;
         if (addedEl) {
-            resultEL = this.dom.loadElement(addedEl);
+            this.dom.loadElementsScoped(addedEl);
         }
-        (_e = (_d = this.dom.store) === null || _d === void 0 ? void 0 : _d.events) === null || _e === void 0 ? void 0 : _e.dispatchEvent(this.dom.name, this.dom.name, "post_render", { change: change, domScope: this.dom });
+        (_e = (_d = this.dom.store) === null || _d === void 0 ? void 0 : _d.events) === null || _e === void 0 ? void 0 : _e.dispatchEvent(this.dom.name, this.dom.name, "post_render", { change: change, domScope: this.$el });
         return resultEL;
     }
     remove(change) {
@@ -95,7 +95,7 @@ export class elist extends kelement {
     render(change) {
         var _a, _b;
         this.$el.innerHTML = change.value.map((e) => this.renderItem(change)).join("\r\n");
-        (_b = (_a = this.dom.store) === null || _a === void 0 ? void 0 : _a.events) === null || _b === void 0 ? void 0 : _b.dispatchEvent(this.dom.name, this.dom.name, "post_render", { change: change, domScope: this.dom });
+        (_b = (_a = this.dom.store) === null || _a === void 0 ? void 0 : _a.events) === null || _b === void 0 ? void 0 : _b.dispatchEvent(this.dom.name, this.dom.name, "post_render", { change: change, domScope: this.$el });
     }
     /**
      *

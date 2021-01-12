@@ -51,7 +51,7 @@ export class component {
         this.store.events?.addEvent(this.name, "/", "change", this.interactions?.["/"]?.["change"], this);
         this.store.events?.addEvent(this.store.name, "/", "change", this.interactions?.["/"]?.["change"], this);
 
-        this.bindByInteractions({ change: {}, domScope: this.dom });
+        this.bindByInteractions({ change: {}, domScope: this.$el });
     }
 
     bindByInteractions(meta: { change: object, domScope: object }) {
@@ -74,15 +74,19 @@ export class component {
                         if (fieldID === mapEvent[1]) {
                             let added = this.store.events?.addEvent(this.name + `-${fieldID}`, path, event, this.interactions?.[path]?.[event]);
 
-                            console.log("addEventListener", $el, this.name + `-${fieldID}`, mapEvent[0], path, event, "added");
-                            if (added)
+                            if (added) {
+                                console.log("addEventListener", $el, this.name + `-${fieldID}`, mapEvent[0], path, event, "added");
                                 $el.addEventListener(mapEvent[0], c);
+                            }
+
                         }
                     } else {
                         let added = this.store.events?.addEvent(this.name + `-${fieldID}`, path, event, this.interactions?.[path]?.[event]);
-                        console.log("addEventListener", $el, this.name + `-${fieldID}`, event, path, "added");
-                        if (added)
+
+                        if (added) {
                             $el.addEventListener(event, c);
+                            console.log("addEventListener", $el, this.name + `-${fieldID}`, event, path, "added");
+                        }
                     }
 
                 }

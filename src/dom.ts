@@ -77,7 +77,7 @@ export class dom {
         this._area.innerHTML = this.template.call(this, { change: data, ...storeObject, _t: this._t });
         this.loadElements();
 
-        this.store.events?.dispatchEvent(this.name, this.name, "post_render", { change: data, domScope: this }, storeObject);
+        this.store.events?.dispatchEvent(this.name, this.name, "post_render", { change: data, domScope: this.$el }, storeObject);
 
     }
 
@@ -291,7 +291,17 @@ export class dom {
         return names;
     }
 
+    loadElementsScoped($scope:Element) {
 
+        let element: NodeListOf<Element> = $scope.querySelectorAll(this._identifier) as NodeListOf<Element>;
+
+        try {
+            element.forEach(($el: Element, currentIndex: number) => this.loadElement($el, currentIndex));
+        } catch (e) {
+            console.log(e);
+        }
+        
+    }
 
     loadElements() {
 

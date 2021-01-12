@@ -32,7 +32,7 @@ export class component {
         (_b = this.store.events) === null || _b === void 0 ? void 0 : _b.addEvent(this.store.name, "/", "change", this.update, this);
         (_c = this.store.events) === null || _c === void 0 ? void 0 : _c.addEvent(this.name, "/", "change", (_e = (_d = this.interactions) === null || _d === void 0 ? void 0 : _d["/"]) === null || _e === void 0 ? void 0 : _e["change"], this);
         (_f = this.store.events) === null || _f === void 0 ? void 0 : _f.addEvent(this.store.name, "/", "change", (_h = (_g = this.interactions) === null || _g === void 0 ? void 0 : _g["/"]) === null || _h === void 0 ? void 0 : _h["change"], this);
-        this.bindByInteractions({ change: {}, domScope: this.dom });
+        this.bindByInteractions({ change: {}, domScope: this.$el });
     }
     bindByInteractions(meta) {
         var _a, _b, _c, _d, _e, _f;
@@ -52,16 +52,18 @@ export class component {
                     if (mapEvent.length > 1) {
                         if (fieldID === mapEvent[1]) {
                             let added = (_a = this.store.events) === null || _a === void 0 ? void 0 : _a.addEvent(this.name + `-${fieldID}`, path, event, (_c = (_b = this.interactions) === null || _b === void 0 ? void 0 : _b[path]) === null || _c === void 0 ? void 0 : _c[event]);
-                            console.log("addEventListener", $el, this.name + `-${fieldID}`, mapEvent[0], path, event, "added");
-                            if (added)
+                            if (added) {
+                                console.log("addEventListener", $el, this.name + `-${fieldID}`, mapEvent[0], path, event, "added");
                                 $el.addEventListener(mapEvent[0], c);
+                            }
                         }
                     }
                     else {
                         let added = (_d = this.store.events) === null || _d === void 0 ? void 0 : _d.addEvent(this.name + `-${fieldID}`, path, event, (_f = (_e = this.interactions) === null || _e === void 0 ? void 0 : _e[path]) === null || _f === void 0 ? void 0 : _f[event]);
-                        console.log("addEventListener", $el, this.name + `-${fieldID}`, event, path, "added");
-                        if (added)
+                        if (added) {
                             $el.addEventListener(event, c);
+                            console.log("addEventListener", $el, this.name + `-${fieldID}`, event, path, "added");
+                        }
                     }
                 }
             }

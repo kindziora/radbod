@@ -25,7 +25,7 @@ export class kelement {
         
         if(!this.$el.getAttribute("data-id")){
             this.setId(null, counter);
-        }else{
+        }else{ 
             this.id = this.$el.getAttribute('data-id');
         }
 
@@ -90,7 +90,7 @@ export class kelement {
             
             this.$el.innerHTML = this.template.call(this, {change, ...stores, _t : this.dom._t}); 
 
-            this.dom.store?.events?.dispatchEvent(this.dom.name, this.dom.name, "post_render", { change: change, domScope: this.dom});
+            this.dom.store?.events?.dispatchEvent(this.dom.name, this.dom.name, "post_render", { change: change, domScope: this.$el});
             
         }else{
             this.$el.innerHTML = change.value; 

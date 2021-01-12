@@ -86,10 +86,10 @@ export class elist extends kelement {
         let addedEl = this.$scope.querySelector(`:scope [data-name="${CSS.escape(change.path)}"]`);
         let resultEL: kelement | null = null;
         if (addedEl) {
-            resultEL = this.dom.loadElement(addedEl);
+            this.dom.loadElementsScoped(addedEl);
         }
 
-        this.dom.store?.events?.dispatchEvent(this.dom.name, this.dom.name, "post_render", { change: change, domScope: this.dom});
+        this.dom.store?.events?.dispatchEvent(this.dom.name, this.dom.name, "post_render", { change: change, domScope: this.$el});
 
         return resultEL;
     }
@@ -107,7 +107,7 @@ export class elist extends kelement {
     render(change: op) {
         this.$el.innerHTML = change.value.map((e: any) => this.renderItem(change)).join("\r\n");
 
-        this.dom.store?.events?.dispatchEvent(this.dom.name, this.dom.name, "post_render", { change: change, domScope: this.dom});
+        this.dom.store?.events?.dispatchEvent(this.dom.name, this.dom.name, "post_render", { change: change, domScope: this.$el});
     }
 
     /**
