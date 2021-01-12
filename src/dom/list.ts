@@ -74,7 +74,7 @@ export class elist extends kelement {
                 let name = tname.join("/");
                 where = "afterend";
                 if (this._listItemsByName[name]) {
-                    this.dom.insertElementByElement(this._listItemsByName[name], where, this.renderItem(change));
+                    this.dom.insertElementByElement(this._listItemsByName[name], where, this.renderItem(change)); 
                 } else {
                     console.log("failed to find point to insert list-item", name);
                 }
@@ -88,6 +88,8 @@ export class elist extends kelement {
         if (addedEl) {
             resultEL = this.dom.loadElement(addedEl);
         }
+
+        this.dom.store?.events?.dispatchEvent(this.dom.name, this.dom.name, "post_render", { change: change, domScope: this.dom});
 
         return resultEL;
     }
@@ -104,6 +106,8 @@ export class elist extends kelement {
     */
     render(change: op) {
         this.$el.innerHTML = change.value.map((e: any) => this.renderItem(change)).join("\r\n");
+
+        this.dom.store?.events?.dispatchEvent(this.dom.name, this.dom.name, "post_render", { change: change, domScope: this.dom});
     }
 
     /**
@@ -114,8 +118,7 @@ export class elist extends kelement {
         let pointer = change.path?.split("/")?.pop();
         change.index = pointer;
         if (this.template) {
-            let storeObject = this.dom.store?.dataH?.store.toObject(); 
-            
+            let storeObject = this.dom.store?.dataH?.store.toObject();
             return this.template.call(this, {change, ...storeObject, _t : this.dom._t});
         } else {
             return `<div data-type="list-item" data-index="${pointer}" data-name="${change.path}">${change.value}</div>`;

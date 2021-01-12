@@ -52,7 +52,7 @@ export class eventHandler {
      */
     addEvent(component, id, name, cb, context) {
         if (typeof cb !== "function")
-            return;
+            return false;
         let callbackId = this.addFunction(cb, { component, id, name }, context);
         if (typeof this.event[component] === "undefined") {
             this.event[component] = {};
@@ -63,9 +63,14 @@ export class eventHandler {
         if (typeof this.event[component][id][name] === "undefined") {
             this.event[component][id][name] = [];
         }
-        if (this.event[component][id][name].indexOf(callbackId) === -1)
+        if (this.event[component][id][name].indexOf(callbackId) === -1) {
+            console.log("addEvent", component, id, name);
             this.event[component][id][name].push(callbackId);
-        return callbackId;
+            return true;
+        }
+        else {
+            return false;
+        }
     }
     dispatchEvent(component, id, name, args = null, returnValue = null, context) {
         var _a, _b;

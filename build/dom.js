@@ -46,12 +46,13 @@ export class dom {
      * @param data
      */
     render(data) {
-        var _a;
+        var _a, _b;
         this.element = {};
         this.elementByName = {};
         let storeObject = (_a = this.store.dataH) === null || _a === void 0 ? void 0 : _a.store.toObject();
         this._area.innerHTML = this.template.call(this, Object.assign(Object.assign({ change: data }, storeObject), { _t: this._t }));
         this.loadElements();
+        (_b = this.store.events) === null || _b === void 0 ? void 0 : _b.dispatchEvent(this.name, this.name, "post_render", { change: data, domScope: this }, storeObject);
     }
     /**
      *
@@ -151,10 +152,10 @@ export class dom {
             }
             // shadowRoot.innerHTML = componentObject.html.trim();
         }
-        console.log(s, componentObject.views, name, componentObject);
         let ddom = new dom($el, componentObject.components || {}, s, componentObject.views, _t);
         ddom.name = name;
         $el.setAttribute("data-name", name);
+        console.log("CREATE COMPONENT:", name, s, componentObject.views, componentObject);
         let newcomponent = new component(ddom, s, componentObject.interactions());
         newcomponent.setId(name);
         if (typeof ((_d = componentObject === null || componentObject === void 0 ? void 0 : componentObject.views) === null || _d === void 0 ? void 0 : _d[name]) !== "function") {

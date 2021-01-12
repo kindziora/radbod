@@ -26,6 +26,9 @@ export class component {
         this.$el = dom._area;
 
         this.bindEvents();
+
+        this.store.events?.addEvent(this.name, this.name, "post_render", this.bindByInteractions, this);
+
     }
 
     getName() {
@@ -41,12 +44,20 @@ export class component {
 
     bindEvents() {
         //this.update.bind(this);
- //wrong this context
+        //wrong this context
         this.store.events?.addEvent(this.name, "/", "change", this.update, this);
         this.store.events?.addEvent(this.store.name, "/", "change", this.update, this);
 
         this.store.events?.addEvent(this.name, "/", "change", this.interactions?.["/"]?.["change"], this);
         this.store.events?.addEvent(this.store.name, "/", "change", this.interactions?.["/"]?.["change"], this);
+
+        this.bindByInteractions({ change: {}, domScope: this.dom });
+    }
+
+    bindByInteractions(meta: { change: object, domScope: object }) {
+        let { change, domScope } = meta;
+        // ONLY ITERATE OVER FIELDS THAT ARE REALY IN SCOPE AND NOT FROM ANY SCOPE OVER ALL FIELDS!!!!!!!!!!!!!
+        console.log("bindByInteractions", this.name, change, domScope);
 
         for (let path in this.interactions) {
 
@@ -56,27 +67,28 @@ export class component {
                     let $el = this.dom.elementByName[path][field].$el;
                     let fieldID = this.dom.elementByName[path][field].id;
                     let mapEvent = event.split('#');
-
+                    let c = (ev) => {
+                        this.store.events?.dispatchEvent(this.name + `-${fieldID}`, path, event, { "field": this.dom.elementByName[path][field], ev }, this.store.data);
+                    };
                     if (mapEvent.length > 1) {
                         if (fieldID === mapEvent[1]) {
-                            this.store.events?.addEvent(this.name, path, event, this.interactions?.[path]?.[event]);
+                            let added = this.store.events?.addEvent(this.name + `-${fieldID}`, path, event, this.interactions?.[path]?.[event]);
 
-                            $el.addEventListener(mapEvent[0], (ev) => {
-                                this.store.events?.dispatchEvent(this.name, path, event, { "field": this.dom.elementByName[path][field], ev }, this.store.data);
-                            });
+                            console.log("addEventListener", $el, this.name + `-${fieldID}`, mapEvent[0], path, event, "added");
+                            if (added)
+                                $el.addEventListener(mapEvent[0], c);
                         }
                     } else {
-                        this.store.events?.addEvent(this.name, path, event, this.interactions?.[path]?.[event]);
-
-                        $el.addEventListener(event, (ev) => {
-                            this.store.events?.dispatchEvent(this.name, path, event, { "field": this.dom.elementByName[path][field], ev }, this.store.data);
-                        });
+                        let added = this.store.events?.addEvent(this.name + `-${fieldID}`, path, event, this.interactions?.[path]?.[event]);
+                        console.log("addEventListener", $el, this.name + `-${fieldID}`, event, path, "added");
+                        if (added)
+                            $el.addEventListener(event, c);
                     }
 
                 }
             }
         }
-
+        return false;
     }
 
     update(changes: Array<op>) {
@@ -98,5 +110,5 @@ export class component {
         this.dom.render(changes);
         this.bindEvents();
     }
-    
+
 }

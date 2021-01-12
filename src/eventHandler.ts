@@ -41,8 +41,7 @@ export class eventHandler {
 */
         
         this.eventById[id] = cb.bind(context||this);
-
-
+        
         return id;
     }
 
@@ -63,8 +62,8 @@ export class eventHandler {
      * @param name 
      * @param cb 
      */
-    addEvent(component: string, id: string, name: string, cb: Function, context? : object) {
-        if(typeof cb !=="function") return;
+    addEvent(component: string, id: string, name: string, cb: Function, context? : object):boolean {
+        if(typeof cb !=="function") return false;
 
         let callbackId: string = this.addFunction(cb, { component, id, name }, context);
 
@@ -80,10 +79,14 @@ export class eventHandler {
             this.event[component][id][name] = [];
         }
 
-        if (this.event[component][id][name].indexOf(callbackId) === -1)
+        if (this.event[component][id][name].indexOf(callbackId) === -1){
+            console.log("addEvent", component, id, name);
             this.event[component][id][name].push(callbackId);
-
-        return callbackId;
+            return true;
+        }else{
+            return false;
+        }
+        
     }
 
     dispatchEvent(component: string, id: string, name: string, args = null, returnValue = null, context? : object) {

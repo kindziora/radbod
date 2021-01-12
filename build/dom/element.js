@@ -64,10 +64,11 @@ export class kelement {
      * @param data
      */
     render(change) {
-        var _a, _b;
+        var _a, _b, _c, _d;
         if (this.template) {
             let stores = (_b = (_a = this.dom.store) === null || _a === void 0 ? void 0 : _a.dataH) === null || _b === void 0 ? void 0 : _b.store.toObject();
             this.$el.innerHTML = this.template.call(this, Object.assign(Object.assign({ change }, stores), { _t: this.dom._t }));
+            (_d = (_c = this.dom.store) === null || _c === void 0 ? void 0 : _c.events) === null || _d === void 0 ? void 0 : _d.dispatchEvent(this.dom.name, this.dom.name, "post_render", { change: change, domScope: this.dom });
         }
         else {
             this.$el.innerHTML = change.value;

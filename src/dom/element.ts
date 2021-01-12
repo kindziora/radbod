@@ -3,7 +3,7 @@ import { dom } from "../dom.js";
 
 export class kelement {
 
-    public id: String;
+    public id: string;
     public $el: HTMLElement;
     public $scope: HTMLElement;
     public dom: dom;
@@ -88,7 +88,10 @@ export class kelement {
         if(this.template){ 
             let stores = this.dom.store?.dataH?.store.toObject();
             
-            this.$el.innerHTML = this.template.call(this, {change, ...stores, _t : this.dom._t});
+            this.$el.innerHTML = this.template.call(this, {change, ...stores, _t : this.dom._t}); 
+
+            this.dom.store?.events?.dispatchEvent(this.dom.name, this.dom.name, "post_render", { change: change, domScope: this.dom});
+            
         }else{
             this.$el.innerHTML = change.value; 
         }

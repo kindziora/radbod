@@ -54,8 +54,12 @@ export class dom {
         this.setId();
         this.store = s;
         this.addTypes(types);
-        this.loadElements();
+        
+        this.loadElements(); 
+
     }
+
+
 
     setTemplate(template: Function) {
         this.template = template;
@@ -69,9 +73,12 @@ export class dom {
         this.element = {};
         this.elementByName = {};
 
-        let storeObject = this.store.dataH?.store.toObject();  
-        this._area.innerHTML = this.template.call(this, {change: data, ...storeObject, _t: this._t});
+        let storeObject = this.store.dataH?.store.toObject();
+        this._area.innerHTML = this.template.call(this, { change: data, ...storeObject, _t: this._t });
         this.loadElements();
+
+        this.store.events?.dispatchEvent(this.name, this.name, "post_render", { change: data, domScope: this }, storeObject);
+
     }
 
     /**
@@ -145,52 +152,53 @@ export class dom {
         } else if (typeof data !== "undefined") {
             s = this.store.dataH.createStore(name, data);
         } else {
-            if(this.store.dataH.store[name]){
+            if (this.store.dataH.store[name]) {
                 s = this.store.dataH.store[name];
-            }else{
+            } else {
                 s = componentObject.data.call(this.store.dataH);
             }
 
             if (s instanceof store) {
 
-            }else{
-                s = this.store.dataH.createStore(name, s ||{});
+            } else {
+                s = this.store.dataH.createStore(name, s || {});
             }
         }
         let storeObject = this.store.dataH?.store.toObject();
-        
+
         let args = this.store.dataH?.store.keys();
 
         let internationalize = new i18n();
-        internationalize.addTranslation(componentObject.translations? componentObject.translations():{});
+        internationalize.addTranslation(componentObject.translations ? componentObject.translations() : {});
 
-        let _t = (text:string, lang?:string) => internationalize._t(text, lang);
+        let _t = (text: string, lang?: string) => internationalize._t(text, lang);
 
 
-        if (componentObject?.views?.[name]) { 
-    
-            $el.innerHTML = componentObject.views[name].call(s, {change:{ value: "" }, ...storeObject, _t });
+        if (componentObject?.views?.[name]) {
+
+            $el.innerHTML = componentObject.views[name].call(s, { change: { value: "" }, ...storeObject, _t });
         } else {
-            if(!componentObject.html){ 
-                $el.innerHTML = componentObject.views[name].call(s, {change:{ value: "" }, ...storeObject, _t });
-            }else{
+            if (!componentObject.html) {
+                $el.innerHTML = componentObject.views[name].call(s, { change: { value: "" }, ...storeObject, _t });
+            } else {
                 $el.innerHTML = componentObject.html.trim();
             }
 
-           // shadowRoot.innerHTML = componentObject.html.trim();
+            // shadowRoot.innerHTML = componentObject.html.trim();
         }
-        
-        console.log(s, componentObject.views, name, componentObject);
 
+       
         let ddom = new dom($el, componentObject.components || {}, s, componentObject.views, _t);
         ddom.name = name;
         $el.setAttribute("data-name", name);
-        
+
+        console.log("CREATE COMPONENT:", name, s, componentObject.views, componentObject);
+
         let newcomponent = new component(ddom, s, componentObject.interactions());
         newcomponent.setId(name);
 
-        if (typeof componentObject?.views?.[name] !== "function") { 
-            newcomponent.dom.setTemplate(eval('(args)=> { let {change, ' + args +', _t} = args; return `' + newcomponent.dom._area.innerHTML + '`}'));
+        if (typeof componentObject?.views?.[name] !== "function") {
+            newcomponent.dom.setTemplate(eval('(args)=> { let {change, ' + args + ', _t} = args; return `' + newcomponent.dom._area.innerHTML + '`}'));
         } else {
             newcomponent.dom.setTemplate(componentObject?.views[name]);
         }
@@ -242,15 +250,15 @@ export class dom {
         let t_el: kelement = this.createElement($el, this.counter); //decorate and extend dom element
         this.detectType(t_el);
         this.addElement(t_el);
-        
-        if(t_el.getName()){ 
+
+        if (t_el.getName()) {
             this.addElementByName(t_el, <string>t_el.getName());
-        }else{
+        } else {
             this.detectOrphanVariables(t_el)
-            .forEach(name => this.addElementByName(t_el, name));
+                .forEach(name => this.addElementByName(t_el, name));
 
         }
-     
+
         return t_el;
     }
 
@@ -274,10 +282,10 @@ export class dom {
         let tpl = Array.from((t_el.template ? t_el.template.toString() : t_el.$el.innerHTML).matchAll(/return `(\$.*)`/gm))[0];
         let names = [];
 
-        if(tpl && tpl[1]){
+        if (tpl && tpl[1]) {
             names = Array.from(tpl[1].matchAll(/\${([\w\.\[\]]*)}/ig), transForm);
         }
-          
+
         //  console.log(tpNode.outerHTML);
 
         return names;
@@ -286,16 +294,15 @@ export class dom {
 
 
     loadElements() {
-       
+
         let element: NodeListOf<Element> = this._area.querySelectorAll(this._identifier) as NodeListOf<Element>;
-         
+
         try {
-
             element.forEach(($el: Element, currentIndex: number) => this.loadElement($el, currentIndex));
-       } catch (e) {
+        } catch (e) {
             console.log(e);
-        } 
-
+        }
+        
     }
 
     removeElement(el: kelement) {

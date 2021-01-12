@@ -41,7 +41,7 @@ export class elist extends kelement {
         console.log("replace whole list");
     }
     add(change) {
-        var _a, _b, _c;
+        var _a, _b, _c, _d, _e;
         let where = "afterbegin";
         let pointer = (_b = (_a = change.path) === null || _a === void 0 ? void 0 : _a.split("/")) === null || _b === void 0 ? void 0 : _b.pop();
         if (!isNaN(pointer)) {
@@ -78,6 +78,7 @@ export class elist extends kelement {
         if (addedEl) {
             resultEL = this.dom.loadElement(addedEl);
         }
+        (_e = (_d = this.dom.store) === null || _d === void 0 ? void 0 : _d.events) === null || _e === void 0 ? void 0 : _e.dispatchEvent(this.dom.name, this.dom.name, "post_render", { change: change, domScope: this.dom });
         return resultEL;
     }
     remove(change) {
@@ -92,7 +93,9 @@ export class elist extends kelement {
     * @param data
     */
     render(change) {
+        var _a, _b;
         this.$el.innerHTML = change.value.map((e) => this.renderItem(change)).join("\r\n");
+        (_b = (_a = this.dom.store) === null || _a === void 0 ? void 0 : _a.events) === null || _b === void 0 ? void 0 : _b.dispatchEvent(this.dom.name, this.dom.name, "post_render", { change: change, domScope: this.dom });
     }
     /**
      *
