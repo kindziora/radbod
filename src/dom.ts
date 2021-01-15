@@ -176,10 +176,10 @@ export class dom {
 
         if (componentObject?.views?.[name]) {
 
-            $el.innerHTML = componentObject.views[name].call(s, { change: { value: "" }, ...storeObject, _t });
+            $el.innerHTML = componentObject.views[name].call(componentObject, { change: { value: "" }, ...storeObject, _t });
         } else {
             if (!componentObject.html) {
-                $el.innerHTML = componentObject.views[name].call(s, { change: { value: "" }, ...storeObject, _t });
+                $el.innerHTML = componentObject.views[name].call(componentObject, { change: { value: "" }, ...storeObject, _t });
             } else {
                 $el.innerHTML = componentObject.html.trim();
             }
@@ -198,7 +198,7 @@ export class dom {
         newcomponent.setId(name);
 
         if (typeof componentObject?.views?.[name] !== "function") {
-            newcomponent.dom.setTemplate(eval('(args)=> { let {change, ' + args + ', _t} = args; return `' + newcomponent.dom._area.innerHTML + '`}'));
+            newcomponent.dom.setTemplate(eval('(function (args) { let {change, ' + args + ', _t} = args; return `' + newcomponent.dom._area.innerHTML + '`})'));
         } else {
             newcomponent.dom.setTemplate(componentObject?.views[name]);
         }

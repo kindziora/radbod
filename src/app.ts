@@ -76,7 +76,7 @@ export class app {
 
         if (typeof views?.[name] === "function") {
 
-            el.innerHTML = views?.[name]?.call(s, {change:{ value: "" }, ...storeObject, _t});
+            el.innerHTML = views?.[name]?.call(this, {change:{ value: "" }, ...storeObject, _t});
         } else {
             el.innerHTML = views?.[name];
         }
@@ -95,7 +95,7 @@ export class app {
 
         if (typeof views?.[name] !== "function") {
             let args = this.dataH?.store.keys()?.join(','); 
-            this.components[name].dom.setTemplate(eval('(args)=> { let {change, ' + args +', _t} = args; return `' + this.components[name].dom._area.innerHTML + '`}'));
+            this.components[name].dom.setTemplate(eval('(function(args){ let {change, ' + args +', _t} = args; return `' + this.components[name].dom._area.innerHTML + '`})'));
         } else {
             this.components[name].dom.setTemplate(views?.[name]);
         }

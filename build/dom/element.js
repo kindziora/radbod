@@ -25,7 +25,7 @@ export class kelement {
             if (!(views === null || views === void 0 ? void 0 : views[this.id])) {
                 let args = (_b = (_a = this.dom.store) === null || _a === void 0 ? void 0 : _a.dataH) === null || _b === void 0 ? void 0 : _b.store.keys();
                 if (this.$el.innerHTML.trim() !== "") {
-                    this.setTemplate(eval('(args)=> { let {change, ' + args + ', _t} = args; return `' + ((_c = this.$el.innerHTML) === null || _c === void 0 ? void 0 : _c.trim()) + '`}'));
+                    this.setTemplate(eval('(function (args) { let {change, ' + args + ', _t} = args; return `' + ((_c = this.$el.innerHTML) === null || _c === void 0 ? void 0 : _c.trim()) + '`})'));
                 }
             }
             else {

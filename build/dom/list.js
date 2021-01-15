@@ -39,6 +39,7 @@ export class elist extends kelement {
     }
     replace(change) {
         console.log("replace whole list");
+        this.render(change);
     }
     add(change) {
         var _a, _b, _c, _d, _e;

@@ -46,6 +46,7 @@ export class elist extends kelement {
 
     replace(change: op) {
         console.log("replace whole list");
+        this.render(change);
     }
 
     add(change: op): kelement | null {

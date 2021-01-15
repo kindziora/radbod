@@ -141,11 +141,11 @@ export class dom {
         internationalize.addTranslation(componentObject.translations ? componentObject.translations() : {});
         let _t = (text, lang) => internationalize._t(text, lang);
         if ((_c = componentObject === null || componentObject === void 0 ? void 0 : componentObject.views) === null || _c === void 0 ? void 0 : _c[name]) {
-            $el.innerHTML = componentObject.views[name].call(s, Object.assign(Object.assign({ change: { value: "" } }, storeObject), { _t }));
+            $el.innerHTML = componentObject.views[name].call(componentObject, Object.assign(Object.assign({ change: { value: "" } }, storeObject), { _t }));
         }
         else {
             if (!componentObject.html) {
-                $el.innerHTML = componentObject.views[name].call(s, Object.assign(Object.assign({ change: { value: "" } }, storeObject), { _t }));
+                $el.innerHTML = componentObject.views[name].call(componentObject, Object.assign(Object.assign({ change: { value: "" } }, storeObject), { _t }));
             }
             else {
                 $el.innerHTML = componentObject.html.trim();
@@ -159,7 +159,7 @@ export class dom {
         let newcomponent = new component(ddom, s, componentObject.interactions());
         newcomponent.setId(name);
         if (typeof ((_d = componentObject === null || componentObject === void 0 ? void 0 : componentObject.views) === null || _d === void 0 ? void 0 : _d[name]) !== "function") {
-            newcomponent.dom.setTemplate(eval('(args)=> { let {change, ' + args + ', _t} = args; return `' + newcomponent.dom._area.innerHTML + '`}'));
+            newcomponent.dom.setTemplate(eval('(function (args) { let {change, ' + args + ', _t} = args; return `' + newcomponent.dom._area.innerHTML + '`})'));
         }
         else {
             newcomponent.dom.setTemplate(componentObject === null || componentObject === void 0 ? void 0 : componentObject.views[name]);

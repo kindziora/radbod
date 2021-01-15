@@ -51,7 +51,7 @@ export class app {
         internationalize.addTranslation(translations);
         let _t = (text, lang) => internationalize._t(text, lang);
         if (typeof (views === null || views === void 0 ? void 0 : views[name]) === "function") {
-            el.innerHTML = (_b = views === null || views === void 0 ? void 0 : views[name]) === null || _b === void 0 ? void 0 : _b.call(s, Object.assign(Object.assign({ change: { value: "" } }, storeObject), { _t }));
+            el.innerHTML = (_b = views === null || views === void 0 ? void 0 : views[name]) === null || _b === void 0 ? void 0 : _b.call(this, Object.assign(Object.assign({ change: { value: "" } }, storeObject), { _t }));
         }
         else {
             el.innerHTML = views === null || views === void 0 ? void 0 : views[name];
@@ -67,7 +67,7 @@ export class app {
         this.components[name] = new component(ddom, s, actions);
         if (typeof (views === null || views === void 0 ? void 0 : views[name]) !== "function") {
             let args = (_d = (_c = this.dataH) === null || _c === void 0 ? void 0 : _c.store.keys()) === null || _d === void 0 ? void 0 : _d.join(',');
-            this.components[name].dom.setTemplate(eval('(args)=> { let {change, ' + args + ', _t} = args; return `' + this.components[name].dom._area.innerHTML + '`}'));
+            this.components[name].dom.setTemplate(eval('(function(args){ let {change, ' + args + ', _t} = args; return `' + this.components[name].dom._area.innerHTML + '`})'));
         }
         else {
             this.components[name].dom.setTemplate(views === null || views === void 0 ? void 0 : views[name]);

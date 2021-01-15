@@ -37,7 +37,7 @@ export class kelement {
                 let args = this.dom.store?.dataH?.store.keys();
     
                 if(this.$el.innerHTML.trim() !==""){
-                     this.setTemplate(eval('(args)=> { let {change, ' + args +', _t} = args; return `'+ this.$el.innerHTML?.trim() +'`}')); 
+                     this.setTemplate(eval('(function (args) { let {change, ' + args +', _t} = args; return `'+ this.$el.innerHTML?.trim() +'`})')); 
                 }
             }else{
                 this.setTemplate(views?.[this.id]);

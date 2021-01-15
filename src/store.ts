@@ -31,16 +31,16 @@ export class store {
             const handler = {
                 get: (oTarget, key): any => {
 
-                    if (typeof oTarget[key] === 'object' && oTarget[key] !== null || typeof oTarget[key] === 'function' ) {
-                        
+                    if (typeof oTarget[key] === 'object' && oTarget[key] !== null || typeof oTarget[key] === 'function') {
+
                         let px: string = parentPath + "/" + key;
-                       
-                        if(key.charAt(0) === "$"){ //reference
+
+                        if (key.charAt(0) === "$") { //reference
                             px = key;
                         }
- 
+
                         this.dataH.pxy[px] = this.dataH?.pxy[px] || createProxy(oTarget[key], px);
-                        
+
                         return this.dataH?.pxy?.[px];
                     } else {
                         return oTarget[key];
@@ -60,11 +60,11 @@ export class store {
                      */
 
                     if (oTarget[sKey] !== vValue) {
-                        oTarget[sKey] = vValue; 
+                        oTarget[sKey] = vValue;
 
-                        let tmpChain = this.changeStore(component, diff); 
+                        let tmpChain = this.changeStore(component, diff);
                     }
-                     
+
 
                     return true;
                 },
@@ -78,25 +78,25 @@ export class store {
                     if (oDesc && "value" in oDesc) { oTarget[sKey] = oDesc.value }
                     return oTarget;
                 }
-                
+
             };
 
             return new Proxy(data, handler);
         }
 
-        if(typeof data !=="object"){
+        if (typeof data !== "object") {
 
             console.log("store data is not an object", typeof data, data);
-            
+
             data = {};
         }
 
-      //  if(typeof this.dataH.pxy[`$${component}`] === "undefined"){
-            this.dataH.pxy[`$${component}`] = this._data = createProxy(data); //fjp.default.deepClone(data);
-       // }else{
-      //      Object.assign(this.dataH.pxy[`$${component}`], data);
-       // }
-        
+        //  if(typeof this.dataH.pxy[`$${component}`] === "undefined"){
+        this.dataH.pxy[`$${component}`] = this._data = createProxy(data); //fjp.default.deepClone(data);
+        // }else{
+        //      Object.assign(this.dataH.pxy[`$${component}`], data);
+        // }
+
         return this;
     }
 
@@ -108,17 +108,17 @@ export class store {
     changeStore(component: string, change: op) {
         let ret = null;
         this.patchQueue.push(change);
-        
+
         let retChange = this.events?.dispatchEvent(component, "/", "change", [change], this.data);
         //console.log(component, "/", "change", change);
 
-        try{
+        try {
             ret = this.events?.dispatchEvent(component, change.path, "change", [change], this.data);
             ret = this.events?.dispatchEvent(component, change.path, change.op, [change], this.data, ret);
-        }catch(e){
+        } catch (e) {
             ret = retChange;
         }
-       
+
         return ret;
     }
 
@@ -126,29 +126,30 @@ export class store {
         return this._data;
     }
 
-    db(){
+    db() {
         return this._storage;
     }
 
-    setDb(db : object){
+    setDb(db: object) {
         return this._storage = db;
     }
     
-    load(selector: Object, cb : Function){
-        if(this.db()){
-           return new Promise((resolve, reject) =>  this.db().find(selector, (data) => {
-                if(typeof data ==="object")
+    load(selector: Object, cb: Function) {
+        if (this.db()) {
+            return new Promise((resolve, reject) => this.db().find(selector, (data) => {
+
+                if (typeof data === "object")
                     this.createStore(this.name, data);
 
                 resolve(data);
                 cb.call(this.dataH, data);
-                
+
             }));
-        }else {
+        } else {
             return this.data;
         }
     }
-    
+
 }
 export interface store {
     find: typeof store.prototype.load;
