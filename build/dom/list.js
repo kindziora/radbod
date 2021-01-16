@@ -77,17 +77,14 @@ export class elist extends kelement {
         let addedEl = this.$scope.querySelector(`:scope [data-name="${CSS.escape(change.path)}"]`);
         let resultEL = null;
         if (addedEl) {
-            this.dom.loadElementsScoped(addedEl);
+            this.dom.loadElementsScoped(addedEl); //not nessesary?
         }
         (_e = (_d = this.dom.store) === null || _d === void 0 ? void 0 : _d.events) === null || _e === void 0 ? void 0 : _e.dispatchEvent(this.dom.name, this.dom.name, "post_render", { change: change, domScope: this.$el });
         return resultEL;
     }
     remove(change) {
-        var _a;
-        super.remove(change);
-        let el = (_a = this.dom.getBestMatchingElements(change.path)) === null || _a === void 0 ? void 0 : _a.pop();
-        if (el)
-            this.dom.removeElement(el);
+        // super.remove(change);
+        this.dom.getBestMatchingElements(change.path, false).some(el => this.dom.removeElement(el));
     }
     /**
     * !!caution this is slow and overwrites the hole html of the $element
@@ -95,7 +92,7 @@ export class elist extends kelement {
     */
     render(change) {
         var _a, _b;
-        this.$el.innerHTML = change.value.map((e) => this.renderItem(change)).join("\r\n");
+        this.$el.innerHTML = JSON.parse(JSON.stringify(change.value)).map((e, i) => this.renderItem({ op: "add", path: change.path + "/" + i, value: e })).join("\r\n");
         (_b = (_a = this.dom.store) === null || _a === void 0 ? void 0 : _a.events) === null || _b === void 0 ? void 0 : _b.dispatchEvent(this.dom.name, this.dom.name, "post_render", { change: change, domScope: this.$el });
     }
     /**

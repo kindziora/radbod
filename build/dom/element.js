@@ -18,12 +18,16 @@ export class kelement {
         else {
             this.id = this.$el.getAttribute('data-id');
         }
+        let args = (_b = (_a = this.dom.store) === null || _a === void 0 ? void 0 : _a.dataH) === null || _b === void 0 ? void 0 : _b.store.keys();
         if (views === null || views === void 0 ? void 0 : views[this.$el.getAttribute('data-view')]) {
             this.setTemplate(views === null || views === void 0 ? void 0 : views[this.$el.getAttribute('data-view')]);
+            if (this.$el.hasAttribute('data-name')) {
+                let c = this.dom.store.accessByPath(this.$el.getAttribute('data-name'));
+                this.render({ op: "add", path: this.$el.getAttribute('data-name'), value: c });
+            }
         }
         else {
             if (!(views === null || views === void 0 ? void 0 : views[this.id])) {
-                let args = (_b = (_a = this.dom.store) === null || _a === void 0 ? void 0 : _a.dataH) === null || _b === void 0 ? void 0 : _b.store.keys();
                 if (this.$el.innerHTML.trim() !== "") {
                     this.setTemplate(eval('(function (args) { let {change, ' + args + ', _t} = args; return `' + ((_c = this.$el.innerHTML) === null || _c === void 0 ? void 0 : _c.trim()) + '`})'));
                 }

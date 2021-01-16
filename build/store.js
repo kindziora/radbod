@@ -9,8 +9,12 @@ export class store {
         this.name = component;
         this.createStore(component, data);
     }
-    unmaskComponentName(component) {
-        return component.charAt(0) === "$" ? component.substr(1) : component;
+    unmaskComponentName(component, char = "$") {
+        return component.charAt(0) === char ? component.substr(1) : component;
+    }
+    accessByPath(path) {
+        let properties = Array.isArray(path) ? path : this.unmaskComponentName(path, "/").split("/");
+        return properties.reduce((prev, curr) => prev && prev[curr], this.dataH.pxy);
     }
     createStore(component, data) {
         let createProxy = (data, parentPath = `/$${component}`) => {

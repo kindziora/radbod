@@ -38,6 +38,7 @@ export class dom {
 
     public _t: Function;
 
+    public kelementBy$el: WeakMap<HTMLElement,kelement>;
 
     constructor(area: HTMLElement, types: { [index: string]: any }, s: store, views?: { [index: string]: Function }, _t: Function) {
 
@@ -45,6 +46,7 @@ export class dom {
         this.$el = this._area;
         this.views = views;
         this._t = _t;
+        this.kelementBy$el = new WeakMap();
 
         if (area.hasAttribute('data-name')) {
             this.name = area.getAttribute('data-name');
@@ -244,22 +246,30 @@ export class dom {
      * @param $el 
      * @param currentIndex 
      */
-    loadElement($el: Element, currentIndex?: number): kelement {
-        this.counter++;
+    loadElement($el: Element, currentIndex?: number): kelement { 
+        
+        if(!this.kelementBy$el.get($el)){
+            this.counter++;
 
-        let t_el: kelement = this.createElement($el, this.counter); //decorate and extend dom element
-        this.detectType(t_el);
-        this.addElement(t_el);
+            let t_el: kelement = this.createElement($el, this.counter); //decorate and extend dom element
+            this.detectType(t_el);
+            this.addElement(t_el);
+    
+            if (t_el.getName()) {
+                this.addElementByName(t_el, <string>t_el.getName());
+            } else {
+                this.detectOrphanVariables(t_el)
+                    .forEach(name => this.addElementByName(t_el, name));
+    
+            }
 
-        if (t_el.getName()) {
-            this.addElementByName(t_el, <string>t_el.getName());
-        } else {
-            this.detectOrphanVariables(t_el)
-                .forEach(name => this.addElementByName(t_el, name));
-
-        }
-
-        return t_el;
+            this.kelementBy$el.set($el, t_el);
+            return t_el;
+          
+        }else{
+            return this.kelementBy$el.get($el);
+        } 
+        
     }
 
     /**
@@ -296,6 +306,7 @@ export class dom {
         let element: NodeListOf<Element> = $scope.querySelectorAll(this._identifier) as NodeListOf<Element>;
 
         try {
+            this.loadElement($scope);
             element.forEach(($el: Element, currentIndex: number) => this.loadElement($el, currentIndex));
         } catch (e) {
             console.log(e);
@@ -340,11 +351,11 @@ export class dom {
      * 
      * @param path 
      */
-    getBestMatchingElements(path: string): Array<kelement> | [] {
+    getBestMatchingElements(path: string, searchAncestors:boolean = true): Array<kelement> | [] {
         let elements: Array<kelement> = [];
         if (typeof this.elementByName[path] !== "undefined") {
             return this.elementByName[path];
-        } else {
+        } else if(searchAncestors){
             let parentPath = path.split("/");
             if (parentPath.length > 1) {
                 parentPath.pop();

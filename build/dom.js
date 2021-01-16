@@ -27,6 +27,7 @@ export class dom {
         this.$el = this._area;
         this.views = views;
         this._t = _t;
+        this.kelementBy$el = new WeakMap();
         if (area.hasAttribute('data-name')) {
             this.name = area.getAttribute('data-name');
         }
@@ -200,18 +201,24 @@ export class dom {
      * @param currentIndex
      */
     loadElement($el, currentIndex) {
-        this.counter++;
-        let t_el = this.createElement($el, this.counter); //decorate and extend dom element
-        this.detectType(t_el);
-        this.addElement(t_el);
-        if (t_el.getName()) {
-            this.addElementByName(t_el, t_el.getName());
+        if (!this.kelementBy$el.get($el)) {
+            this.counter++;
+            let t_el = this.createElement($el, this.counter); //decorate and extend dom element
+            this.detectType(t_el);
+            this.addElement(t_el);
+            if (t_el.getName()) {
+                this.addElementByName(t_el, t_el.getName());
+            }
+            else {
+                this.detectOrphanVariables(t_el)
+                    .forEach(name => this.addElementByName(t_el, name));
+            }
+            this.kelementBy$el.set($el, t_el);
+            return t_el;
         }
         else {
-            this.detectOrphanVariables(t_el)
-                .forEach(name => this.addElementByName(t_el, name));
+            return this.kelementBy$el.get($el);
         }
-        return t_el;
     }
     /**
      * detect orphan variable usages
@@ -238,6 +245,7 @@ export class dom {
     loadElementsScoped($scope) {
         let element = $scope.querySelectorAll(this._identifier);
         try {
+            this.loadElement($scope);
             element.forEach(($el, currentIndex) => this.loadElement($el, currentIndex));
         }
         catch (e) {
@@ -275,12 +283,12 @@ export class dom {
      *
      * @param path
      */
-    getBestMatchingElements(path) {
+    getBestMatchingElements(path, searchAncestors = true) {
         let elements = [];
         if (typeof this.elementByName[path] !== "undefined") {
             return this.elementByName[path];
         }
-        else {
+        else if (searchAncestors) {
             let parentPath = path.split("/");
             if (parentPath.length > 1) {
                 parentPath.pop();

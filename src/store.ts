@@ -21,8 +21,13 @@ export class store {
         this.createStore(component, data);
     }
 
-    unmaskComponentName(component: string) {
-        return component.charAt(0) === "$" ? component.substr(1) : component;
+    unmaskComponentName(component: string, char:string = "$") {
+        return component.charAt(0) === char ? component.substr(1) : component;
+    }
+
+    accessByPath(path: string){
+        let properties = Array.isArray(path) ? path : this.unmaskComponentName(path, "/").split("/");
+        return properties.reduce((prev, curr) => prev && prev[curr], this.dataH.pxy)
     }
 
     createStore(component: string, data: Object) {

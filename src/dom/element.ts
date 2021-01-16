@@ -18,34 +18,38 @@ export class kelement {
      * @param counter 
      * @param dom 
      */
-     constructor(el: HTMLElement, $scope: HTMLElement, counter: number, dom:dom, views?: { [index: string]: Function }) {
+    constructor(el: HTMLElement, $scope: HTMLElement, counter: number, dom: dom, views?: { [index: string]: Function }) {
         this.$el = el;
         this.$scope = $scope;
         this.dom = dom;
-        
-        if(!this.$el.getAttribute("data-id")){
+
+        if (!this.$el.getAttribute("data-id")) {
             this.setId(null, counter);
-        }else{ 
+        } else {
             this.id = this.$el.getAttribute('data-id');
         }
+        let args = this.dom.store?.dataH?.store.keys();
 
-        if(views?.[this.$el.getAttribute('data-view')]){
+        if (views?.[this.$el.getAttribute('data-view')]) {
             this.setTemplate(views?.[this.$el.getAttribute('data-view')]);
-        }else{
-            if(!views?.[this.id]){ 
 
-                let args = this.dom.store?.dataH?.store.keys();
-    
-                if(this.$el.innerHTML.trim() !==""){
-                     this.setTemplate(eval('(function (args) { let {change, ' + args +', _t} = args; return `'+ this.$el.innerHTML?.trim() +'`})')); 
+            if (this.$el.hasAttribute('data-name')) {
+                let c = this.dom.store.accessByPath(this.$el.getAttribute('data-name'));
+                this.render({ op: "add", path: this.$el.getAttribute('data-name'), value: c });
+              }
+
+        } else {
+            if (!views?.[this.id]) {
+                if (this.$el.innerHTML.trim() !== "") {
+                    this.setTemplate(eval('(function (args) { let {change, ' + args + ', _t} = args; return `' + this.$el.innerHTML?.trim() + '`})'));
                 }
-            }else{
+            } else {
                 this.setTemplate(views?.[this.id]);
             }
         }
- 
-        if(!this.$el.hasAttribute("data-view")){
-            this.$el.setAttribute("data-view", this.id); 
+
+        if (!this.$el.hasAttribute("data-view")) {
+            this.$el.setAttribute("data-view", this.id);
         }
 
     }
@@ -63,17 +67,17 @@ export class kelement {
         this.$el.setAttribute("data-id", id);
         this.id = id;
     }
- 
+
     update(changes: Array<op>) {
 
         for (let i: number = 0; i < changes.length; i++) {
             let change: op = changes[i];
             console.log(change.op, change.value);
             if (typeof this[change.op] !== "undefined") {
-                this[change.op](change); 
+                this[change.op](change);
             }
         }
-        
+
     }
 
     setTemplate(template: Function) {
@@ -84,21 +88,21 @@ export class kelement {
      * !!caution this is slow and overwrites the hole html of the $element
      * @param data 
      */
-    render(change: op){
-        if(this.template){ 
+    render(change: op) {
+        if (this.template) {
             let stores = this.dom.store?.dataH?.store.toObject();
-            
-            this.$el.innerHTML = this.template.call(this, {change, ...stores, _t : this.dom._t}); 
 
-            this.dom.store?.events?.dispatchEvent(this.dom.name, this.dom.name, "post_render", { change: change, domScope: this.$el});
-            
-        }else{
-            this.$el.innerHTML = change.value; 
+            this.$el.innerHTML = this.template.call(this, { change, ...stores, _t: this.dom._t });
+
+            this.dom.store?.events?.dispatchEvent(this.dom.name, this.dom.name, "post_render", { change: change, domScope: this.$el });
+
+        } else {
+            this.$el.innerHTML = change.value;
         }
     }
 
     replace(change: op) {
-       this.render(change);
+        this.render(change);
     }
 
     add(change: op) {
@@ -107,26 +111,26 @@ export class kelement {
 
     remove(change: op) {
         //if parent exists notify parent and remove el, otherwise tell domHandler to remove el
-        if(this.isListItem()){
+        if (this.isListItem()) {
             this.getListContainer()?.remove(change);
-        }else{
+        } else {
             this.$el.remove();
         }
     }
 
-    isListItem():boolean{
+    isListItem(): boolean {
         return this._isListItem;
     }
 
-    setIsListItem(value: boolean){
+    setIsListItem(value: boolean) {
         this._isListItem = value;
     }
 
-    getListContainer(){
+    getListContainer() {
         return this._listContainer;
     }
 
-    setListContainer(value: kelement){
+    setListContainer(value: kelement) {
         this._listContainer = value;
     }
 }

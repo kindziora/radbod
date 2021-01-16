@@ -56,6 +56,7 @@ export class component {
 
     bindByInteractions(meta: { change: object, domScope: object }) {
         let { change, domScope } = meta;
+        this.dom.loadElementsScoped(domScope);
         // ONLY ITERATE OVER FIELDS THAT ARE REALY IN SCOPE AND NOT FROM ANY SCOPE OVER ALL FIELDS!!!!!!!!!!!!!
         console.log("bindByInteractions", this.name, change, domScope);
 
