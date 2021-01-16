@@ -12,7 +12,7 @@ export class kelement {
         this.$el = el;
         this.$scope = $scope;
         this.dom = dom;
-        if (!this.$el.getAttribute("data-id")) {
+        if (!this.$el.hasAttribute("data-id")) {
             this.setId(null, counter);
         }
         else {
