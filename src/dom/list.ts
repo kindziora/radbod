@@ -105,7 +105,7 @@ export class elist extends kelement {
     * @param data 
     */
     render(change: op) {
-        this.$el.innerHTML = JSON.parse(JSON.stringify(change.value)).map((e: any, i) => this.renderItem({ op: "add", path: change.path + "/" + i, value: e })).join("\r\n");
+        this.$el.innerHTML = JSON.parse(JSON.stringify(change.value||[])).map((e: any, i) => this.renderItem({ op: "add", path: change.path + "/" + i, value: e })).join("\r\n");
         this.dom.store?.events?.dispatchEvent(this.dom.name, this.dom.name, "post_render", { change: change, domScope: this.$el});
     }
 

@@ -92,7 +92,7 @@ export class elist extends kelement {
     */
     render(change) {
         var _a, _b;
-        this.$el.innerHTML = JSON.parse(JSON.stringify(change.value)).map((e, i) => this.renderItem({ op: "add", path: change.path + "/" + i, value: e })).join("\r\n");
+        this.$el.innerHTML = JSON.parse(JSON.stringify(change.value || [])).map((e, i) => this.renderItem({ op: "add", path: change.path + "/" + i, value: e })).join("\r\n");
         (_b = (_a = this.dom.store) === null || _a === void 0 ? void 0 : _a.events) === null || _b === void 0 ? void 0 : _b.dispatchEvent(this.dom.name, this.dom.name, "post_render", { change: change, domScope: this.$el });
     }
     /**

@@ -81,9 +81,10 @@ export class app {
             el.innerHTML = views?.[name];
         }
 
+        el.setAttribute("data-name", name);
+
         let ddom = new dom(el, injections, s, views, _t);
         ddom.name = name;
-        el.setAttribute("data-name", name);
 
         if(style) {
             let stEl = document.createElement('style');

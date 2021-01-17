@@ -53,6 +53,7 @@ export class dom {
         } else {
             this.name = area?.tagName;
         }
+        this._identifier = `:scope [data-id^="${this.name}"], :scope *:not([data-id]), :scope [type="component"]`;
         this.setId();
         this.store = s;
         this.addTypes(types);
@@ -306,7 +307,7 @@ export class dom {
         let element: NodeListOf<Element> = $scope.querySelectorAll(this._identifier) as NodeListOf<Element>;
 
         try {
-            this.loadElement($scope);
+           // this.loadElement($scope);
             element.forEach(($el: Element, currentIndex: number) => this.loadElement($el, currentIndex));
         } catch (e) {
             console.log(e);

@@ -34,6 +34,7 @@ export class dom {
         else {
             this.name = area === null || area === void 0 ? void 0 : area.tagName;
         }
+        this._identifier = `:scope [data-id^="${this.name}"], :scope *:not([data-id]), :scope [type="component"]`;
         this.setId();
         this.store = s;
         this.addTypes(types);
@@ -245,7 +246,7 @@ export class dom {
     loadElementsScoped($scope) {
         let element = $scope.querySelectorAll(this._identifier);
         try {
-            this.loadElement($scope);
+            // this.loadElement($scope);
             element.forEach(($el, currentIndex) => this.loadElement($el, currentIndex));
         }
         catch (e) {
