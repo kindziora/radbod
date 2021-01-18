@@ -68,10 +68,10 @@ export class dom {
         }
     }
     setId() {
-        this.counter++;
         let id = this.name || "c" + "-" + this.counter;
         this._area.setAttribute("data-id", id);
         this.id = id;
+        this.counter++;
     }
     /**
      *

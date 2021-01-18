@@ -97,10 +97,10 @@ export class dom {
     }
 
     private setId() {
-        this.counter++;
         let id: string = this.name || "c" + "-" + this.counter;
         this._area.setAttribute("data-id", id);
         this.id = id;
+        this.counter++;
     }
 
     /**
@@ -318,7 +318,7 @@ export class dom {
     loadElements() {
 
         let element: NodeListOf<Element> = this._area.querySelectorAll(this._identifier) as NodeListOf<Element>;
-
+        
         try {
             element.forEach(($el: Element, currentIndex: number) => this.loadElement($el, currentIndex));
         } catch (e) {
