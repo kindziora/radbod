@@ -197,7 +197,7 @@ export class dom {
 
         console.log("CREATE COMPONENT:", name, s, componentObject.views, componentObject);
 
-        let newcomponent = new component(ddom, s, componentObject.interactions());
+        let newcomponent = new component(ddom, s, componentObject.interactions.call({componentObject, dom: ddom}));
         newcomponent.setId(name);
 
         if (typeof componentObject?.views?.[name] !== "function") {

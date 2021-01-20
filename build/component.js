@@ -82,8 +82,11 @@ export class component {
         }
     }
     render(changes) {
+        var _a, _b;
         console.log("COMPONENT UPDATE BECAUSE NO FIELD TO MATCH");
         this.dom.render(changes);
+        let storeObject = (_a = this.store.dataH) === null || _a === void 0 ? void 0 : _a.store.toObject();
+        (_b = this.store.events) === null || _b === void 0 ? void 0 : _b.dispatchEvent(this.name, this.name, "post_render", { change: changes[0], domScope: this.$el }, storeObject);
         this.bindEvents();
     }
 }

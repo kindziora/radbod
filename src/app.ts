@@ -38,10 +38,10 @@ export class app {
                 componentObject.data.call(this.dataH, function(data) {
                     console.log(`DATA MAIN COMPONENT ${name}`, data);
                 }),
-                componentObject.interactions(), 
+                componentObject.interactions, 
                 componentObject.components, 
                 componentObject.translations(),
-                componentObject.style
+                componentObject
             );
 
             callback(stores, data, compo);
@@ -57,7 +57,7 @@ export class app {
     * @param actions 
     * @param injections 
     */ 
-    createComponent(name: string, views: { [index: string]: string }, data: Object | store, actions: object, injections: object = {}, translations: object = {}, style?:object) {
+    createComponent(name: string, views: { [index: string]: string }, data: Object | store, actions: object, injections: object = {}, translations: object = {}, componentObject?:object, style?:object) {
         let s;
 
         if (data instanceof store) {
@@ -77,6 +77,7 @@ export class app {
         if (typeof views?.[name] === "function") {
 
             el.innerHTML = views?.[name]?.call(this, {change:{ value: "" }, ...storeObject, _t});
+
         } else {
             el.innerHTML = views?.[name];
         }
@@ -91,8 +92,15 @@ export class app {
             stEl.innerHTML = style;
             el.append(stEl);
         }
+        let act = {};
+        try{
+            act = actions.call({componentObject, dom: ddom});
+        }catch(e) {
+            console.log(e);
+        }
         
-        this.components[name] = new component(ddom, s, actions);
+
+        this.components[name] = new component(ddom, s, act);
 
         if (typeof views?.[name] !== "function") {
             let args = this.dataH?.store.keys()?.join(','); 

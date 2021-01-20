@@ -24,7 +24,7 @@ export class app {
         console.log(`mount component: ${name}`, this.loadStores(componentObject, (stores, data) => {
             let compo = this.createComponent(name, componentObject.views, componentObject.data.call(this.dataH, function (data) {
                 console.log(`DATA MAIN COMPONENT ${name}`, data);
-            }), componentObject.interactions(), componentObject.components, componentObject.translations(), componentObject.style);
+            }), componentObject.interactions, componentObject.components, componentObject.translations(), componentObject);
             callback(stores, data, compo);
         }));
     }
@@ -36,7 +36,7 @@ export class app {
     * @param actions
     * @param injections
     */
-    createComponent(name, views, data, actions, injections = {}, translations = {}, style) {
+    createComponent(name, views, data, actions, injections = {}, translations = {}, componentObject, style) {
         var _a, _b, _c, _d;
         let s;
         if (data instanceof store) {
@@ -64,7 +64,14 @@ export class app {
             stEl.innerHTML = style;
             el.append(stEl);
         }
-        this.components[name] = new component(ddom, s, actions);
+        let act = {};
+        try {
+            act = actions.call({ componentObject, dom: ddom });
+        }
+        catch (e) {
+            console.log(e);
+        }
+        this.components[name] = new component(ddom, s, act);
         if (typeof (views === null || views === void 0 ? void 0 : views[name]) !== "function") {
             let args = (_d = (_c = this.dataH) === null || _c === void 0 ? void 0 : _c.store.keys()) === null || _d === void 0 ? void 0 : _d.join(',');
             this.components[name].dom.setTemplate(eval('(function(args){ let {change, ' + args + ', _t} = args; return `' + this.components[name].dom._area.innerHTML + '`})'));

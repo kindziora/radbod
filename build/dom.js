@@ -158,7 +158,7 @@ export class dom {
         ddom.name = name;
         $el.setAttribute("data-name", name);
         console.log("CREATE COMPONENT:", name, s, componentObject.views, componentObject);
-        let newcomponent = new component(ddom, s, componentObject.interactions());
+        let newcomponent = new component(ddom, s, componentObject.interactions.call({ componentObject, dom: ddom }));
         newcomponent.setId(name);
         if (typeof ((_d = componentObject === null || componentObject === void 0 ? void 0 : componentObject.views) === null || _d === void 0 ? void 0 : _d[name]) !== "function") {
             newcomponent.dom.setTemplate(eval('(function (args) { let {change, ' + args + ', _t} = args; return `' + newcomponent.dom._area.innerHTML + '`})'));
