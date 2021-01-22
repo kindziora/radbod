@@ -1,6 +1,6 @@
 export * from './dataHandler.js';
 import { eventHandler } from './eventHandler.js';
-import { dataHandler, op } from './dataHandler.js';
+import { dataHandler, op, validationResult } from './dataHandler.js';
 
 export class store {
 
@@ -10,6 +10,8 @@ export class store {
     public component: string;
     public name: string;
     private patchQueue: Array<op> = [];
+
+    private _validations: { [index: string]: Object } = {};
 
     private _storage: Object;
 
@@ -138,7 +140,54 @@ export class store {
     setDb(db: object) {
         return this._storage = db;
     }
-    
+
+    setValidations(validations: { [index: string]: Object }){
+        this._validations = validations;
+        return this;
+    }
+
+    addValidations(validations: { [index: string]: Object }){
+
+        this._validations = Object.assign(this._validations, validations);
+
+        return this;
+    }
+
+    getValidations(){
+        this._validations;
+    }
+
+    /*
+    validate(name: string, value: any, typeName: string) {  
+
+            function validate(validateResult: validationResult) {
+                validateResult.value = value;
+                model.setState(name, validateResult);
+
+                if (typeof value.getName === "function")
+                    cls.model2View.call(value, model.getChangedModelFields());
+                return validateResult.result ? value : undefined;
+            }
+
+            if (typeof child.validator !== "undefined" && typeof child.validator[type] === "function") {
+                var validateResult = child.validator[type].call(model, value, name);
+                return validate(validateResult);
+            } else {
+
+                if (typeof type.result !== 'undefined') {
+                    return validate(type);
+                } else {
+                    throw {
+                        message: "Validator of type " + type + "does not exist.",
+                        name: "ValidationException"
+                    };
+                }
+
+            }
+        }
+    }*/
+
+
     load(selector: Object, cb: Function) {
         if (this.db()) {
             return new Promise((resolve, reject) => this.db().find(selector, (data) => {

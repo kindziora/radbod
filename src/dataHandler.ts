@@ -1,6 +1,13 @@
 import { store } from './store.js';
 
 export interface op { op: string, path: string, value: any };
+
+export interface validationResult {
+    result: boolean,
+    msg : string,
+    view : string
+};
+
 import { eventHandler } from './eventHandler.js';
 
 export class dataHandler {

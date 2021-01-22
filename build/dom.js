@@ -137,6 +137,8 @@ export class dom {
                 s = this.store.dataH.createStore(name, s || {});
             }
         }
+        if (typeof componentObject.validations !== "undefined")
+            s.addValidations(componentObject.validations);
         let storeObject = (_a = this.store.dataH) === null || _a === void 0 ? void 0 : _a.store.toObject();
         let args = (_b = this.store.dataH) === null || _b === void 0 ? void 0 : _b.store.keys();
         let internationalize = new i18n();

@@ -167,6 +167,10 @@ export class dom {
                 s = this.store.dataH.createStore(name, s || {});
             }
         }
+
+        if(typeof componentObject.validations !=="undefined")
+            s.addValidations(componentObject.validations);
+
         let storeObject = this.store.dataH?.store.toObject();
 
         let args = this.store.dataH?.store.keys();
