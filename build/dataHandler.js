@@ -1,6 +1,4 @@
 import { store } from './store.js';
-;
-;
 export class dataHandler {
     constructor(eventH, environment) {
         this.store = {};

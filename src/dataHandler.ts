@@ -1,8 +1,8 @@
 import { store } from './store.js';
 
-export interface op { op: string, path: string, value: any };
+export type op = { op: string, path: string, value: any };
 
-export interface validationResult {
+export type validationResult = {
     result: boolean,
     msg : string,
     view : string

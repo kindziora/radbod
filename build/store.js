@@ -1,4 +1,38 @@
 export * from './dataHandler.js';
+var validationMode;
+(function (validationMode) {
+    validationMode[validationMode["fifo"] = 0] = "fifo";
+    validationMode[validationMode["all"] = 0] = "all";
+})(validationMode || (validationMode = {}));
+export class meta {
+    constructor(eventH) {
+        this._meta = {};
+        this._state = {};
+        this.events = eventH;
+    }
+    getMeta(fieldPath) {
+        var _a;
+        return (_a = this._meta[fieldPath]) !== null && _a !== void 0 ? _a : { validationMode: validationMode.all, validators: {} };
+    }
+    setMeta(fieldPath, value) {
+        var _a;
+        value.validationMode = (_a = value === null || value === void 0 ? void 0 : value.validationMode) !== null && _a !== void 0 ? _a : validationMode.all;
+        this._meta[fieldPath] = value;
+    }
+    getState(fieldPath) {
+        var _a;
+        return (_a = this._state[fieldPath]) !== null && _a !== void 0 ? _a : { isValid: true, msg: {} };
+    }
+    setState(fieldPath, info) {
+        var _a, _b, _c;
+        let validChanged = ((_a = this._state[fieldPath]) === null || _a === void 0 ? void 0 : _a.isValid) !== info.isValid;
+        let msgChanged = ((_b = this._state[fieldPath]) === null || _b === void 0 ? void 0 : _b.msg) !== info.msg;
+        if (validChanged || msgChanged) {
+            this._state[fieldPath] = info;
+            (_c = this.events) === null || _c === void 0 ? void 0 : _c.dispatchEvent("_state", fieldPath, "change", [{ op: "change", path: fieldPath, value: info }], info);
+        }
+    }
+}
 export class store {
     constructor(eventH, dataH, component, data) {
         this._data = {};
@@ -16,6 +50,24 @@ export class store {
     accessByPath(path) {
         let properties = Array.isArray(path) ? path : this.unmaskComponentName(path, "/").split("/");
         return properties.reduce((prev, curr) => prev && prev[curr], this.dataH.pxy);
+    }
+    getMetaState() {
+        return this._meta;
+    }
+    validateField(fieldPath, value) {
+        let metaData = this._meta.getMeta(fieldPath);
+        let stateData = this._meta.getState(fieldPath);
+        if (metaData === null || metaData === void 0 ? void 0 : metaData.validators) {
+            for (let v in metaData.validators) {
+                let result = metaData.validators[v](value);
+                if (!result.isValid) {
+                    stateData.msg[v] = result.msg;
+                    stateData.isValid = false;
+                }
+            }
+        }
+        this._meta.setState(fieldPath, stateData);
+        return stateData;
     }
     createStore(component, data) {
         let createProxy = (data, parentPath = `/$${component}`) => {
@@ -44,24 +96,39 @@ export class store {
                      * @todo set value and use this.pxy[px] for $ connected values
                      */
                     if (oTarget[sKey] !== vValue) {
-                        oTarget[sKey] = vValue;
-                        let tmpChain = this.changeStore(component, diff);
+                        let result = this.validateField(diff.path, vValue);
+                        if (result.isValid) {
+                            oTarget[sKey] = vValue;
+                            let tmpChain = this.changeStore(component, diff);
+                        }
+                        else {
+                            /*  return false; */
+                        }
                     }
                     return true;
                 },
                 deleteProperty: (oTarget, sKey) => {
                     console.log("delete", oTarget[sKey]);
-                    delete oTarget[sKey];
-                    this.changeStore(component, { op: "remove", path: parentPath + "/" + sKey });
+                    let result = this.validateField(parentPath + "/" + sKey, null);
+                    if (result.isValid) {
+                        delete oTarget[sKey];
+                        this.changeStore(component, { op: "remove", path: parentPath + "/" + sKey, value: undefined });
+                    }
+                    else {
+                        /*  return false; */
+                    }
                     return true;
                 },
                 defineProperty: (oTarget, sKey, oDesc) => {
+                    console.log("DEFINE", oTarget[sKey]);
                     if (oDesc && "value" in oDesc) {
                         oTarget[sKey] = oDesc.value;
                     }
                     return oTarget;
                 }
             };
+            //create meta here and set prefix path
+            this._meta = new meta(this.events);
             return new Proxy(data, handler);
         };
         if (typeof data !== "object") {
@@ -113,7 +180,7 @@ export class store {
         return this;
     }
     getValidations() {
-        this._validations;
+        return this._validations;
     }
     /*
     validate(name: string, value: any, typeName: string) {

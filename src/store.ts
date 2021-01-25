@@ -2,6 +2,61 @@ export * from './dataHandler.js';
 import { eventHandler } from './eventHandler.js';
 import { dataHandler, op, validationResult } from './dataHandler.js';
 
+type state = {
+    isValid: boolean,
+    msg: { [index: string]: string } | string
+}
+
+enum validationMode {
+    fifo = 0,
+    all = 0
+}
+
+type _metaData = {
+    validationMode: validationMode,
+    validators: { [index: string]: Function }
+}
+
+export class meta {
+
+    private _meta: { [index: string]: _metaData } = {};
+
+    private _state: { [index: string]: state } = {};
+
+    public events: eventHandler | undefined;
+
+    constructor(eventH: eventHandler) {
+        this.events = eventH;
+    }
+
+    getMeta(fieldPath: string): _metaData {
+        return this._meta[fieldPath]??{ validationMode: validationMode.all, validators :{}};
+    }
+
+    setMeta(fieldPath: string, value: _metaData) {
+        value.validationMode = value?.validationMode ?? validationMode.all;
+
+        this._meta[fieldPath] = value;
+    }
+
+    getState(fieldPath: string): state {
+        return this._state[fieldPath]??{ isValid: true, msg: {} };
+    }
+
+    setState(fieldPath: string, info: state) {
+
+        let validChanged = this._state[fieldPath]?.isValid !== info.isValid;
+        let msgChanged = this._state[fieldPath]?.msg !== info.msg;
+
+        if (validChanged || msgChanged) {
+            this._state[fieldPath] = info;
+            this.events?.dispatchEvent("_state", fieldPath, "change", [{ op: "change", path: fieldPath, value: info }], info);
+        }
+
+    }
+
+}
+
 export class store {
 
     private _data: { [index: string]: Object } = {};
@@ -12,6 +67,7 @@ export class store {
     private patchQueue: Array<op> = [];
 
     private _validations: { [index: string]: Object } = {};
+    private _meta: meta;
 
     private _storage: Object;
 
@@ -23,20 +79,43 @@ export class store {
         this.createStore(component, data);
     }
 
-    unmaskComponentName(component: string, char:string = "$") {
+    unmaskComponentName(component: string, char: string = "$") {
         return component.charAt(0) === char ? component.substr(1) : component;
     }
 
-    accessByPath(path: string){
+    accessByPath(path: string) {
         let properties = Array.isArray(path) ? path : this.unmaskComponentName(path, "/").split("/");
-        return properties.reduce((prev, curr) => prev && prev[curr], this.dataH.pxy)
+        return properties.reduce((prev: any, curr: any) => prev && prev[curr], this.dataH.pxy)
+    }
+
+    getMetaState():meta{
+        return this._meta;
+    }
+
+    validateField(fieldPath: string, value: any): state {
+        let metaData: _metaData = this._meta.getMeta(fieldPath);
+        let stateData: state = this._meta.getState(fieldPath);
+          
+        if (metaData?.validators) {
+            for (let v in metaData.validators) {
+                let result: state = metaData.validators[v](value);
+                if (!result.isValid) {
+                    stateData.msg[v] = result.msg;
+                    stateData.isValid = false;
+                }
+            } 
+        }
+
+        this._meta.setState(fieldPath, stateData);
+
+       return stateData;
     }
 
     createStore(component: string, data: Object) {
 
         let createProxy = (data: Object, parentPath: string = `/$${component}`) => {
             const handler = {
-                get: (oTarget, key): any => {
+                get: (oTarget:any, key:string): any => {
 
                     if (typeof oTarget[key] === 'object' && oTarget[key] !== null || typeof oTarget[key] === 'function') {
 
@@ -58,35 +137,53 @@ export class store {
                      */
 
                 },
-                set: (oTarget, sKey, vValue) => {
+                set: (oTarget:any, sKey:string, vValue:any) => {
                     let op: string = typeof oTarget[sKey] === "undefined" ? "add" : "replace";
                     let diff: op = { op, path: parentPath + "/" + sKey, value: vValue };
-
+ 
                     /**
                      * @todo set value and use this.pxy[px] for $ connected values 
                      */
-
                     if (oTarget[sKey] !== vValue) {
-                        oTarget[sKey] = vValue;
+                        let result:state = this.validateField(diff.path, vValue);
+                        if(result.isValid) {
+                            oTarget[sKey] = vValue;
+                            let tmpChain = this.changeStore(component, diff);
+                        }else{
+                          /*  return false; */
+                        }
+                         
+                    }
+                    
+                    return true;
+                },
+                deleteProperty: (oTarget:any, sKey:string) => {
+                    console.log("delete", oTarget[sKey]);
 
-                        let tmpChain = this.changeStore(component, diff);
+                    let result:state = this.validateField(parentPath + "/" + sKey, null);
+                    if(result.isValid) {
+                        delete oTarget[sKey];
+                        this.changeStore(component, { op: "remove", path: parentPath + "/" + sKey, value: undefined });
+                    }else{
+                      /*  return false; */
+                    }
+                    
+                    return true;
+                },
+                defineProperty: (oTarget:any, sKey:string, oDesc:any) => {
+                    console.log("DEFINE", oTarget[sKey]);
+
+                    if (oDesc && "value" in oDesc) { 
+                        oTarget[sKey] = oDesc.value; 
                     }
 
-
-                    return true;
-                },
-                deleteProperty: (oTarget, sKey) => {
-                    console.log("delete", oTarget[sKey]);
-                    delete oTarget[sKey];
-                    this.changeStore(component, { op: "remove", path: parentPath + "/" + sKey });
-                    return true;
-                },
-                defineProperty: (oTarget, sKey, oDesc) => {
-                    if (oDesc && "value" in oDesc) { oTarget[sKey] = oDesc.value }
                     return oTarget;
                 }
 
             };
+            //create meta here and set prefix path
+
+            this._meta = new meta(this.events);
 
             return new Proxy(data, handler);
         }
@@ -141,20 +238,20 @@ export class store {
         return this._storage = db;
     }
 
-    setValidations(validations: { [index: string]: Object }){
+    setValidations(validations: { [index: string]: Object }) {
         this._validations = validations;
         return this;
     }
 
-    addValidations(validations: { [index: string]: Object }){
+    addValidations(validations: { [index: string]: Object }) {
 
         this._validations = Object.assign(this._validations, validations);
 
         return this;
     }
 
-    getValidations(){
-        this._validations;
+    getValidations() {
+       return this._validations;
     }
 
     /*

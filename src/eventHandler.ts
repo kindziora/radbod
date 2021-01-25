@@ -89,7 +89,7 @@ export class eventHandler {
         
     }
 
-    dispatchEvent(component: string, id: string, name: string, args = null, returnValue = null, context? : object) {
+    dispatchEvent(component: string, id: string, name: string, args:any = null, returnValue:any = null, context? : object) {
 
         if (this.event[component]?.[id]?.[name]) {
             let ret = null || returnValue;
