@@ -106,7 +106,7 @@ export class store {
             for (let v in metaData.validators) {
                 let result: state = metaData.validators[v](value);
                 if (!result.isValid) {
-                    stateData.msg.push(result.msg[0]);
+                    stateData.msg.push(result.msg);
                     stateData.isValid = false;
                 }
             } 
