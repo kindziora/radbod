@@ -25,13 +25,14 @@ export class component {
         this.id = id;
     }
     bindEvents() {
-        var _a, _b, _c, _d, _e, _f, _g, _h;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
         //this.update.bind(this);
         //wrong this context
         (_a = this.store.events) === null || _a === void 0 ? void 0 : _a.addEvent(this.name, "/", "change", this.update, this);
         (_b = this.store.events) === null || _b === void 0 ? void 0 : _b.addEvent(this.store.name, "/", "change", this.update, this);
-        (_c = this.store.events) === null || _c === void 0 ? void 0 : _c.addEvent(this.name, "/", "change", (_e = (_d = this.interactions) === null || _d === void 0 ? void 0 : _d["/"]) === null || _e === void 0 ? void 0 : _e["change"], this);
-        (_f = this.store.events) === null || _f === void 0 ? void 0 : _f.addEvent(this.store.name, "/", "change", (_h = (_g = this.interactions) === null || _g === void 0 ? void 0 : _g["/"]) === null || _h === void 0 ? void 0 : _h["change"], this);
+        (_c = this.store.events) === null || _c === void 0 ? void 0 : _c.addEvent("_state", "/", "change", this.update, this);
+        (_d = this.store.events) === null || _d === void 0 ? void 0 : _d.addEvent(this.name, "/", "change", (_f = (_e = this.interactions) === null || _e === void 0 ? void 0 : _e["/"]) === null || _f === void 0 ? void 0 : _f["change"], this);
+        (_g = this.store.events) === null || _g === void 0 ? void 0 : _g.addEvent(this.store.name, "/", "change", (_j = (_h = this.interactions) === null || _h === void 0 ? void 0 : _h["/"]) === null || _j === void 0 ? void 0 : _j["change"], this);
         this.bindByInteractions({ change: {}, domScope: this.$el });
     }
     bindByInteractions(meta) {
@@ -76,7 +77,7 @@ export class component {
             let change = changes[i];
             let chs = this.dom.getBestMatchingElements(change.path);
             chs.forEach((el) => el.update([change]));
-            if (chs.length === 0) {
+            if (chs.length === 0 && change.path.indexOf("_state") === -1) {
                 this.render(change);
             }
         }

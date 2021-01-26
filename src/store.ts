@@ -4,7 +4,7 @@ import { dataHandler, op, validationResult } from './dataHandler.js';
 
 type state = {
     isValid: boolean,
-    msg: { [index: string]: string } | string
+    msg: Array<string>
 }
 
 enum validationMode {
@@ -40,7 +40,7 @@ export class meta {
     }
 
     getState(fieldPath: string): state {
-        return this._state[fieldPath]??{ isValid: true, msg: {} };
+        return this._state[fieldPath]??{ isValid: true, msg: [] };
     }
 
     setState(fieldPath: string, info: state) {
@@ -50,7 +50,8 @@ export class meta {
 
         if (validChanged || msgChanged) {
             this._state[fieldPath] = info;
-            this.events?.dispatchEvent("_state", fieldPath, "change", [{ op: "change", path: fieldPath, value: info }], info);
+            this.events?.dispatchEvent("_state", "/_state" + fieldPath, "change", [{ op: "replace", path: "/_state" + fieldPath, value: info }], info);
+            this.events?.dispatchEvent("_state", "/", "change", [{ op: "replace", path: "/_state" + fieldPath, value: info }], info);
         }
 
     }
@@ -84,6 +85,11 @@ export class store {
     }
 
     accessByPath(path: string) {
+
+        if(path.indexOf("_state") !==-1) {
+            return this._meta.getState(path);
+        }
+
         let properties = Array.isArray(path) ? path : this.unmaskComponentName(path, "/").split("/");
         return properties.reduce((prev: any, curr: any) => prev && prev[curr], this.dataH.pxy)
     }
@@ -94,13 +100,13 @@ export class store {
 
     validateField(fieldPath: string, value: any): state {
         let metaData: _metaData = this._meta.getMeta(fieldPath);
-        let stateData: state = this._meta.getState(fieldPath);
+        let stateData: state = { isValid: true, msg: [] };
           
         if (metaData?.validators) {
             for (let v in metaData.validators) {
                 let result: state = metaData.validators[v](value);
                 if (!result.isValid) {
-                    stateData.msg[v] = result.msg;
+                    stateData.msg.push(result.msg[0]);
                     stateData.isValid = false;
                 }
             } 
@@ -144,8 +150,8 @@ export class store {
                     /**
                      * @todo set value and use this.pxy[px] for $ connected values 
                      */
+                    let result:state = this.validateField(diff.path, vValue);
                     if (oTarget[sKey] !== vValue) {
-                        let result:state = this.validateField(diff.path, vValue);
                         if(result.isValid) {
                             oTarget[sKey] = vValue;
                             let tmpChain = this.changeStore(component, diff);
@@ -253,37 +259,6 @@ export class store {
     getValidations() {
        return this._validations;
     }
-
-    /*
-    validate(name: string, value: any, typeName: string) {  
-
-            function validate(validateResult: validationResult) {
-                validateResult.value = value;
-                model.setState(name, validateResult);
-
-                if (typeof value.getName === "function")
-                    cls.model2View.call(value, model.getChangedModelFields());
-                return validateResult.result ? value : undefined;
-            }
-
-            if (typeof child.validator !== "undefined" && typeof child.validator[type] === "function") {
-                var validateResult = child.validator[type].call(model, value, name);
-                return validate(validateResult);
-            } else {
-
-                if (typeof type.result !== 'undefined') {
-                    return validate(type);
-                } else {
-                    throw {
-                        message: "Validator of type " + type + "does not exist.",
-                        name: "ValidationException"
-                    };
-                }
-
-            }
-        }
-    }*/
-
 
     load(selector: Object, cb: Function) {
         if (this.db()) {

@@ -48,6 +48,8 @@ export class component {
         this.store.events?.addEvent(this.name, "/", "change", this.update, this);
         this.store.events?.addEvent(this.store.name, "/", "change", this.update, this);
 
+        this.store.events?.addEvent("_state", "/", "change", this.update, this);
+
         this.store.events?.addEvent(this.name, "/", "change", this.interactions?.["/"]?.["change"], this);
         this.store.events?.addEvent(this.store.name, "/", "change", this.interactions?.["/"]?.["change"], this);
 
@@ -103,7 +105,7 @@ export class component {
             let chs = this.dom.getBestMatchingElements(change.path);
             chs.forEach((el) => el.update([change]));
 
-            if (chs.length === 0) {
+            if (chs.length === 0 && change.path.indexOf("_state") === -1) {
                 this.render(change);
             }
         }

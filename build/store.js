@@ -21,15 +21,16 @@ export class meta {
     }
     getState(fieldPath) {
         var _a;
-        return (_a = this._state[fieldPath]) !== null && _a !== void 0 ? _a : { isValid: true, msg: {} };
+        return (_a = this._state[fieldPath]) !== null && _a !== void 0 ? _a : { isValid: true, msg: [] };
     }
     setState(fieldPath, info) {
-        var _a, _b, _c;
+        var _a, _b, _c, _d;
         let validChanged = ((_a = this._state[fieldPath]) === null || _a === void 0 ? void 0 : _a.isValid) !== info.isValid;
         let msgChanged = ((_b = this._state[fieldPath]) === null || _b === void 0 ? void 0 : _b.msg) !== info.msg;
         if (validChanged || msgChanged) {
             this._state[fieldPath] = info;
-            (_c = this.events) === null || _c === void 0 ? void 0 : _c.dispatchEvent("_state", fieldPath, "change", [{ op: "change", path: fieldPath, value: info }], info);
+            (_c = this.events) === null || _c === void 0 ? void 0 : _c.dispatchEvent("_state", "/_state" + fieldPath, "change", [{ op: "replace", path: "/_state" + fieldPath, value: info }], info);
+            (_d = this.events) === null || _d === void 0 ? void 0 : _d.dispatchEvent("_state", "/", "change", [{ op: "replace", path: "/_state" + fieldPath, value: info }], info);
         }
     }
 }
@@ -48,6 +49,9 @@ export class store {
         return component.charAt(0) === char ? component.substr(1) : component;
     }
     accessByPath(path) {
+        if (path.indexOf("_state") !== -1) {
+            return this._meta.getState(path);
+        }
         let properties = Array.isArray(path) ? path : this.unmaskComponentName(path, "/").split("/");
         return properties.reduce((prev, curr) => prev && prev[curr], this.dataH.pxy);
     }
@@ -56,12 +60,12 @@ export class store {
     }
     validateField(fieldPath, value) {
         let metaData = this._meta.getMeta(fieldPath);
-        let stateData = this._meta.getState(fieldPath);
+        let stateData = { isValid: true, msg: [] };
         if (metaData === null || metaData === void 0 ? void 0 : metaData.validators) {
             for (let v in metaData.validators) {
                 let result = metaData.validators[v](value);
                 if (!result.isValid) {
-                    stateData.msg[v] = result.msg;
+                    stateData.msg.push(result.msg[0]);
                     stateData.isValid = false;
                 }
             }
@@ -95,8 +99,8 @@ export class store {
                     /**
                      * @todo set value and use this.pxy[px] for $ connected values
                      */
+                    let result = this.validateField(diff.path, vValue);
                     if (oTarget[sKey] !== vValue) {
-                        let result = this.validateField(diff.path, vValue);
                         if (result.isValid) {
                             oTarget[sKey] = vValue;
                             let tmpChain = this.changeStore(component, diff);
@@ -182,35 +186,6 @@ export class store {
     getValidations() {
         return this._validations;
     }
-    /*
-    validate(name: string, value: any, typeName: string) {
-
-            function validate(validateResult: validationResult) {
-                validateResult.value = value;
-                model.setState(name, validateResult);
-
-                if (typeof value.getName === "function")
-                    cls.model2View.call(value, model.getChangedModelFields());
-                return validateResult.result ? value : undefined;
-            }
-
-            if (typeof child.validator !== "undefined" && typeof child.validator[type] === "function") {
-                var validateResult = child.validator[type].call(model, value, name);
-                return validate(validateResult);
-            } else {
-
-                if (typeof type.result !== 'undefined') {
-                    return validate(type);
-                } else {
-                    throw {
-                        message: "Validator of type " + type + "does not exist.",
-                        name: "ValidationException"
-                    };
-                }
-
-            }
-        }
-    }*/
     load(selector, cb) {
         if (this.db()) {
             return new Promise((resolve, reject) => this.db().find(selector, (data) => {
