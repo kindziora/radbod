@@ -76,7 +76,17 @@ export class component {
         for (let i = 0; i < changes.length; i++) {
             let change = changes[i];
             let chs = this.dom.getBestMatchingElements(change.path);
-            chs.forEach((el) => el.update([change]));
+            let store = this.store;
+            chs.forEach(function (el) {
+                let fieldPath = el.$el.getAttribute("data-name");
+                if (change.path !== fieldPath) {
+                    let val = store.accessByPath(fieldPath);
+                    return el.update([{ op: "replace", path: fieldPath, value: val }]);
+                }
+                else {
+                    return el.update([change]);
+                }
+            });
             if (chs.length === 0 && change.path.indexOf("_state") === -1) {
                 this.render(change);
             }

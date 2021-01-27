@@ -12,25 +12,32 @@ export class meta {
     }
     getMeta(fieldPath) {
         var _a;
-        return (_a = this._meta[fieldPath]) !== null && _a !== void 0 ? _a : { validationMode: validationMode.all, validators: {} };
+        return (_a = this._meta[this.normalizeFieldpath(fieldPath)]) !== null && _a !== void 0 ? _a : { validationMode: validationMode.all, validators: {} };
     }
     setMeta(fieldPath, value) {
         var _a;
         value.validationMode = (_a = value === null || value === void 0 ? void 0 : value.validationMode) !== null && _a !== void 0 ? _a : validationMode.all;
-        this._meta[fieldPath] = value;
+        this._meta[this.normalizeFieldpath(fieldPath)] = value;
+    }
+    normalizeFieldpath(fieldPath) {
+        return fieldPath.replace("/_state", "");
     }
     getState(fieldPath) {
         var _a;
-        return (_a = this._state[fieldPath]) !== null && _a !== void 0 ? _a : { isValid: true, msg: [] };
+        return (_a = this._state[this.normalizeFieldpath(fieldPath)]) !== null && _a !== void 0 ? _a : { isValid: true, msg: [] };
     }
     setState(fieldPath, info) {
-        var _a, _b, _c, _d;
+        var _a, _b, _c, _d, _e;
+        fieldPath = this.normalizeFieldpath(fieldPath);
         let validChanged = ((_a = this._state[fieldPath]) === null || _a === void 0 ? void 0 : _a.isValid) !== info.isValid;
         let msgChanged = ((_b = this._state[fieldPath]) === null || _b === void 0 ? void 0 : _b.msg) !== info.msg;
         if (validChanged || msgChanged) {
             this._state[fieldPath] = info;
             (_c = this.events) === null || _c === void 0 ? void 0 : _c.dispatchEvent("_state", "/_state" + fieldPath, "change", [{ op: "replace", path: "/_state" + fieldPath, value: info }], info);
-            (_d = this.events) === null || _d === void 0 ? void 0 : _d.dispatchEvent("_state", "/", "change", [{ op: "replace", path: "/_state" + fieldPath, value: info }], info);
+            if (validChanged)
+                (_d = this.events) === null || _d === void 0 ? void 0 : _d.dispatchEvent("_state", "/", "change", [{ op: "replace", path: "/_state" + fieldPath + "/isValid", value: info.isValid }], info);
+            if (msgChanged)
+                (_e = this.events) === null || _e === void 0 ? void 0 : _e.dispatchEvent("_state", "/", "change", [{ op: "replace", path: "/_state" + fieldPath + "/msg", value: info.msg }], info);
         }
     }
 }

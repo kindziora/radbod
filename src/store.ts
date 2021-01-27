@@ -30,28 +30,37 @@ export class meta {
     }
 
     getMeta(fieldPath: string): _metaData {
-        return this._meta[fieldPath]??{ validationMode: validationMode.all, validators :{}};
+        return this._meta[this.normalizeFieldpath(fieldPath)]??{ validationMode: validationMode.all, validators :{}};
     }
 
     setMeta(fieldPath: string, value: _metaData) {
         value.validationMode = value?.validationMode ?? validationMode.all;
 
-        this._meta[fieldPath] = value;
+        this._meta[this.normalizeFieldpath(fieldPath)] = value;
     }
 
+    normalizeFieldpath(fieldPath:string){
+        return fieldPath.replace("/_state", "");
+    }
     getState(fieldPath: string): state {
-        return this._state[fieldPath]??{ isValid: true, msg: [] };
+        return this._state[this.normalizeFieldpath(fieldPath)]??{ isValid: true, msg: [] };
     }
 
     setState(fieldPath: string, info: state) {
-
+        fieldPath = this.normalizeFieldpath(fieldPath);
         let validChanged = this._state[fieldPath]?.isValid !== info.isValid;
         let msgChanged = this._state[fieldPath]?.msg !== info.msg;
 
         if (validChanged || msgChanged) {
             this._state[fieldPath] = info;
             this.events?.dispatchEvent("_state", "/_state" + fieldPath, "change", [{ op: "replace", path: "/_state" + fieldPath, value: info }], info);
-            this.events?.dispatchEvent("_state", "/", "change", [{ op: "replace", path: "/_state" + fieldPath, value: info }], info);
+            
+            if(validChanged)
+                this.events?.dispatchEvent("_state", "/", "change", [{ op: "replace", path: "/_state" + fieldPath + "/isValid", value: info.isValid }], info);
+            if(msgChanged)
+                this.events?.dispatchEvent("_state", "/", "change", [{ op: "replace", path: "/_state" + fieldPath + "/msg", value: info.msg }], info);
+
+
         }
 
     }
