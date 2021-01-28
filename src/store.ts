@@ -55,10 +55,14 @@ export class meta {
             this._state[fieldPath] = info;
             this.events?.dispatchEvent("_state", "/_state" + fieldPath, "change", [{ op: "replace", path: "/_state" + fieldPath, value: info }], info);
             
-            if(validChanged)
+            if(validChanged){
+                this.events?.dispatchEvent("_state", "/_state" + fieldPath + "/isValid", "change", [{ op: "replace", path: "/_state" + fieldPath + "/isValid", value: info.isValid }], info);
                 this.events?.dispatchEvent("_state", "/", "change", [{ op: "replace", path: "/_state" + fieldPath + "/isValid", value: info.isValid }], info);
-            if(msgChanged)
+            }
+            if(msgChanged){
+                this.events?.dispatchEvent("_state", "/_state" + fieldPath + "/msg", "change", [{ op: "replace", path: "/_state" + fieldPath + "/msg", value: info.msg }], info);
                 this.events?.dispatchEvent("_state", "/", "change", [{ op: "replace", path: "/_state" + fieldPath + "/msg", value: info.msg }], info);
+            }
 
 
         }

@@ -33,10 +33,22 @@ export class component {
         (_c = this.store.events) === null || _c === void 0 ? void 0 : _c.addEvent("_state", "/", "change", this.update, this);
         (_d = this.store.events) === null || _d === void 0 ? void 0 : _d.addEvent(this.name, "/", "change", (_f = (_e = this.interactions) === null || _e === void 0 ? void 0 : _e["/"]) === null || _f === void 0 ? void 0 : _f["change"], this);
         (_g = this.store.events) === null || _g === void 0 ? void 0 : _g.addEvent(this.store.name, "/", "change", (_j = (_h = this.interactions) === null || _h === void 0 ? void 0 : _h["/"]) === null || _j === void 0 ? void 0 : _j["change"], this);
+        this.bindNonDomInteractions();
         this.bindByInteractions({ change: {}, domScope: this.$el });
     }
+    bindNonDomInteractions() {
+        var _a, _b, _c;
+        for (let path in this.interactions) {
+            if (typeof this.dom.elementByName[path] === "undefined") {
+                for (let event in this.interactions[path]) {
+                    let name = this.store.unmaskComponentName(path, "/").split("/").shift();
+                    (_a = this.store.events) === null || _a === void 0 ? void 0 : _a.addEvent(this.store.unmaskComponentName(name), path, event, (_c = (_b = this.interactions) === null || _b === void 0 ? void 0 : _b[path]) === null || _c === void 0 ? void 0 : _c[event]);
+                }
+            }
+        }
+    }
     bindByInteractions(meta) {
-        var _a, _b, _c, _d, _e, _f;
+        var _a, _b, _c, _d, _e;
         let { change, domScope } = meta;
         this.dom.loadElementsScoped(domScope);
         // ONLY ITERATE OVER FIELDS THAT ARE REALY IN SCOPE AND NOT FROM ANY SCOPE OVER ALL FIELDS!!!!!!!!!!!!!
@@ -51,20 +63,14 @@ export class component {
                         var _a;
                         (_a = this.store.events) === null || _a === void 0 ? void 0 : _a.dispatchEvent(this.name + `-${fieldID}`, path, event, { "field": this.dom.elementByName[path][field], ev }, this.store.data);
                     };
-                    if (mapEvent.length > 1) {
-                        if (fieldID === mapEvent[1]) {
-                            let added = (_a = this.store.events) === null || _a === void 0 ? void 0 : _a.addEvent(this.name + `-${fieldID}`, path, event, (_c = (_b = this.interactions) === null || _b === void 0 ? void 0 : _b[path]) === null || _c === void 0 ? void 0 : _c[event]);
-                            if (added) {
-                                console.log("addEventListener", $el, this.name + `-${fieldID}`, mapEvent[0], path, event, "added");
-                                $el.addEventListener(mapEvent[0], c);
-                            }
-                        }
+                    let eventList = (_b = (_a = this.interactions) === null || _a === void 0 ? void 0 : _a[path]) === null || _b === void 0 ? void 0 : _b[event];
+                    if (!Array.isArray(eventList)) {
+                        eventList = [(_d = (_c = this.interactions) === null || _c === void 0 ? void 0 : _c[path]) === null || _d === void 0 ? void 0 : _d[event]];
                     }
-                    else {
-                        let added = (_d = this.store.events) === null || _d === void 0 ? void 0 : _d.addEvent(this.name + `-${fieldID}`, path, event, (_f = (_e = this.interactions) === null || _e === void 0 ? void 0 : _e[path]) === null || _f === void 0 ? void 0 : _f[event]);
+                    for (let evt in eventList) {
+                        let added = (_e = this.store.events) === null || _e === void 0 ? void 0 : _e.addEvent(this.name + `-${fieldID}`, path, event, eventList[evt]);
                         if (added) {
-                            $el.addEventListener(event, c);
-                            console.log("addEventListener", $el, this.name + `-${fieldID}`, event, path, "added");
+                            $el.addEventListener((mapEvent.length > 1 && fieldID === mapEvent[1]) ? mapEvent[0] : event, c);
                         }
                     }
                 }

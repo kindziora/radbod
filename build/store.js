@@ -27,17 +27,21 @@ export class meta {
         return (_a = this._state[this.normalizeFieldpath(fieldPath)]) !== null && _a !== void 0 ? _a : { isValid: true, msg: [] };
     }
     setState(fieldPath, info) {
-        var _a, _b, _c, _d, _e;
+        var _a, _b, _c, _d, _e, _f, _g;
         fieldPath = this.normalizeFieldpath(fieldPath);
         let validChanged = ((_a = this._state[fieldPath]) === null || _a === void 0 ? void 0 : _a.isValid) !== info.isValid;
         let msgChanged = ((_b = this._state[fieldPath]) === null || _b === void 0 ? void 0 : _b.msg) !== info.msg;
         if (validChanged || msgChanged) {
             this._state[fieldPath] = info;
             (_c = this.events) === null || _c === void 0 ? void 0 : _c.dispatchEvent("_state", "/_state" + fieldPath, "change", [{ op: "replace", path: "/_state" + fieldPath, value: info }], info);
-            if (validChanged)
-                (_d = this.events) === null || _d === void 0 ? void 0 : _d.dispatchEvent("_state", "/", "change", [{ op: "replace", path: "/_state" + fieldPath + "/isValid", value: info.isValid }], info);
-            if (msgChanged)
-                (_e = this.events) === null || _e === void 0 ? void 0 : _e.dispatchEvent("_state", "/", "change", [{ op: "replace", path: "/_state" + fieldPath + "/msg", value: info.msg }], info);
+            if (validChanged) {
+                (_d = this.events) === null || _d === void 0 ? void 0 : _d.dispatchEvent("_state", "/_state" + fieldPath + "/isValid", "change", [{ op: "replace", path: "/_state" + fieldPath + "/isValid", value: info.isValid }], info);
+                (_e = this.events) === null || _e === void 0 ? void 0 : _e.dispatchEvent("_state", "/", "change", [{ op: "replace", path: "/_state" + fieldPath + "/isValid", value: info.isValid }], info);
+            }
+            if (msgChanged) {
+                (_f = this.events) === null || _f === void 0 ? void 0 : _f.dispatchEvent("_state", "/_state" + fieldPath + "/msg", "change", [{ op: "replace", path: "/_state" + fieldPath + "/msg", value: info.msg }], info);
+                (_g = this.events) === null || _g === void 0 ? void 0 : _g.dispatchEvent("_state", "/", "change", [{ op: "replace", path: "/_state" + fieldPath + "/msg", value: info.msg }], info);
+            }
         }
     }
 }

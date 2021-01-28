@@ -13,7 +13,7 @@ import { component } from "./component.js";
 import { store } from './store.js';
 import { i18n } from './i18n.js';
 export class dom {
-    constructor(area, types, s, views, _t) {
+    constructor(area, types, s, views, _t, counter = 0) {
         this._area = {};
         this._identifier = ':scope *';
         this.componentList = [];
@@ -35,6 +35,7 @@ export class dom {
             this.name = area === null || area === void 0 ? void 0 : area.tagName;
         }
         this._identifier = `:scope [data-id^="${this.name}"], :scope *:not([data-id]), :scope [type="component"]`;
+        this.counter = counter;
         this.setId();
         this.store = s;
         this.addTypes(types);
@@ -156,7 +157,7 @@ export class dom {
             }
             // shadowRoot.innerHTML = componentObject.html.trim();
         }
-        let ddom = new dom($el, componentObject.components || {}, s, componentObject.views, _t);
+        let ddom = new dom($el, componentObject.components || {}, s, componentObject.views, _t, this.counter);
         ddom.name = name;
         $el.setAttribute("data-name", name);
         console.log("CREATE COMPONENT:", name, s, componentObject.views, componentObject);

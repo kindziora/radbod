@@ -40,7 +40,7 @@ export class dom {
 
     public kelementBy$el: WeakMap<HTMLElement,kelement>;
 
-    constructor(area: HTMLElement, types: { [index: string]: any }, s: store, views?: { [index: string]: Function }, _t: Function) {
+    constructor(area: HTMLElement, types: { [index: string]: any }, s: store, views: { [index: string]: Function }, _t: Function, counter:number = 0) {
 
         this._area = area as HTMLElement;
         this.$el = this._area;
@@ -54,7 +54,9 @@ export class dom {
             this.name = area?.tagName;
         }
         this._identifier = `:scope [data-id^="${this.name}"], :scope *:not([data-id]), :scope [type="component"]`;
+        this.counter = counter;
         this.setId();
+
         this.store = s;
         this.addTypes(types);
         
@@ -195,7 +197,7 @@ export class dom {
         }
 
        
-        let ddom = new dom($el, componentObject.components || {}, s, componentObject.views, _t);
+        let ddom = new dom($el, componentObject.components || {}, s, componentObject.views, _t, this.counter);
         ddom.name = name;
         $el.setAttribute("data-name", name);
 
