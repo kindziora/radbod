@@ -8,6 +8,7 @@ import { file } from './dom/element/input/file.js';
 import { button } from './dom/element/button.js';
 import { elist } from './dom/list.js';
 import { select } from './dom/list/select.js';
+import { listItem } from './dom/list/listItem.js';
 import { textarea } from './dom/element/textarea.js';
 import { component } from "./component.js";
 import { store } from './store.js';
@@ -19,7 +20,7 @@ export class dom {
         this.componentList = [];
         this.element = {};
         this.elementByName = {};
-        this.elementTypes = { input, text, radio, checkbox, range, file, button, list: elist, select, textarea, kelement };
+        this.elementTypes = { listItem, input, text, radio, checkbox, range, file, button, list: elist, select, textarea, kelement };
         this.counter = 0;
         this.id = "c-0";
         this.name = "c-x";
@@ -95,6 +96,9 @@ export class dom {
         }
         if (($element === null || $element === void 0 ? void 0 : $element.getAttribute('data-type')) == "list") {
             name = "list";
+        }
+        if (($element === null || $element === void 0 ? void 0 : $element.getAttribute('data-type')) == "list-item") {
+            name = "listItem";
         }
         return name;
     }
@@ -276,6 +280,8 @@ export class dom {
         if (typeof this.elementByName[name] === "undefined") {
             this.elementByName[name] = [];
         }
+        if (!el.$el.hasAttribute("data-name"))
+            el.$el.setAttribute("data-name", name);
         this.elementByName[name].push(el);
     }
     // patch  == [

@@ -85,7 +85,7 @@ export class component {
             let store = this.store;
             chs.forEach(function (el) {
                 let fieldPath = el.$el.getAttribute("data-name");
-                if (change.path !== fieldPath) {
+                if (change.path !== fieldPath && change.op !== "add") {
                     let val = store.accessByPath(fieldPath);
                     return el.update([{ op: "replace", path: fieldPath, value: val }]);
                 }
