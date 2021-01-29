@@ -55,7 +55,7 @@ export class dom {
         } else {
             this.name = area?.tagName;
         }
-        this._identifier = `:scope [data-id^="${this.name}"], :scope *:not([data-id]), :scope [type="component"]`;
+        this._identifier = `:scope *`;
         this.counter = counter;
         this.setId();
 
@@ -314,13 +314,23 @@ export class dom {
         return names;
     }
 
+    _load($el: Element, currentIndex: number) {
+        
+      //  if(!$el?.hasAttribute("data-id")){
+            this.loadElement($el, currentIndex);
+      //  }else { //if($el?.getAttribute("data-id")?.indexOf(this.name) !== -1)
+      //      this.loadElement($el, currentIndex);
+      //  }
+        
+    }
+
     loadElementsScoped($scope:Element) {
 
         let element: NodeListOf<Element> = $scope.querySelectorAll(this._identifier) as NodeListOf<Element>;
 
         try {
            // this.loadElement($scope);
-            element.forEach(($el: Element, currentIndex: number) => this.loadElement($el, currentIndex));
+            element.forEach(($el: Element, currentIndex: number) => this._load($el, currentIndex));
         } catch (e) {
             console.log(e);
         }
@@ -332,7 +342,7 @@ export class dom {
         let element: NodeListOf<Element> = this._area.querySelectorAll(this._identifier) as NodeListOf<Element>;
         
         try {
-            element.forEach(($el: Element, currentIndex: number) => this.loadElement($el, currentIndex));
+            element.forEach(($el: Element, currentIndex: number) => this._load($el, currentIndex));
         } catch (e) {
             console.log(e);
         }

@@ -35,7 +35,7 @@ export class dom {
         else {
             this.name = area === null || area === void 0 ? void 0 : area.tagName;
         }
-        this._identifier = `:scope [data-id^="${this.name}"], :scope *:not([data-id]), :scope [type="component"]`;
+        this._identifier = `:scope *`;
         this.counter = counter;
         this.setId();
         this.store = s;
@@ -250,11 +250,18 @@ export class dom {
         //  console.log(tpNode.outerHTML);
         return names;
     }
+    _load($el, currentIndex) {
+        //  if(!$el?.hasAttribute("data-id")){
+        this.loadElement($el, currentIndex);
+        //  }else { //if($el?.getAttribute("data-id")?.indexOf(this.name) !== -1)
+        //      this.loadElement($el, currentIndex);
+        //  }
+    }
     loadElementsScoped($scope) {
         let element = $scope.querySelectorAll(this._identifier);
         try {
             // this.loadElement($scope);
-            element.forEach(($el, currentIndex) => this.loadElement($el, currentIndex));
+            element.forEach(($el, currentIndex) => this._load($el, currentIndex));
         }
         catch (e) {
             console.log(e);
@@ -263,7 +270,7 @@ export class dom {
     loadElements() {
         let element = this._area.querySelectorAll(this._identifier);
         try {
-            element.forEach(($el, currentIndex) => this.loadElement($el, currentIndex));
+            element.forEach(($el, currentIndex) => this._load($el, currentIndex));
         }
         catch (e) {
             console.log(e);
