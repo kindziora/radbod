@@ -79,12 +79,14 @@ export class dom {
     render(data: object) {
         this.element = {};
         this.elementByName = {};
-
         let storeObject = this.store.dataH?.store.toObject();
         this._area.innerHTML = this.template.call(this, { change: data, ...storeObject, _t: this._t });
+       
+        this.kelementBy$el = new WeakMap();
+       
         this.loadElements();
 
-        this.store.events?.dispatchEvent(this.name, this.name, "post_render", { change: data, domScope: this.$el }, storeObject);
+        this.store.events?.dispatchEvent(this.name, this.name, "post_render", { change: data, domScope: this.$el, readd :true }, storeObject);
 
     }
 

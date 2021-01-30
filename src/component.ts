@@ -70,8 +70,8 @@ export class component {
         }
     }
 
-    bindByInteractions(meta: { change: object, domScope: object }) {
-        let { change, domScope } = meta;
+    bindByInteractions(meta: { change: object, domScope: object, readd?:boolean }) {
+        let { change, domScope, readd } = meta;
         this.dom.loadElementsScoped(domScope);
         // ONLY ITERATE OVER FIELDS THAT ARE REALY IN SCOPE AND NOT FROM ANY SCOPE OVER ALL FIELDS!!!!!!!!!!!!!
         console.log("bindByInteractions", this.name, change, domScope);
@@ -97,9 +97,9 @@ export class component {
                     for(let evt in eventList){
                         let added = this.store.events?.addEvent(this.name + `-${fieldID}`, path, event, eventList[evt]);
 
-                        if (added) {
+                        if (added || readd) {
                             $el.addEventListener((mapEvent.length > 1 && fieldID === mapEvent[1]) ?  mapEvent[0] : event, c);
-                         }
+                        }
                     }
 
                 }
@@ -134,12 +134,13 @@ export class component {
     }
 
     render(changes: Array<op>) {
-        console.log("COMPONENT UPDATE BECAUSE NO FIELD TO MATCH");
-        this.dom.render(changes);
-        let storeObject = this.store.dataH?.store.toObject();
-        this.store.events?.dispatchEvent(this.name, this.name, "post_render", { change: changes[0], domScope: this.$el }, storeObject);
+        console.log("COMPONENT UPDATE ??? BECAUSE NO FIELD TO MATCH");
+       
+       // this.dom.render(changes);
+     //   let storeObject = this.store.dataH?.store.toObject();
+       // this.store.events?.dispatchEvent(this.name, this.name, "post_render", { change: changes[0], domScope: this.$el }, storeObject);
 
-        this.bindEvents();
+       // this.bindEvents();
     }
 
 }

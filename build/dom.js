@@ -55,8 +55,9 @@ export class dom {
         this.elementByName = {};
         let storeObject = (_a = this.store.dataH) === null || _a === void 0 ? void 0 : _a.store.toObject();
         this._area.innerHTML = this.template.call(this, Object.assign(Object.assign({ change: data }, storeObject), { _t: this._t }));
+        this.kelementBy$el = new WeakMap();
         this.loadElements();
-        (_b = this.store.events) === null || _b === void 0 ? void 0 : _b.dispatchEvent(this.name, this.name, "post_render", { change: data, domScope: this.$el }, storeObject);
+        (_b = this.store.events) === null || _b === void 0 ? void 0 : _b.dispatchEvent(this.name, this.name, "post_render", { change: data, domScope: this.$el, readd: true }, storeObject);
     }
     /**
      *
