@@ -78,24 +78,35 @@ export class component {
         }
         return false;
     }
+    /**
+     *
+     * nächste todos
+     * garbage collection für elements mit hilfe von remove element und kelementBy$el, elementByName, element, events die auf elements matchen alles per event handling event "remove_element"
+     *
+     * @param changes
+     */
     update(changes) {
         for (let i = 0; i < changes.length; i++) {
             let change = changes[i];
-            let chs = this.dom.getBestMatchingElements(change.path);
+            let chs = this.dom.findMatchingElements(change.path);
             let store = this.store;
+            let getArrayItemPath = this.dom.getArrayItemPath;
             chs.forEach(function (el) {
                 let fieldPath = el.$el.getAttribute("data-name");
                 if (change.path !== fieldPath && change.op !== "add") {
-                    let val = store.accessByPath(fieldPath);
-                    return el.update([{ op: "replace", path: fieldPath, value: val }]);
+                    if (el.constructor.name !== "elist") {
+                        let val = store.accessByPath(fieldPath); //get correct context/scope
+                        return el.update([{ op: "replace", path: fieldPath, value: val }]);
+                    }
+                    else {
+                        let itemPath = getArrayItemPath(change.path);
+                        return el.update([{ op: "add", path: itemPath, value: store.accessByPath(itemPath) }]);
+                    }
                 }
                 else {
                     return el.update([change]);
                 }
             });
-            if (chs.length === 0 && change.path.indexOf("_state") === -1) {
-                this.render(change);
-            }
         }
     }
     render(changes) {

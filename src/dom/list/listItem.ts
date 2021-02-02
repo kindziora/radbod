@@ -13,11 +13,15 @@ export class listItem extends kelement {
                 para.innerHTML = this.getListContainer()?.template.call(this, { change, ...stores, _t: this.dom._t }).trim();
 
                 //what about outerHTML?
-
-                this.$el.innerHTML = para?.firstChild?.innerHTML;
+                if(!para?.firstChild){ 
+                    change.op = "remove";
+                    this.getListContainer()?.remove(change);
+                }else{
+                    this.$el.innerHTML = para?.firstChild?.innerHTML?.trim();
+                }
 
             }else{
-                this.$el.innerHTML = this.template.call(this, { change, ...stores, _t: this.dom._t });
+                this.$el.innerHTML = this.template.call(this, { change, ...stores, _t: this.dom._t }).trim();
             } 
 
             this.dom.store?.events?.dispatchEvent(this.dom.name, this.dom.name, "post_render", { change: change, domScope: this.$el });

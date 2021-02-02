@@ -84,7 +84,10 @@ export class elist extends kelement {
     }
     remove(change) {
         // super.remove(change);
-        this.dom.getBestMatchingElements(change.path, false).some(el => this.dom.removeElement(el));
+        this.mapListItems();
+        this.dom.removeElement(this._listItemsByName[change.path]);
+        delete this._listItems[this._listItemsByName[change.path].id];
+        delete this._listItemsByName[change.path];
     }
     /**
     * !!caution this is slow and overwrites the hole html of the $element
@@ -93,7 +96,7 @@ export class elist extends kelement {
     render(change) {
         var _a, _b;
         let items = JSON.parse(JSON.stringify(change.value || [])).filter((i) => !!i);
-        this.$el.innerHTML = items.map((e, i) => this.renderItem({ op: "add", path: change.path + "/" + i, value: e })).join("\r\n");
+        this.$el.innerHTML = items.map((e, i) => this.renderItem({ op: "add", path: change.path + "/" + i, value: e })).join("\r\n").trim();
         (_b = (_a = this.dom.store) === null || _a === void 0 ? void 0 : _a.events) === null || _b === void 0 ? void 0 : _b.dispatchEvent(this.dom.name, this.dom.name, "post_render", { change: change, domScope: this.$el });
     }
     /**
@@ -106,7 +109,7 @@ export class elist extends kelement {
         change.index = pointer;
         if (this.template) {
             let storeObject = (_d = (_c = this.dom.store) === null || _c === void 0 ? void 0 : _c.dataH) === null || _d === void 0 ? void 0 : _d.store.toObject();
-            return this.template.call(this, Object.assign(Object.assign({ change }, storeObject), { _t: this.dom._t }));
+            return this.template.call(this, Object.assign(Object.assign({ change }, storeObject), { _t: this.dom._t })).trim();
         }
         else {
             return `<div data-type="list-item" data-index="${pointer}" data-name="${change.path}">${change.value}</div>`;

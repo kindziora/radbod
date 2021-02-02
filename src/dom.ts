@@ -40,9 +40,9 @@ export class dom {
 
     public _t: Function;
 
-    public kelementBy$el: WeakMap<HTMLElement,kelement>;
+    public kelementBy$el: WeakMap<HTMLElement, kelement>;
 
-    constructor(area: HTMLElement, types: { [index: string]: any }, s: store, views: { [index: string]: Function }, _t: Function, counter:number = 0) {
+    constructor(area: HTMLElement, types: { [index: string]: any }, s: store, views: { [index: string]: Function }, _t: Function, counter: number = 0) {
 
         this._area = area as HTMLElement;
         this.$el = this._area;
@@ -61,8 +61,8 @@ export class dom {
 
         this.store = s;
         this.addTypes(types);
-        
-        this.loadElements(); 
+
+        this.loadElements();
 
     }
 
@@ -80,13 +80,13 @@ export class dom {
         this.element = {};
         this.elementByName = {};
         let storeObject = this.store.dataH?.store.toObject();
-        this._area.innerHTML = this.template.call(this, { change: data, ...storeObject, _t: this._t });
-       
+        this._area.innerHTML = this.template.call(this, { change: data, ...storeObject, _t: this._t }).trim();
+
         this.kelementBy$el = new WeakMap();
-       
+
         this.loadElements();
 
-        this.store.events?.dispatchEvent(this.name, this.name, "post_render", { change: data, domScope: this.$el, readd :true }, storeObject);
+        this.store.events?.dispatchEvent(this.name, this.name, "post_render", { change: data, domScope: this.$el, readd: true }, storeObject);
 
     }
 
@@ -135,7 +135,7 @@ export class dom {
         if ($element?.getAttribute('data-type') == "list-item") {
             name = "listItem";
         }
- 
+
         return name;
     }
 
@@ -178,7 +178,7 @@ export class dom {
             }
         }
 
-        if(typeof componentObject.validations !=="undefined")
+        if (typeof componentObject.validations !== "undefined")
             s.addValidations(componentObject.validations);
 
         let storeObject = this.store.dataH?.store.toObject();
@@ -193,10 +193,10 @@ export class dom {
 
         if (componentObject?.views?.[name]) {
 
-            $el.innerHTML = componentObject.views[name].call(componentObject, { change: { value: "" }, ...storeObject, _t });
+            $el.innerHTML = componentObject.views[name].call(componentObject, { change: { value: "" }, ...storeObject, _t }).trim();
         } else {
             if (!componentObject.html) {
-                $el.innerHTML = componentObject.views[name].call(componentObject, { change: { value: "" }, ...storeObject, _t });
+                $el.innerHTML = componentObject.views[name].call(componentObject, { change: { value: "" }, ...storeObject, _t }).trim();
             } else {
                 $el.innerHTML = componentObject.html.trim();
             }
@@ -204,18 +204,18 @@ export class dom {
             // shadowRoot.innerHTML = componentObject.html.trim();
         }
 
-       
+
         let ddom = new dom($el, componentObject.components || {}, s, componentObject.views, _t, this.counter);
         ddom.name = name;
         $el.setAttribute("data-name", name);
 
         console.log("CREATE COMPONENT:", name, s, componentObject.views, componentObject);
 
-        let newcomponent = new component(ddom, s, componentObject.interactions.call({componentObject, dom: ddom}));
+        let newcomponent = new component(ddom, s, componentObject.interactions.call({ componentObject, dom: ddom }));
         newcomponent.setId(name);
 
         if (typeof componentObject?.views?.[name] !== "function") {
-            newcomponent.dom.setTemplate(eval('(function (args) { let {change, ' + args + ', _t} = args; return `' + newcomponent.dom._area.innerHTML + '`})'));
+            newcomponent.dom.setTemplate(eval('(function (args) { let {change, ' + args + ', _t} = args; return `' + newcomponent.dom._area.innerHTML.trim() + '`})'));
         } else {
             newcomponent.dom.setTemplate(componentObject?.views[name]);
         }
@@ -235,6 +235,10 @@ export class dom {
         return this.elementTypes[fieldTypeName].prototype === "component" ?
             this.createComponent($el, fieldTypeName) :
             new this.elementTypes[fieldTypeName]($el, this._area, currentIndex, this, this.views, this._t);
+    }
+
+    isElementComponent($el: Element): boolean {
+        return this.elementTypes[this.mapField(<string>$el.tagName.toLowerCase(), $el)].prototype === "component";
     }
     /**
      * 
@@ -261,30 +265,30 @@ export class dom {
      * @param $el 
      * @param currentIndex 
      */
-    loadElement($el: Element, currentIndex?: number): kelement { 
-        
-        if(!this.kelementBy$el.get($el)){
+    loadElement($el: Element, currentIndex?: number): kelement {
+
+        if (!this.kelementBy$el.get($el)) {
             this.counter++;
 
             let t_el: kelement = this.createElement($el, this.counter); //decorate and extend dom element
             this.detectType(t_el);
             this.addElement(t_el);
-    
+
             if (t_el.getName()) {
                 this.addElementByName(t_el, <string>t_el.getName());
             } else {
                 this.detectOrphanVariables(t_el)
                     .forEach(name => this.addElementByName(t_el, name));
-    
+
             }
 
             this.kelementBy$el.set($el, t_el);
             return t_el;
-          
-        }else{
+
+        } else {
             return this.kelementBy$el.get($el);
-        } 
-        
+        }
+
     }
 
     /**
@@ -317,43 +321,66 @@ export class dom {
     }
 
     _load($el: Element, currentIndex: number) {
-        
-      //  if(!$el?.hasAttribute("data-id")){
+
+        if (!$el?.hasAttribute("data-id")) {
             this.loadElement($el, currentIndex);
-      //  }else { //if($el?.getAttribute("data-id")?.indexOf(this.name) !== -1)
-      //      this.loadElement($el, currentIndex);
-      //  }
-        
+        } else if ($el?.getAttribute("data-id")?.indexOf(this.name) !== -1 || this.isElementComponent($el)) {
+            this.loadElement($el, currentIndex);
+        }
+
     }
 
-    loadElementsScoped($scope:Element) {
+    loadElementsScoped($scope: Element) {
 
         let element: NodeListOf<Element> = $scope.querySelectorAll(this._identifier) as NodeListOf<Element>;
 
         try {
-           // this.loadElement($scope);
+            // this.loadElement($scope);
             element.forEach(($el: Element, currentIndex: number) => this._load($el, currentIndex));
         } catch (e) {
             console.log(e);
         }
-        
+
     }
 
     loadElements() {
 
         let element: NodeListOf<Element> = this._area.querySelectorAll(this._identifier) as NodeListOf<Element>;
-        
+
         try {
             element.forEach(($el: Element, currentIndex: number) => this._load($el, currentIndex));
         } catch (e) {
             console.log(e);
         }
-        
+
+    }
+
+
+
+    _removeElement(el: kelement) {
+
+        delete this.element[<string>el.id];
+        let name: string = el.getName();
+        if (typeof this.elementByName[name] !== "undefined") {
+            this.elementByName[name] = this.elementByName[name].filter(function (element) {
+                return element.id !== <string>el.id;
+            });
+        }
+        this.kelementBy$el.delete(el.$el);
+        el.$el.remove();
     }
 
     removeElement(el: kelement) {
-        el.$el.remove();
-        delete this.element[<string>el.id];
+
+        let children: NodeListOf<Element> = el.$el.querySelectorAll(this._identifier) as NodeListOf<Element>;
+        try {
+            children.forEach(($el: Element, currentIndex: number) => this._removeElement(this.kelementBy$el.get($el)));
+        } catch (e) {
+            console.log(e);
+        }
+
+        this._removeElement(el);
+
     }
 
     addElement(el: kelement) {
@@ -364,8 +391,8 @@ export class dom {
         if (typeof this.elementByName[name] === "undefined") {
             this.elementByName[name] = [];
         }
-        if(!el.$el.hasAttribute("data-name"))
-            el.$el.setAttribute("data-name", name );
+        if (!el.$el.hasAttribute("data-name"))
+            el.$el.setAttribute("data-name", name);
 
         this.elementByName[name].push(el);
     }
@@ -379,11 +406,12 @@ export class dom {
      * 
      * @param path 
      */
-    getBestMatchingElements(path: string, searchAncestors:boolean = true): Array<kelement> | [] {
+    getBestMatchingElements(path: string, searchAncestors: boolean = true): Array<kelement> | [] {
+
         let elements: Array<kelement> = [];
         if (typeof this.elementByName[path] !== "undefined") {
             return this.elementByName[path];
-        } else if(searchAncestors){
+        } else if (searchAncestors) {
             let parentPath = path.split("/");
             if (parentPath.length > 1) {
                 parentPath.pop();
@@ -393,5 +421,65 @@ export class dom {
         return elements;
     }
 
+    findMatchingElements(path: string): Array<kelement> | [] {
+        let onlyListContainer: Array<kelement> = [];
+        let elementsDetailedMatch: Array<kelement> = this.getBestMatchingElements(path);
+        let ArrayParentPath: string = this.getArrayParentPath(path);
+
+
+        if (ArrayParentPath !== path) { //get array container
+            onlyListContainer = this.getBestMatchingElements(ArrayParentPath).filter(function (item) {
+                return item.constructor.name === "elist";
+            }).filter(function (item) {
+                for (let i in elementsDetailedMatch) {
+                    if (item.$el.contains(elementsDetailedMatch[i].$el)) {
+                        return false;
+                    }
+                }
+                return true;
+            });
+        }
+
+        return [...onlyListContainer, ...elementsDetailedMatch];
+    }
+
+    getArrayParentPath(path: string): string {
+
+        let parts: string[] = path.split("/");
+        for (let i in parts) {
+            if (parseInt(parts[i]) == parts[i]) {
+                parts.splice(i);
+                break;
+            }
+        }
+        return parts.join("/");
+    }
+
+    getArrayItemPath(path: string): string {
+
+        let parts: string[] = path.split("/");
+        for (let i in parts) {
+            if (parseInt(parts[i]) == parts[i]) {
+                return parts.splice(0, parseInt(i) + 1).join("/");
+            }
+        }
+        return parts.join("/");
+    }
+
+    pathContainsArray(path: string): boolean {
+        return this.getArrayParentPath(path) !== path;
+    }
+
+    getParents($scope: HTMLElement, selector: string): HTMLElement | null {
+        let foundElem: HTMLElement | null;
+        while ($scope && $scope.parentNode && $scope != this.$el) {
+            foundElem = $scope.parentNode.querySelector(selector);
+            if (foundElem) {
+                return foundElem;
+            }
+            $scope = $scope.parentNode;
+        }
+        return null;
+    }
 
 }

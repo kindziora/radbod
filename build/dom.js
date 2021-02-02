@@ -54,7 +54,7 @@ export class dom {
         this.element = {};
         this.elementByName = {};
         let storeObject = (_a = this.store.dataH) === null || _a === void 0 ? void 0 : _a.store.toObject();
-        this._area.innerHTML = this.template.call(this, Object.assign(Object.assign({ change: data }, storeObject), { _t: this._t }));
+        this._area.innerHTML = this.template.call(this, Object.assign(Object.assign({ change: data }, storeObject), { _t: this._t })).trim();
         this.kelementBy$el = new WeakMap();
         this.loadElements();
         (_b = this.store.events) === null || _b === void 0 ? void 0 : _b.dispatchEvent(this.name, this.name, "post_render", { change: data, domScope: this.$el, readd: true }, storeObject);
@@ -151,11 +151,11 @@ export class dom {
         internationalize.addTranslation(componentObject.translations ? componentObject.translations() : {});
         let _t = (text, lang) => internationalize._t(text, lang);
         if ((_c = componentObject === null || componentObject === void 0 ? void 0 : componentObject.views) === null || _c === void 0 ? void 0 : _c[name]) {
-            $el.innerHTML = componentObject.views[name].call(componentObject, Object.assign(Object.assign({ change: { value: "" } }, storeObject), { _t }));
+            $el.innerHTML = componentObject.views[name].call(componentObject, Object.assign(Object.assign({ change: { value: "" } }, storeObject), { _t })).trim();
         }
         else {
             if (!componentObject.html) {
-                $el.innerHTML = componentObject.views[name].call(componentObject, Object.assign(Object.assign({ change: { value: "" } }, storeObject), { _t }));
+                $el.innerHTML = componentObject.views[name].call(componentObject, Object.assign(Object.assign({ change: { value: "" } }, storeObject), { _t })).trim();
             }
             else {
                 $el.innerHTML = componentObject.html.trim();
@@ -169,7 +169,7 @@ export class dom {
         let newcomponent = new component(ddom, s, componentObject.interactions.call({ componentObject, dom: ddom }));
         newcomponent.setId(name);
         if (typeof ((_d = componentObject === null || componentObject === void 0 ? void 0 : componentObject.views) === null || _d === void 0 ? void 0 : _d[name]) !== "function") {
-            newcomponent.dom.setTemplate(eval('(function (args) { let {change, ' + args + ', _t} = args; return `' + newcomponent.dom._area.innerHTML + '`})'));
+            newcomponent.dom.setTemplate(eval('(function (args) { let {change, ' + args + ', _t} = args; return `' + newcomponent.dom._area.innerHTML.trim() + '`})'));
         }
         else {
             newcomponent.dom.setTemplate(componentObject === null || componentObject === void 0 ? void 0 : componentObject.views[name]);
@@ -186,6 +186,9 @@ export class dom {
         return this.elementTypes[fieldTypeName].prototype === "component" ?
             this.createComponent($el, fieldTypeName) :
             new this.elementTypes[fieldTypeName]($el, this._area, currentIndex, this, this.views, this._t);
+    }
+    isElementComponent($el) {
+        return this.elementTypes[this.mapField($el.tagName.toLowerCase(), $el)].prototype === "component";
     }
     /**
      *
@@ -252,11 +255,13 @@ export class dom {
         return names;
     }
     _load($el, currentIndex) {
-        //  if(!$el?.hasAttribute("data-id")){
-        this.loadElement($el, currentIndex);
-        //  }else { //if($el?.getAttribute("data-id")?.indexOf(this.name) !== -1)
-        //      this.loadElement($el, currentIndex);
-        //  }
+        var _a;
+        if (!($el === null || $el === void 0 ? void 0 : $el.hasAttribute("data-id"))) {
+            this.loadElement($el, currentIndex);
+        }
+        else if (((_a = $el === null || $el === void 0 ? void 0 : $el.getAttribute("data-id")) === null || _a === void 0 ? void 0 : _a.indexOf(this.name)) !== -1 || this.isElementComponent($el)) {
+            this.loadElement($el, currentIndex);
+        }
     }
     loadElementsScoped($scope) {
         let element = $scope.querySelectorAll(this._identifier);
@@ -277,9 +282,26 @@ export class dom {
             console.log(e);
         }
     }
-    removeElement(el) {
-        el.$el.remove();
+    _removeElement(el) {
         delete this.element[el.id];
+        let name = el.getName();
+        if (typeof this.elementByName[name] !== "undefined") {
+            this.elementByName[name] = this.elementByName[name].filter(function (element) {
+                return element.id !== el.id;
+            });
+        }
+        this.kelementBy$el.delete(el.$el);
+        el.$el.remove();
+    }
+    removeElement(el) {
+        let children = el.$el.querySelectorAll(this._identifier);
+        try {
+            children.forEach(($el, currentIndex) => this._removeElement(this.kelementBy$el.get($el)));
+        }
+        catch (e) {
+            console.log(e);
+        }
+        this._removeElement(el);
     }
     addElement(el) {
         this.element[el.id] = el;
@@ -314,5 +336,56 @@ export class dom {
             }
         }
         return elements;
+    }
+    findMatchingElements(path) {
+        let onlyListContainer = [];
+        let elementsDetailedMatch = this.getBestMatchingElements(path);
+        let ArrayParentPath = this.getArrayParentPath(path);
+        if (ArrayParentPath !== path) { //get array container
+            onlyListContainer = this.getBestMatchingElements(ArrayParentPath).filter(function (item) {
+                return item.constructor.name === "elist";
+            }).filter(function (item) {
+                for (let i in elementsDetailedMatch) {
+                    if (item.$el.contains(elementsDetailedMatch[i].$el)) {
+                        return false;
+                    }
+                }
+                return true;
+            });
+        }
+        return [...onlyListContainer, ...elementsDetailedMatch];
+    }
+    getArrayParentPath(path) {
+        let parts = path.split("/");
+        for (let i in parts) {
+            if (parseInt(parts[i]) == parts[i]) {
+                parts.splice(i);
+                break;
+            }
+        }
+        return parts.join("/");
+    }
+    getArrayItemPath(path) {
+        let parts = path.split("/");
+        for (let i in parts) {
+            if (parseInt(parts[i]) == parts[i]) {
+                return parts.splice(0, parseInt(i) + 1).join("/");
+            }
+        }
+        return parts.join("/");
+    }
+    pathContainsArray(path) {
+        return this.getArrayParentPath(path) !== path;
+    }
+    getParents($scope, selector) {
+        let foundElem;
+        while ($scope && $scope.parentNode && $scope != this.$el) {
+            foundElem = $scope.parentNode.querySelector(selector);
+            if (foundElem) {
+                return foundElem;
+            }
+            $scope = $scope.parentNode;
+        }
+        return null;
     }
 }

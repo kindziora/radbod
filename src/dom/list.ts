@@ -97,7 +97,12 @@ export class elist extends kelement {
 
     remove(change: op) {
        // super.remove(change);
-        this.dom.getBestMatchingElements(change.path, false).some(el => this.dom.removeElement(el));
+       this.mapListItems();
+       this.dom.removeElement(this._listItemsByName[change.path]);
+       
+       delete this._listItems[this._listItemsByName[change.path].id];  
+       delete this._listItemsByName[change.path];
+       
     }
 
     /**
@@ -106,7 +111,7 @@ export class elist extends kelement {
     */
     render(change: op) {
         let items = JSON.parse(JSON.stringify(change.value||[])).filter((i:any) => !!i);
-        this.$el.innerHTML = items.map((e: any, i:number) => this.renderItem({ op: "add", path: change.path + "/" + i, value: e })).join("\r\n");
+        this.$el.innerHTML = items.map((e: any, i:number) => this.renderItem({ op: "add", path: change.path + "/" + i, value: e })).join("\r\n").trim();
         this.dom.store?.events?.dispatchEvent(this.dom.name, this.dom.name, "post_render", { change: change, domScope: this.$el});
     }
 
@@ -119,7 +124,7 @@ export class elist extends kelement {
         change.index = pointer;
         if (this.template) {
             let storeObject = this.dom.store?.dataH?.store.toObject();
-            return this.template.call(this, {change, ...storeObject, _t : this.dom._t});
+            return this.template.call(this, {change, ...storeObject, _t : this.dom._t}).trim();
         } else {
             return `<div data-type="list-item" data-index="${pointer}" data-name="${change.path}">${change.value}</div>`;
         }
