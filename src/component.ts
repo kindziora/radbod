@@ -27,7 +27,7 @@ export class component {
 
         this.bindEvents();
 
-        this.store.events?.addEvent(this.name, this.name, "post_render", this.bindByInteractions, this);
+        this.store.events?.add(`/$${this.name}`, "post_render", this.bindByInteractions, this);
 
     }
 
@@ -45,14 +45,11 @@ export class component {
     bindEvents() {
         //this.update.bind(this);
         //wrong this context
-        this.store.events?.addEvent(this.name, "/", "change", this.update, this);
-        this.store.events?.addEvent(this.store.name, "/", "change", this.update, this);
+        this.store.events?.add("/$" + this.store.name, "change", this.update, this);
 
-        this.store.events?.addEvent("_state", "/", "change", this.update, this);
+        this.store.events?.add("/_state", "change", this.update, this);
 
-        this.store.events?.addEvent(this.name, "/", "change", this.interactions?.["/"]?.["change"], this);
-        this.store.events?.addEvent(this.store.name, "/", "change", this.interactions?.["/"]?.["change"], this);
-
+        this.store.events?.add("/$" + this.store.name, "change", this.interactions?.["/$" + this.store.name]?.["change"], this);
 
         this.bindNonDomInteractions();
 
@@ -64,7 +61,7 @@ export class component {
             if (typeof this.dom.elementByName[path] === "undefined") {
                 for (let event in this.interactions[path]) {
                     let name:string = this.store.unmaskComponentName(path, "/").split("/").shift(); 
-                    this.store.events?.addEvent(this.store.unmaskComponentName(name), path, event, this.interactions?.[path]?.[event]);
+                    this.store.events?.add( path, event, this.interactions?.[path]?.[event], this);
                 }
             }
         }
@@ -76,6 +73,10 @@ export class component {
         // ONLY ITERATE OVER FIELDS THAT ARE REALY IN SCOPE AND NOT FROM ANY SCOPE OVER ALL FIELDS!!!!!!!!!!!!!
         console.log("bindByInteractions", this.name, change, domScope);
 
+        /**
+         * @todo WeakMaps für events nutzen und $el als key
+         * 
+         */
         for (let path in this.interactions) {
 
             for (let event in this.interactions[path]) {
@@ -84,10 +85,7 @@ export class component {
                     let $el = this.dom.elementByName[path][field].$el;
                     let fieldID = this.dom.elementByName[path][field].id;
                     let mapEvent = event.split('#');
-                    let c = (ev) => {
-                        this.store.events?.dispatchEvent(this.name + `-${fieldID}`, path, event, { "field": this.dom.elementByName[path][field], ev }, this.store.data);
-                    };
-
+      
                     let eventList: Array<Function> = this.interactions?.[path]?.[event];
                     
                     if(!Array.isArray(eventList)){
@@ -95,10 +93,16 @@ export class component {
                     }
                     
                     for(let evt in eventList){
-                        let added = this.store.events?.addEvent(this.name + `-${fieldID}`, path, event, eventList[evt]);
+                        let added = this.store.events?.addByElement(this.name, $el, event, eventList[evt], this);
 
                         if (added || readd) {
-                            $el.addEventListener((mapEvent.length > 1 && fieldID === mapEvent[1]) ?  mapEvent[0] : event, c);
+                            let func = function(f, me, $el, event){ 
+                                return function(ev){ 
+                                    me.store.events?.dispatchEvent(me.name, $el, event, { "field": f, ev }, me.store.data, me.interactions);
+                                }
+                            }(this.dom.elementByName[path][field], this, $el, event);
+
+                            $el.addEventListener((mapEvent.length > 1 && fieldID === mapEvent[1]) ?  mapEvent[0] : event, func);
                         }
                     }
 

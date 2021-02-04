@@ -54,7 +54,7 @@ export class kelement {
     update(changes) {
         for (let i = 0; i < changes.length; i++) {
             let change = changes[i];
-            console.log(change.op, change.value);
+            console.log(change.op, change.value, this.$el);
             if (typeof this[change.op] !== "undefined") {
                 this[change.op](change);
             }
@@ -72,7 +72,7 @@ export class kelement {
         if (this.template) {
             let stores = (_b = (_a = this.dom.store) === null || _a === void 0 ? void 0 : _a.dataH) === null || _b === void 0 ? void 0 : _b.store.toObject();
             this.$el.innerHTML = this.template.call(this, Object.assign(Object.assign({ change }, stores), { _t: this.dom._t })).trim();
-            (_d = (_c = this.dom.store) === null || _c === void 0 ? void 0 : _c.events) === null || _d === void 0 ? void 0 : _d.dispatchEvent(this.dom.name, this.dom.name, "post_render", { change: change, domScope: this.$el });
+            (_d = (_c = this.dom.store) === null || _c === void 0 ? void 0 : _c.events) === null || _d === void 0 ? void 0 : _d.dispatchEvent(this.dom.name, `/$${this.dom.name}`, "post_render", { change: change, domScope: this.$el });
         }
         else {
             this.$el.innerHTML = change.value;

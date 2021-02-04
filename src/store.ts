@@ -135,8 +135,9 @@ export class store {
         let createProxy = (data: Object, parentPath: string = `/$${component}`) => {
             const handler = {
                 get: (oTarget:any, key:string): any => {
+                    if( typeof oTarget[key] === 'function') return oTarget[key];
 
-                    if (typeof oTarget[key] === 'object' && oTarget[key] !== null || typeof oTarget[key] === 'function') {
+                    if (typeof oTarget[key] === 'object' && oTarget[key] !== null) {
 
                         let px: string = parentPath + "/" + key;
 
@@ -232,7 +233,9 @@ export class store {
         let ret = null;
         this.patchQueue.push(change);
 
-        let retChange = this.events?.dispatchEvent(component, "/", "change", [change], this.data);
+        if(this.patchQueue.length > 100) this.patchQueue.shift();
+
+        let retChange = this.events?.dispatchEvent(component, "/" + `$${component}`, "change", [change], this.data);
         //console.log(component, "/", "change", change);
 
         try {

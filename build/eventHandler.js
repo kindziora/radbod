@@ -1,71 +1,50 @@
-/**
- *
- * @param str
- * @param seed
- */
-export const cyrb53 = function (str, seed = 0) {
-    let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
-    for (let i = 0, ch; i < str.length; i++) {
-        ch = str.charCodeAt(i);
-        h1 = Math.imul(h1 ^ ch, 2654435761);
-        h2 = Math.imul(h2 ^ ch, 1597334677);
-    }
-    h1 = Math.imul(h1 ^ h1 >>> 16, 2246822507) ^ Math.imul(h2 ^ h2 >>> 13, 3266489909);
-    h2 = Math.imul(h2 ^ h2 >>> 16, 2246822507) ^ Math.imul(h1 ^ h1 >>> 13, 3266489909);
-    return 4294967296 * (2097151 & h2) + (h1 >>> 0);
-};
 ;
 export class eventHandler {
     constructor() {
         this.event = {};
-        this.eventById = {};
+        this.eventByElement = {};
     }
     construct() {
     }
     /**
-     *
-     * @param cb
+     *  @TODO event handler geht noch nicht, unter anderem doppelte change events und komisches verhalten
      */
-    addFunction(cb, meta, context) {
-        let id = cyrb53(cb.toString()) + "_" + meta.component;
-        /*
-        this.eventById[id] = ((meta, eventHdlr) => (args:object = {}, returnValue = null) =>{
-            return cb(args, returnValue, meta);
-        })(meta, this);
-*/
-        this.eventById[id] = cb.bind(context || this);
-        return id;
+    remove(path, name) {
+        delete this.event[path][name];
     }
-    getFunction(id) {
-        return this.eventById[id];
+    removeByElement(component, element) {
+        var _a;
+        (_a = this.eventByElement[component]) === null || _a === void 0 ? void 0 : _a.delete(element);
     }
-    removeEvent(callbackId) {
-        delete this.eventById[callbackId];
-        //todo: cleanup named object
-    }
-    /**
-     *
-     * @param component
-     * @param id
-     * @param name
-     * @param cb
-     */
-    addEvent(component, id, name, cb, context) {
+    add(path, name, cb, context) {
+        console.log("%cADD CUSTOM EVENT ", "color: green; font-size: 12px", path, name);
         if (typeof cb !== "function")
             return false;
-        let callbackId = this.addFunction(cb, { component, id, name }, context);
-        if (typeof this.event[component] === "undefined") {
-            this.event[component] = {};
+        if (typeof this.event[path] === "undefined") {
+            this.event[path] = {};
         }
-        if (typeof this.event[component][id] === "undefined") {
-            this.event[component][id] = {};
+        if (typeof this.event[path][name] === "undefined") {
+            this.event[path][name] = [];
         }
-        if (typeof this.event[component][id][name] === "undefined") {
-            this.event[component][id][name] = [];
+        if (this.event[path][name].indexOf({ cb, context }) === -1) {
+            this.event[path][name].push({ cb, context });
+            return true;
         }
-        if (this.event[component][id][name].indexOf(callbackId) === -1) {
-            console.log("addEvent", component, id, name);
-            this.event[component][id][name].push(callbackId);
+        else {
+            return false;
+        }
+    }
+    addByElement(component, id, name, cb, context) {
+        if (typeof cb !== "function")
+            return false;
+        if (typeof this.eventByElement[component] === "undefined") {
+            this.eventByElement[component] = new WeakMap();
+        }
+        let callbacks = this.eventByElement[component].get(id) || new Map();
+        if (!callbacks.has(cb)) {
+            callbacks.set(cb, { name, context });
+            console.log("%cADD EVENT TO $EL", "color: lightgreen; font-size: 12px", component, id, name);
+            this.eventByElement[component].set(id, callbacks);
             return true;
         }
         else {
@@ -73,15 +52,26 @@ export class eventHandler {
         }
     }
     dispatchEvent(component, id, name, args = null, returnValue = null, context) {
-        var _a, _b;
-        if ((_b = (_a = this.event[component]) === null || _a === void 0 ? void 0 : _a[id]) === null || _b === void 0 ? void 0 : _b[name]) {
+        var _a;
+        let eventMap = [];
+        if (typeof id !== "string") {
+            let tmpData = (_a = this.eventByElement[component]) === null || _a === void 0 ? void 0 : _a.get(id);
+            for (let [cb, v] of tmpData) {
+                if (v.name === name)
+                    eventMap.push({ cb, context: v.context });
+            }
+        }
+        else {
+            eventMap = this.event[id] && this.event[id][name] ? this.event[id][name] : [];
+        }
+        if (eventMap) {
             let ret = null || returnValue;
             let special = name.indexOf("pre_") > -1 || name.indexOf("post_") > -1;
             if (!special)
                 ret = this.dispatchEvent(component, id, "pre_" + name, args, ret);
-            for (let i in this.event[component][id][name]) {
-                let callbackID = this.event[component][id][name][i];
-                let mep = this.getFunction(callbackID)(args, ret);
+            for (let i in eventMap) {
+                console.log(`%cFIRE ${(typeof id !== "string") ? "$EL" : "CUSTOM"} EVENT `, "color: red; font-size: 12px", component, id, name, i, eventMap[i].cb);
+                let mep = eventMap[i].cb.call(eventMap[i].context, args, ret);
                 if (typeof mep !== "undefined") {
                     ret = mep;
                 }

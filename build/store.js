@@ -89,7 +89,9 @@ export class store {
             const handler = {
                 get: (oTarget, key) => {
                     var _a, _b, _c;
-                    if (typeof oTarget[key] === 'object' && oTarget[key] !== null || typeof oTarget[key] === 'function') {
+                    if (typeof oTarget[key] === 'function')
+                        return oTarget[key];
+                    if (typeof oTarget[key] === 'object' && oTarget[key] !== null) {
                         let px = parentPath + "/" + key;
                         if (key.charAt(0) === "$") { //reference
                             px = key;
@@ -166,7 +168,9 @@ export class store {
         var _a, _b, _c;
         let ret = null;
         this.patchQueue.push(change);
-        let retChange = (_a = this.events) === null || _a === void 0 ? void 0 : _a.dispatchEvent(component, "/", "change", [change], this.data);
+        if (this.patchQueue.length > 100)
+            this.patchQueue.shift();
+        let retChange = (_a = this.events) === null || _a === void 0 ? void 0 : _a.dispatchEvent(component, "/" + `$${component}`, "change", [change], this.data);
         //console.log(component, "/", "change", change);
         try {
             ret = (_b = this.events) === null || _b === void 0 ? void 0 : _b.dispatchEvent(component, change.path, "change", [change], this.data);

@@ -18,13 +18,15 @@ export class listItem extends kelement {
                     this.getListContainer()?.remove(change);
                 }else{
                     this.$el.innerHTML = para?.firstChild?.innerHTML?.trim();
+                    this.dom.store?.events?.dispatchEvent(this.dom.name, `/$${this.dom.name}`, "post_render", { change: change, domScope: this.$el });
                 }
 
             }else{
                 this.$el.innerHTML = this.template.call(this, { change, ...stores, _t: this.dom._t }).trim();
-            } 
+                this.dom.store?.events?.dispatchEvent(this.dom.name, `/$${this.dom.name}`, "post_render", { change: change, domScope: this.$el });
+            }
 
-            this.dom.store?.events?.dispatchEvent(this.dom.name, this.dom.name, "post_render", { change: change, domScope: this.$el });
+           
 
         } else {
             this.$el.innerHTML = change.value;

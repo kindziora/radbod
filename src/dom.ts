@@ -86,7 +86,7 @@ export class dom {
 
         this.loadElements();
 
-        this.store.events?.dispatchEvent(this.name, this.name, "post_render", { change: data, domScope: this.$el, readd: true }, storeObject);
+        this.store.events?.dispatchEvent(this.name, `/$${this.name}`, "post_render", { change: data, domScope: this.$el, readd: true }, storeObject);
 
     }
 

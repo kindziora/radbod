@@ -41,8 +41,13 @@ export class elist extends kelement {
         console.log("replace whole list");
         this.render(change);
     }
+    /**
+     *
+     * @TODO es fehlen teilweise elemente anch vielem hin und her geklicke
+     *
+     */
     add(change) {
-        var _a, _b, _c, _d, _e;
+        var _a, _b, _c, _d;
         let where = "afterbegin";
         let pointer = (_b = (_a = change.path) === null || _a === void 0 ? void 0 : _a.split("/")) === null || _b === void 0 ? void 0 : _b.pop();
         if (!isNaN(pointer)) {
@@ -52,34 +57,38 @@ export class elist extends kelement {
                 this.dom.insertElementByElement(this, where, this.renderItem(change));
             }
             //appendend to end
-            if (pos > Object.keys(items).length - 1) {
+            if (pos !== 0 && pos > Object.keys(items).length - 1) {
                 where = "beforeend";
                 this.dom.insertElementByElement(this, where, this.renderItem(change));
             }
             //inserted in between
             if (pos > 0 && pos < Object.keys(items).length - 1) {
-                let tname = (_c = change.path) === null || _c === void 0 ? void 0 : _c.split("/");
-                tname.pop();
-                tname.push(pos - 1);
-                let name = tname.join("/");
-                where = "afterend";
-                if (this._listItemsByName[name]) {
-                    this.dom.insertElementByElement(this._listItemsByName[name], where, this.renderItem(change));
+                function walkUntilFound(dir, where) {
+                    let inserted = false;
+                    for (let i = pos; i > 0; i = i + dir) {
+                        let name = change.path.replace(/\d+(\D*)$/gm, i);
+                        if (this._listItemsByName[name]) {
+                            this.dom.insertElementByElement(this._listItemsByName[name], where, this.renderItem(change));
+                            inserted = true;
+                            break;
+                        }
+                    }
+                    return inserted;
                 }
-                else {
-                    console.log("failed to find point to insert list-item", name);
+                if (!walkUntilFound.call(this, -1, "afterend")) {
+                    walkUntilFound.call(this, 1, "afterend");
                 }
             }
         }
         else {
             console.log("failed pointer from path", change.path);
         }
-        let addedEl = this.$scope.querySelector(`:scope [data-name="${CSS.escape(change.path)}"]`);
+        let addedEl = this.$el.querySelector(`:scope [data-name="${CSS.escape(change.path)}"]`);
         let resultEL = null;
         if (addedEl) {
             this.dom.loadElementsScoped(addedEl); //not nessesary?
         }
-        (_e = (_d = this.dom.store) === null || _d === void 0 ? void 0 : _d.events) === null || _e === void 0 ? void 0 : _e.dispatchEvent(this.dom.name, this.dom.name, "post_render", { change: change, domScope: this.$el });
+        (_d = (_c = this.dom.store) === null || _c === void 0 ? void 0 : _c.events) === null || _d === void 0 ? void 0 : _d.dispatchEvent(this.dom.name, `/$${this.dom.name}`, "post_render", { change: change, domScope: this.$el });
         return resultEL;
     }
     remove(change) {
@@ -97,7 +106,7 @@ export class elist extends kelement {
         var _a, _b;
         let items = JSON.parse(JSON.stringify(change.value || [])).filter((i) => !!i);
         this.$el.innerHTML = items.map((e, i) => this.renderItem({ op: "add", path: change.path + "/" + i, value: e })).join("\r\n").trim();
-        (_b = (_a = this.dom.store) === null || _a === void 0 ? void 0 : _a.events) === null || _b === void 0 ? void 0 : _b.dispatchEvent(this.dom.name, this.dom.name, "post_render", { change: change, domScope: this.$el });
+        (_b = (_a = this.dom.store) === null || _a === void 0 ? void 0 : _a.events) === null || _b === void 0 ? void 0 : _b.dispatchEvent(this.dom.name, `/$${this.dom.name}`, "post_render", { change: change, domScope: this.$el });
     }
     /**
      *

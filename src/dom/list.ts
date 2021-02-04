@@ -13,7 +13,7 @@ export class elist extends kelement {
     }
 
     getNativeListItems(): HTMLCollection {
-        return Array.from(this.$el ?.children as HTMLCollection);
+        return Array.from(this.$el?.children as HTMLCollection);
     }
 
     getListItems(cached: boolean = false) {
@@ -25,7 +25,7 @@ export class elist extends kelement {
         let items = this.getNativeListItems();
         for (let e in items) {
 
-            let id = typeof items[e] !== "undefined" ? items[e]?.getAttribute("data-id"): "";
+            let id = typeof items[e] !== "undefined" ? items[e]?.getAttribute("data-id") : "";
 
             if (id in this.dom.element) {
                 mappedItems[id] = this.dom.element[id];
@@ -48,7 +48,11 @@ export class elist extends kelement {
         console.log("replace whole list");
         this.render(change);
     }
-
+/**
+ * 
+ * @TODO es fehlen teilweise elemente anch vielem hin und her geklicke
+ * 
+ */
     add(change: op): kelement | null {
         let where: InsertPosition = "afterbegin";
         let pointer = change.path?.split("/")?.pop();
@@ -62,47 +66,58 @@ export class elist extends kelement {
             }
 
             //appendend to end
-            if (pos > Object.keys(items).length - 1) {
+            if (pos !== 0 && pos > Object.keys(items).length - 1) {
                 where = "beforeend";
                 this.dom.insertElementByElement(this, where, this.renderItem(change));
             }
 
             //inserted in between
             if (pos > 0 && pos < Object.keys(items).length - 1) {
-                let tname = change.path ?.split("/");
-                tname.pop();
-                tname.push(pos - 1);
-                let name = tname.join("/");
-                where = "afterend";
-                if (this._listItemsByName[name]) {
-                    this.dom.insertElementByElement(this._listItemsByName[name], where, this.renderItem(change)); 
-                } else {
-                    console.log("failed to find point to insert list-item", name);
+                 
+                function walkUntilFound(dir: number, where : string) {
+                    let inserted: boolean = false;
+
+                    for (let i = pos; i > 0; i = i + dir) {
+                        let name: string = change.path.replace(/\d+(\D*)$/gm, i);
+
+                        if (this._listItemsByName[name]) {
+                            this.dom.insertElementByElement(this._listItemsByName[name], where, this.renderItem(change));
+                            inserted = true;
+                            break;
+                        }
+                    }
+                    return inserted;
                 }
+ 
+
+                if(!walkUntilFound.call(this, -1, "afterend")){
+                    walkUntilFound.call(this, 1, "afterend");
+                }
+
             }
 
         } else {
             console.log("failed pointer from path", change.path);
         }
-        let addedEl = this.$scope.querySelector(`:scope [data-name="${CSS.escape(change.path)}"]`);
+        let addedEl = this.$el.querySelector(`:scope [data-name="${CSS.escape(change.path)}"]`);
         let resultEL: kelement | null = null;
         if (addedEl) {
             this.dom.loadElementsScoped(addedEl); //not nessesary?
         }
 
-        this.dom.store?.events?.dispatchEvent(this.dom.name, this.dom.name, "post_render", { change: change, domScope: this.$el});
+        this.dom.store?.events?.dispatchEvent(this.dom.name, `/$${this.dom.name}`, "post_render", { change: change, domScope: this.$el });
 
         return resultEL;
     }
 
     remove(change: op) {
-       // super.remove(change);
-       this.mapListItems();
-       this.dom.removeElement(this._listItemsByName[change.path]);
-       
-       delete this._listItems[this._listItemsByName[change.path].id];  
-       delete this._listItemsByName[change.path];
-       
+        // super.remove(change);
+        this.mapListItems();
+        this.dom.removeElement(this._listItemsByName[change.path]);
+
+        delete this._listItems[this._listItemsByName[change.path].id];
+        delete this._listItemsByName[change.path];
+
     }
 
     /**
@@ -110,9 +125,9 @@ export class elist extends kelement {
     * @param data 
     */
     render(change: op) {
-        let items = JSON.parse(JSON.stringify(change.value||[])).filter((i:any) => !!i);
-        this.$el.innerHTML = items.map((e: any, i:number) => this.renderItem({ op: "add", path: change.path + "/" + i, value: e })).join("\r\n").trim();
-        this.dom.store?.events?.dispatchEvent(this.dom.name, this.dom.name, "post_render", { change: change, domScope: this.$el});
+        let items = JSON.parse(JSON.stringify(change.value || [])).filter((i: any) => !!i);
+        this.$el.innerHTML = items.map((e: any, i: number) => this.renderItem({ op: "add", path: change.path + "/" + i, value: e })).join("\r\n").trim();
+        this.dom.store?.events?.dispatchEvent(this.dom.name, `/$${this.dom.name}`, "post_render", { change: change, domScope: this.$el });
     }
 
     /**
@@ -124,7 +139,7 @@ export class elist extends kelement {
         change.index = pointer;
         if (this.template) {
             let storeObject = this.dom.store?.dataH?.store.toObject();
-            return this.template.call(this, {change, ...storeObject, _t : this.dom._t}).trim();
+            return this.template.call(this, { change, ...storeObject, _t: this.dom._t }).trim();
         } else {
             return `<div data-type="list-item" data-index="${pointer}" data-name="${change.path}">${change.value}</div>`;
         }

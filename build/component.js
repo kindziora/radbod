@@ -14,7 +14,7 @@ export class component {
         this.name = this.dom.name;
         this.$el = dom._area;
         this.bindEvents();
-        (_a = this.store.events) === null || _a === void 0 ? void 0 : _a.addEvent(this.name, this.name, "post_render", this.bindByInteractions, this);
+        (_a = this.store.events) === null || _a === void 0 ? void 0 : _a.add(`/$${this.name}`, "post_render", this.bindByInteractions, this);
     }
     getName() {
         return this.name;
@@ -25,14 +25,12 @@ export class component {
         this.id = id;
     }
     bindEvents() {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+        var _a, _b, _c, _d, _e;
         //this.update.bind(this);
         //wrong this context
-        (_a = this.store.events) === null || _a === void 0 ? void 0 : _a.addEvent(this.name, "/", "change", this.update, this);
-        (_b = this.store.events) === null || _b === void 0 ? void 0 : _b.addEvent(this.store.name, "/", "change", this.update, this);
-        (_c = this.store.events) === null || _c === void 0 ? void 0 : _c.addEvent("_state", "/", "change", this.update, this);
-        (_d = this.store.events) === null || _d === void 0 ? void 0 : _d.addEvent(this.name, "/", "change", (_f = (_e = this.interactions) === null || _e === void 0 ? void 0 : _e["/"]) === null || _f === void 0 ? void 0 : _f["change"], this);
-        (_g = this.store.events) === null || _g === void 0 ? void 0 : _g.addEvent(this.store.name, "/", "change", (_j = (_h = this.interactions) === null || _h === void 0 ? void 0 : _h["/"]) === null || _j === void 0 ? void 0 : _j["change"], this);
+        (_a = this.store.events) === null || _a === void 0 ? void 0 : _a.add("/$" + this.store.name, "change", this.update, this);
+        (_b = this.store.events) === null || _b === void 0 ? void 0 : _b.add("/_state", "change", this.update, this);
+        (_c = this.store.events) === null || _c === void 0 ? void 0 : _c.add("/$" + this.store.name, "change", (_e = (_d = this.interactions) === null || _d === void 0 ? void 0 : _d["/$" + this.store.name]) === null || _e === void 0 ? void 0 : _e["change"], this);
         this.bindNonDomInteractions();
         this.bindByInteractions({ change: {}, domScope: this.$el });
     }
@@ -42,7 +40,7 @@ export class component {
             if (typeof this.dom.elementByName[path] === "undefined") {
                 for (let event in this.interactions[path]) {
                     let name = this.store.unmaskComponentName(path, "/").split("/").shift();
-                    (_a = this.store.events) === null || _a === void 0 ? void 0 : _a.addEvent(this.store.unmaskComponentName(name), path, event, (_c = (_b = this.interactions) === null || _b === void 0 ? void 0 : _b[path]) === null || _c === void 0 ? void 0 : _c[event]);
+                    (_a = this.store.events) === null || _a === void 0 ? void 0 : _a.add(path, event, (_c = (_b = this.interactions) === null || _b === void 0 ? void 0 : _b[path]) === null || _c === void 0 ? void 0 : _c[event], this);
                 }
             }
         }
@@ -53,24 +51,30 @@ export class component {
         this.dom.loadElementsScoped(domScope);
         // ONLY ITERATE OVER FIELDS THAT ARE REALY IN SCOPE AND NOT FROM ANY SCOPE OVER ALL FIELDS!!!!!!!!!!!!!
         console.log("bindByInteractions", this.name, change, domScope);
+        /**
+         * @todo WeakMaps für events nutzen und $el als key
+         *
+         */
         for (let path in this.interactions) {
             for (let event in this.interactions[path]) {
                 for (let field in this.dom.elementByName[path]) {
                     let $el = this.dom.elementByName[path][field].$el;
                     let fieldID = this.dom.elementByName[path][field].id;
                     let mapEvent = event.split('#');
-                    let c = (ev) => {
-                        var _a;
-                        (_a = this.store.events) === null || _a === void 0 ? void 0 : _a.dispatchEvent(this.name + `-${fieldID}`, path, event, { "field": this.dom.elementByName[path][field], ev }, this.store.data);
-                    };
                     let eventList = (_b = (_a = this.interactions) === null || _a === void 0 ? void 0 : _a[path]) === null || _b === void 0 ? void 0 : _b[event];
                     if (!Array.isArray(eventList)) {
                         eventList = [(_d = (_c = this.interactions) === null || _c === void 0 ? void 0 : _c[path]) === null || _d === void 0 ? void 0 : _d[event]];
                     }
                     for (let evt in eventList) {
-                        let added = (_e = this.store.events) === null || _e === void 0 ? void 0 : _e.addEvent(this.name + `-${fieldID}`, path, event, eventList[evt]);
+                        let added = (_e = this.store.events) === null || _e === void 0 ? void 0 : _e.addByElement(this.name, $el, event, eventList[evt], this);
                         if (added || readd) {
-                            $el.addEventListener((mapEvent.length > 1 && fieldID === mapEvent[1]) ? mapEvent[0] : event, c);
+                            let func = function (f, me, $el, event) {
+                                return function (ev) {
+                                    var _a;
+                                    (_a = me.store.events) === null || _a === void 0 ? void 0 : _a.dispatchEvent(me.name, $el, event, { "field": f, ev }, me.store.data, me.interactions);
+                                };
+                            }(this.dom.elementByName[path][field], this, $el, event);
+                            $el.addEventListener((mapEvent.length > 1 && fieldID === mapEvent[1]) ? mapEvent[0] : event, func);
                         }
                     }
                 }
