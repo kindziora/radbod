@@ -72,12 +72,12 @@ export class elist extends kelement {
             }
 
             //inserted in between
-            if (pos > 0 && pos < Object.keys(items).length - 1) {
+            if (pos > 0 && pos <= Object.keys(items).length - 1) {
                  
                 function walkUntilFound(dir: number, where : string) {
                     let inserted: boolean = false;
 
-                    for (let i = pos; i > 0; i = i + dir) {
+                    for (let i = pos; i >= 0; i = i + dir) {
                         let name: string = change.path.replace(/\d+(\D*)$/gm, i);
 
                         if (this._listItemsByName[name]) {
@@ -91,7 +91,9 @@ export class elist extends kelement {
  
 
                 if(!walkUntilFound.call(this, -1, "afterend")){
-                    walkUntilFound.call(this, 1, "afterend");
+                    if(!walkUntilFound.call(this, 1, "afterend")){
+                      
+                    }
                 }
 
             }
@@ -101,11 +103,8 @@ export class elist extends kelement {
         }
         let addedEl = this.$el.querySelector(`:scope [data-name="${CSS.escape(change.path)}"]`);
         let resultEL: kelement | null = null;
-        if (addedEl) {
-            this.dom.loadElementsScoped(addedEl); //not nessesary?
-        }
-
-        this.dom.store?.events?.dispatchEvent(this.dom.name, `/$${this.dom.name}`, "post_render", { change: change, domScope: this.$el });
+        if(addedEl)
+            this.dom.store?.events?.dispatchEvent(this.dom.name, `/$${this.dom.name}`, "post_render", { change: change, domScope: addedEl });
 
         return resultEL;
     }

@@ -10,6 +10,7 @@ export class listItem extends kelement {
             if(typeof this.getListContainer()?.template ==="function") {
                 
                 let para:HTMLElement = document.createElement("DIV"); 
+                
                 para.innerHTML = this.getListContainer()?.template.call(this, { change, ...stores, _t: this.dom._t }).trim();
 
                 //what about outerHTML?

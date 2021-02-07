@@ -266,7 +266,7 @@ export class dom {
     loadElementsScoped($scope) {
         let element = $scope.querySelectorAll(this._identifier);
         try {
-            // this.loadElement($scope);
+            this._load($scope, this.counter);
             element.forEach(($el, currentIndex) => this._load($el, currentIndex));
         }
         catch (e) {

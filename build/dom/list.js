@@ -62,10 +62,10 @@ export class elist extends kelement {
                 this.dom.insertElementByElement(this, where, this.renderItem(change));
             }
             //inserted in between
-            if (pos > 0 && pos < Object.keys(items).length - 1) {
+            if (pos > 0 && pos <= Object.keys(items).length - 1) {
                 function walkUntilFound(dir, where) {
                     let inserted = false;
-                    for (let i = pos; i > 0; i = i + dir) {
+                    for (let i = pos; i >= 0; i = i + dir) {
                         let name = change.path.replace(/\d+(\D*)$/gm, i);
                         if (this._listItemsByName[name]) {
                             this.dom.insertElementByElement(this._listItemsByName[name], where, this.renderItem(change));
@@ -76,7 +76,8 @@ export class elist extends kelement {
                     return inserted;
                 }
                 if (!walkUntilFound.call(this, -1, "afterend")) {
-                    walkUntilFound.call(this, 1, "afterend");
+                    if (!walkUntilFound.call(this, 1, "afterend")) {
+                    }
                 }
             }
         }
@@ -85,10 +86,8 @@ export class elist extends kelement {
         }
         let addedEl = this.$el.querySelector(`:scope [data-name="${CSS.escape(change.path)}"]`);
         let resultEL = null;
-        if (addedEl) {
-            this.dom.loadElementsScoped(addedEl); //not nessesary?
-        }
-        (_d = (_c = this.dom.store) === null || _c === void 0 ? void 0 : _c.events) === null || _d === void 0 ? void 0 : _d.dispatchEvent(this.dom.name, `/$${this.dom.name}`, "post_render", { change: change, domScope: this.$el });
+        if (addedEl)
+            (_d = (_c = this.dom.store) === null || _c === void 0 ? void 0 : _c.events) === null || _d === void 0 ? void 0 : _d.dispatchEvent(this.dom.name, `/$${this.dom.name}`, "post_render", { change: change, domScope: addedEl });
         return resultEL;
     }
     remove(change) {

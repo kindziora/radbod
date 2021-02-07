@@ -335,7 +335,8 @@ export class dom {
         let element: NodeListOf<Element> = $scope.querySelectorAll(this._identifier) as NodeListOf<Element>;
 
         try {
-            // this.loadElement($scope);
+            this._load($scope, this.counter);
+
             element.forEach(($el: Element, currentIndex: number) => this._load($el, currentIndex));
         } catch (e) {
             console.log(e);
