@@ -69,9 +69,40 @@ export class component {
 
     bindByInteractions(meta: { change: object, domScope: object, readd?:boolean }) {
         let { change, domScope, readd } = meta;
-        this.dom.loadElementsScoped(domScope);
+        let loaded = this.dom.loadElementsScoped(domScope) || [];
+        
         // ONLY ITERATE OVER FIELDS THAT ARE REALY IN SCOPE AND NOT FROM ANY SCOPE OVER ALL FIELDS!!!!!!!!!!!!!
         console.log("bindByInteractions", this.name, change, domScope);
+       
+         for(let t in loaded){
+             
+            let t_el = loaded[t];
+
+            if(t_el.$el.hasAttribute("data-events")){
+                let onEvents : string[] | null = t_el.$el.getAttribute("data-events")?.split(",");
+               
+                for(let events in onEvents){
+                    let nameEvent = onEvents[events].split(":");
+                    
+                    if(typeof this.interactions[nameEvent[0]] !== "undefined" && typeof this.interactions[nameEvent[0]][nameEvent[1]] !== "undefined" ){
+                        let added = this.store.events?.addByElement(this.name, t_el.$el, nameEvent[1], this.interactions[nameEvent[0]][nameEvent[1]], this);
+                    
+                        if (added || readd) {
+                            let func = makeFunc(t_el, this, t_el.$el, nameEvent[1]);
+                            t_el.$el.addEventListener(nameEvent[1], func);
+                        }
+                    }else{
+                        console.log("No interaction callback found for: ", onEvents[events]);
+                    }
+                }  
+            }
+        }
+        
+        function makeFunc(f, me, $el, event){ 
+            return function(ev){ 
+                me.store.events?.dispatchEvent(me.name, $el, event, { "field": f, ev }, me.store.data, me.interactions);
+            }
+        }
 
         /**
          * @todo WeakMaps für events nutzen und $el als key
@@ -85,7 +116,7 @@ export class component {
                     let $el = this.dom.elementByName[path][field].$el;
                     let fieldID = this.dom.elementByName[path][field].id;
                     let mapEvent = event.split('#');
-      
+       
                     let eventList: Array<Function> = this.interactions?.[path]?.[event];
                     
                     if(!Array.isArray(eventList)){
@@ -96,13 +127,11 @@ export class component {
                         let added = this.store.events?.addByElement(this.name, $el, event, eventList[evt], this);
 
                         if (added || readd) {
-                            let func = function(f, me, $el, event){ 
-                                return function(ev){ 
-                                    me.store.events?.dispatchEvent(me.name, $el, event, { "field": f, ev }, me.store.data, me.interactions);
-                                }
-                            }(this.dom.elementByName[path][field], this, $el, event);
+                            let eventName = (mapEvent.length > 1 && fieldID === mapEvent[1]) ?  mapEvent[0] : event;
 
-                            $el.addEventListener((mapEvent.length > 1 && fieldID === mapEvent[1]) ?  mapEvent[0] : event, func);
+                            let func = makeFunc(this.dom.elementByName[path][field], this, $el, event);
+
+                            $el.addEventListener(eventName, func);
                         }
                     }
 
@@ -137,7 +166,9 @@ export class component {
                         return el.update([{ op: "replace", path: fieldPath, value: val }]); 
                     }else{
                         let itemPath : string = getArrayItemPath(change.path);
-                        return el.update([{ op: "add", path: itemPath, value: store.accessByPath(itemPath) }]);
+                        let val : any = store.accessByPath(itemPath);
+                        if(val)
+                            return el.update([{ op: "add", path: itemPath, value: val }]);
                     }
                 } else {
                     return el.update([change]);

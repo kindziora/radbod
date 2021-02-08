@@ -112,11 +112,12 @@ export class elist extends kelement {
     remove(change: op) {
         // super.remove(change);
         this.mapListItems();
-        this.dom.removeElement(this._listItemsByName[change.path]);
+        if(typeof this._listItemsByName[change.path] !=="undefined") {
+            this.dom.removeElement(this._listItemsByName[change.path]);
 
-        delete this._listItems[this._listItemsByName[change.path].id];
-        delete this._listItemsByName[change.path];
-
+            delete this._listItems[this._listItemsByName[change.path].id];
+            delete this._listItemsByName[change.path];
+        } 
     }
 
     /**

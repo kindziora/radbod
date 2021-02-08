@@ -257,21 +257,26 @@ export class dom {
     _load($el, currentIndex) {
         var _a;
         if (!($el === null || $el === void 0 ? void 0 : $el.hasAttribute("data-id"))) {
-            this.loadElement($el, currentIndex);
+            return this.loadElement($el, currentIndex);
         }
         else if (((_a = $el === null || $el === void 0 ? void 0 : $el.getAttribute("data-id")) === null || _a === void 0 ? void 0 : _a.indexOf(this.name)) !== -1 || this.isElementComponent($el)) {
-            this.loadElement($el, currentIndex);
+            return this.loadElement($el, currentIndex);
         }
+        return this.kelementBy$el[$el];
     }
     loadElementsScoped($scope) {
+        let loaded = [];
         let element = $scope.querySelectorAll(this._identifier);
         try {
-            this._load($scope, this.counter);
-            element.forEach(($el, currentIndex) => this._load($el, currentIndex));
+            loaded = Array.from(element).map(($el, currentIndex) => this._load($el, currentIndex)).filter(e => e);
+            let l = this._load($scope, this.counter);
+            if (l)
+                loaded.push(l);
         }
         catch (e) {
             console.log(e);
         }
+        return loaded;
     }
     loadElements() {
         let element = this._area.querySelectorAll(this._identifier);

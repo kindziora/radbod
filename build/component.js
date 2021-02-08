@@ -46,11 +46,36 @@ export class component {
         }
     }
     bindByInteractions(meta) {
-        var _a, _b, _c, _d, _e;
+        var _a, _b, _c, _d, _e, _f, _g;
         let { change, domScope, readd } = meta;
-        this.dom.loadElementsScoped(domScope);
+        let loaded = this.dom.loadElementsScoped(domScope) || [];
         // ONLY ITERATE OVER FIELDS THAT ARE REALY IN SCOPE AND NOT FROM ANY SCOPE OVER ALL FIELDS!!!!!!!!!!!!!
         console.log("bindByInteractions", this.name, change, domScope);
+        for (let t in loaded) {
+            let t_el = loaded[t];
+            if (t_el.$el.hasAttribute("data-events")) {
+                let onEvents = (_a = t_el.$el.getAttribute("data-events")) === null || _a === void 0 ? void 0 : _a.split(",");
+                for (let events in onEvents) {
+                    let nameEvent = onEvents[events].split(":");
+                    if (typeof this.interactions[nameEvent[0]] !== "undefined" && typeof this.interactions[nameEvent[0]][nameEvent[1]] !== "undefined") {
+                        let added = (_b = this.store.events) === null || _b === void 0 ? void 0 : _b.addByElement(this.name, t_el.$el, nameEvent[1], this.interactions[nameEvent[0]][nameEvent[1]], this);
+                        if (added || readd) {
+                            let func = makeFunc(t_el, this, t_el.$el, nameEvent[1]);
+                            t_el.$el.addEventListener(nameEvent[1], func);
+                        }
+                    }
+                    else {
+                        console.log("No interaction callback found for: ", onEvents[events]);
+                    }
+                }
+            }
+        }
+        function makeFunc(f, me, $el, event) {
+            return function (ev) {
+                var _a;
+                (_a = me.store.events) === null || _a === void 0 ? void 0 : _a.dispatchEvent(me.name, $el, event, { "field": f, ev }, me.store.data, me.interactions);
+            };
+        }
         /**
          * @todo WeakMaps für events nutzen und $el als key
          *
@@ -61,20 +86,16 @@ export class component {
                     let $el = this.dom.elementByName[path][field].$el;
                     let fieldID = this.dom.elementByName[path][field].id;
                     let mapEvent = event.split('#');
-                    let eventList = (_b = (_a = this.interactions) === null || _a === void 0 ? void 0 : _a[path]) === null || _b === void 0 ? void 0 : _b[event];
+                    let eventList = (_d = (_c = this.interactions) === null || _c === void 0 ? void 0 : _c[path]) === null || _d === void 0 ? void 0 : _d[event];
                     if (!Array.isArray(eventList)) {
-                        eventList = [(_d = (_c = this.interactions) === null || _c === void 0 ? void 0 : _c[path]) === null || _d === void 0 ? void 0 : _d[event]];
+                        eventList = [(_f = (_e = this.interactions) === null || _e === void 0 ? void 0 : _e[path]) === null || _f === void 0 ? void 0 : _f[event]];
                     }
                     for (let evt in eventList) {
-                        let added = (_e = this.store.events) === null || _e === void 0 ? void 0 : _e.addByElement(this.name, $el, event, eventList[evt], this);
+                        let added = (_g = this.store.events) === null || _g === void 0 ? void 0 : _g.addByElement(this.name, $el, event, eventList[evt], this);
                         if (added || readd) {
-                            let func = function (f, me, $el, event) {
-                                return function (ev) {
-                                    var _a;
-                                    (_a = me.store.events) === null || _a === void 0 ? void 0 : _a.dispatchEvent(me.name, $el, event, { "field": f, ev }, me.store.data, me.interactions);
-                                };
-                            }(this.dom.elementByName[path][field], this, $el, event);
-                            $el.addEventListener((mapEvent.length > 1 && fieldID === mapEvent[1]) ? mapEvent[0] : event, func);
+                            let eventName = (mapEvent.length > 1 && fieldID === mapEvent[1]) ? mapEvent[0] : event;
+                            let func = makeFunc(this.dom.elementByName[path][field], this, $el, event);
+                            $el.addEventListener(eventName, func);
                         }
                     }
                 }
@@ -104,7 +125,9 @@ export class component {
                     }
                     else {
                         let itemPath = getArrayItemPath(change.path);
-                        return el.update([{ op: "add", path: itemPath, value: store.accessByPath(itemPath) }]);
+                        let val = store.accessByPath(itemPath);
+                        if (val)
+                            return el.update([{ op: "add", path: itemPath, value: val }]);
                     }
                 }
                 else {

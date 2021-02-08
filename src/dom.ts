@@ -320,32 +320,35 @@ export class dom {
         return names;
     }
 
-    _load($el: Element, currentIndex: number) {
+    _load($el: Element, currentIndex: number): kelement {
 
         if (!$el?.hasAttribute("data-id")) {
-            this.loadElement($el, currentIndex);
+           return this.loadElement($el, currentIndex);
         } else if ($el?.getAttribute("data-id")?.indexOf(this.name) !== -1 || this.isElementComponent($el)) {
-            this.loadElement($el, currentIndex);
+           return this.loadElement($el, currentIndex);
         }
-
+        return this.kelementBy$el[$el];
     }
 
-    loadElementsScoped($scope: Element) {
-
+    loadElementsScoped($scope: Element) : kelement[]{
+        let loaded : kelement[] = [];
         let element: NodeListOf<Element> = $scope.querySelectorAll(this._identifier) as NodeListOf<Element>;
 
         try {
-            this._load($scope, this.counter);
+           
+            loaded = Array.from(element).map(($el: Element, currentIndex: number) => this._load($el, currentIndex)).filter(e=>e);
 
-            element.forEach(($el: Element, currentIndex: number) => this._load($el, currentIndex));
+            let l = this._load($scope, this.counter);
+            if(l) loaded.push(l);
+
         } catch (e) {
             console.log(e);
         }
-
+        return loaded;
     }
 
     loadElements() {
-
+        
         let element: NodeListOf<Element> = this._area.querySelectorAll(this._identifier) as NodeListOf<Element>;
 
         try {
