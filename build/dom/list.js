@@ -119,7 +119,7 @@ export class elist extends kelement {
         change.index = pointer;
         if (this.template) {
             let storeObject = (_d = (_c = this.dom.store) === null || _c === void 0 ? void 0 : _c.dataH) === null || _d === void 0 ? void 0 : _d.store.toObject();
-            return this.template.call(this, Object.assign(Object.assign({ change }, storeObject), { _t: this.dom._t })).trim();
+            return (this.template.call(this, Object.assign(Object.assign({ change }, storeObject), { _t: this.dom._t })) + "").trim();
         }
         else {
             return `<div data-type="list-item" data-index="${pointer}" data-name="${change.path}">${change.value}</div>`;

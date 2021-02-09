@@ -54,7 +54,7 @@ export class dom {
         this.element = {};
         this.elementByName = {};
         let storeObject = (_a = this.store.dataH) === null || _a === void 0 ? void 0 : _a.store.toObject();
-        this._area.innerHTML = this.template.call(this, Object.assign(Object.assign({ change: data }, storeObject), { _t: this._t })).trim();
+        this._area.innerHTML = (this.template.call(this, Object.assign(Object.assign({ change: data }, storeObject), { _t: this._t })) + "").trim();
         this.kelementBy$el = new WeakMap();
         this.loadElements();
         (_b = this.store.events) === null || _b === void 0 ? void 0 : _b.dispatchEvent(this.name, `/$${this.name}`, "post_render", { change: data, domScope: this.$el, readd: true }, storeObject);
@@ -151,11 +151,11 @@ export class dom {
         internationalize.addTranslation(componentObject.translations ? componentObject.translations() : {});
         let _t = (text, lang) => internationalize._t(text, lang);
         if ((_c = componentObject === null || componentObject === void 0 ? void 0 : componentObject.views) === null || _c === void 0 ? void 0 : _c[name]) {
-            $el.innerHTML = componentObject.views[name].call(componentObject, Object.assign(Object.assign({ change: { value: "" } }, storeObject), { _t })).trim();
+            $el.innerHTML = (componentObject.views[name].call(componentObject, Object.assign(Object.assign({ change: { value: "" } }, storeObject), { _t })) + "").trim();
         }
         else {
             if (!componentObject.html) {
-                $el.innerHTML = componentObject.views[name].call(componentObject, Object.assign(Object.assign({ change: { value: "" } }, storeObject), { _t })).trim();
+                $el.innerHTML = (componentObject.views[name].call(componentObject, Object.assign(Object.assign({ change: { value: "" } }, storeObject), { _t })) + "").trim();
             }
             else {
                 $el.innerHTML = componentObject.html.trim();
@@ -259,10 +259,10 @@ export class dom {
         if (!($el === null || $el === void 0 ? void 0 : $el.hasAttribute("data-id"))) {
             return this.loadElement($el, currentIndex);
         }
-        else if (((_a = $el === null || $el === void 0 ? void 0 : $el.getAttribute("data-id")) === null || _a === void 0 ? void 0 : _a.indexOf(this.name)) !== -1 || this.isElementComponent($el)) {
+        else if ((((_a = $el === null || $el === void 0 ? void 0 : $el.getAttribute("data-id")) === null || _a === void 0 ? void 0 : _a.indexOf(this.name)) !== -1) || this.isElementComponent($el)) {
             return this.loadElement($el, currentIndex);
         }
-        return this.kelementBy$el[$el];
+        return this.kelementBy$el.get($el);
     }
     loadElementsScoped($scope) {
         let loaded = [];

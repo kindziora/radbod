@@ -6,7 +6,7 @@ export class listItem extends kelement {
             let stores = (_b = (_a = this.dom.store) === null || _a === void 0 ? void 0 : _a.dataH) === null || _b === void 0 ? void 0 : _b.store.toObject();
             if (typeof ((_c = this.getListContainer()) === null || _c === void 0 ? void 0 : _c.template) === "function") {
                 let para = document.createElement("DIV");
-                para.innerHTML = (_d = this.getListContainer()) === null || _d === void 0 ? void 0 : _d.template.call(this, Object.assign(Object.assign({ change }, stores), { _t: this.dom._t })).trim();
+                para.innerHTML = (((_d = this.getListContainer()) === null || _d === void 0 ? void 0 : _d.template.call(this, Object.assign(Object.assign({ change }, stores), { _t: this.dom._t }))) + "").trim();
                 //what about outerHTML?
                 if (!(para === null || para === void 0 ? void 0 : para.firstChild)) {
                     change.op = "remove";
@@ -18,7 +18,7 @@ export class listItem extends kelement {
                 }
             }
             else {
-                this.$el.innerHTML = this.template.call(this, Object.assign(Object.assign({ change }, stores), { _t: this.dom._t })).trim();
+                this.$el.innerHTML = (this.template.call(this, Object.assign(Object.assign({ change }, stores), { _t: this.dom._t })) + "").trim();
                 (_l = (_k = this.dom.store) === null || _k === void 0 ? void 0 : _k.events) === null || _l === void 0 ? void 0 : _l.dispatchEvent(this.dom.name, `/$${this.dom.name}`, "post_render", { change: change, domScope: this.$el });
             }
         }

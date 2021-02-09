@@ -80,7 +80,7 @@ export class dom {
         this.element = {};
         this.elementByName = {};
         let storeObject = this.store.dataH?.store.toObject();
-        this._area.innerHTML = this.template.call(this, { change: data, ...storeObject, _t: this._t }).trim();
+        this._area.innerHTML = (this.template.call(this, { change: data, ...storeObject, _t: this._t }) +"").trim();
 
         this.kelementBy$el = new WeakMap();
 
@@ -193,10 +193,10 @@ export class dom {
 
         if (componentObject?.views?.[name]) {
 
-            $el.innerHTML = componentObject.views[name].call(componentObject, { change: { value: "" }, ...storeObject, _t }).trim();
+            $el.innerHTML = (componentObject.views[name].call(componentObject, { change: { value: "" }, ...storeObject, _t }) +"").trim();
         } else {
             if (!componentObject.html) {
-                $el.innerHTML = componentObject.views[name].call(componentObject, { change: { value: "" }, ...storeObject, _t }).trim();
+                $el.innerHTML = (componentObject.views[name].call(componentObject, { change: { value: "" }, ...storeObject, _t }) + "").trim();
             } else {
                 $el.innerHTML = componentObject.html.trim();
             }
@@ -324,10 +324,10 @@ export class dom {
 
         if (!$el?.hasAttribute("data-id")) {
            return this.loadElement($el, currentIndex);
-        } else if ($el?.getAttribute("data-id")?.indexOf(this.name) !== -1 || this.isElementComponent($el)) {
+        } else if ( ($el?.getAttribute("data-id")?.indexOf(this.name) !== -1) || this.isElementComponent($el) ) {
            return this.loadElement($el, currentIndex);
         }
-        return this.kelementBy$el[$el];
+        return this.kelementBy$el.get($el);
     }
 
     loadElementsScoped($scope: Element) : kelement[]{
