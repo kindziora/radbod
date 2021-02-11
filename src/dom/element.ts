@@ -35,9 +35,11 @@ export class kelement {
 
             if (this.$el.hasAttribute('data-name')) {
                 let c = this.dom.store.accessByPath(this.$el.getAttribute('data-name'));
-                this.render({ op: "add", path: this.$el.getAttribute('data-name'), value: c });
-              }
-
+                if (typeof c !== "undefined") {
+                    this.render({ op: "add", path: this.$el.getAttribute('data-name'), value: c });
+                }
+            }
+ 
         } else {
             if (!views?.[this.id]) {
                 if (this.$el.innerHTML.trim() !== "") {
@@ -91,9 +93,9 @@ export class kelement {
     render(change: op) {
         if (this.template) {
             let stores = this.dom.store?.dataH?.store.toObject();
- 
+
             this.$el.innerHTML = (this.template.call(this, { change, ...stores, _t: this.dom._t }) + "").trim();
- 
+
             this.dom.store?.events?.dispatchEvent(this.dom.name, `/$${this.dom.name}`, "post_render", { change: change, domScope: this.$el });
 
         } else {

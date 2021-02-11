@@ -23,7 +23,9 @@ export class kelement {
             this.setTemplate(views === null || views === void 0 ? void 0 : views[this.$el.getAttribute('data-view')]);
             if (this.$el.hasAttribute('data-name')) {
                 let c = this.dom.store.accessByPath(this.$el.getAttribute('data-name'));
-                this.render({ op: "add", path: this.$el.getAttribute('data-name'), value: c });
+                if (typeof c !== "undefined") {
+                    this.render({ op: "add", path: this.$el.getAttribute('data-name'), value: c });
+                }
             }
         }
         else {
