@@ -165,6 +165,11 @@ export class dom {
         let ddom = new dom($el, componentObject.components || {}, s, componentObject.views, _t, this.counter);
         ddom.name = name;
         $el.setAttribute("data-name", name);
+        if (componentObject.style) {
+            let stEl = document.createElement('style');
+            stEl.innerHTML = componentObject.style;
+            $el.append(stEl);
+        }
         console.log("CREATE COMPONENT:", name, s, componentObject.views, componentObject);
         let newcomponent = new component(ddom, s, componentObject.interactions.call({ componentObject, dom: ddom }));
         newcomponent.setId(name);
@@ -255,11 +260,11 @@ export class dom {
         return names;
     }
     _load($el, currentIndex) {
-        var _a;
+        var _a, _b;
         if (!($el === null || $el === void 0 ? void 0 : $el.hasAttribute("data-id"))) {
             return this.loadElement($el, currentIndex);
         }
-        else if ((((_a = $el === null || $el === void 0 ? void 0 : $el.getAttribute("data-id")) === null || _a === void 0 ? void 0 : _a.indexOf(this.name)) !== -1) || this.isElementComponent($el)) {
+        else if ((((_a = $el === null || $el === void 0 ? void 0 : $el.getAttribute("data-id")) === null || _a === void 0 ? void 0 : _a.indexOf(this.name)) !== -1) || this.isElementComponent($el) || ((_b = $el === null || $el === void 0 ? void 0 : $el.getAttribute("data-name")) === null || _b === void 0 ? void 0 : _b.indexOf("/_state")) !== -1) {
             return this.loadElement($el, currentIndex);
         }
         return this.kelementBy$el.get($el);
@@ -274,7 +279,7 @@ export class dom {
                 loaded.push(l);
         }
         catch (e) {
-            console.log(e);
+            console.log("FIELD NOT LOADED ERROR:", e);
         }
         return loaded;
     }

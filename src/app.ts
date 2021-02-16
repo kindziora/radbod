@@ -83,15 +83,17 @@ export class app {
         }
 
         el.setAttribute("data-name", name);
+        
+        if(componentObject?.style) {
+            let stEl = document.createElement('style');
+            stEl.innerHTML = componentObject.style;
+            el.append(stEl);
+        }
 
         let ddom = new dom(el, injections, s, views, _t);
         ddom.name = name;
 
-        if(style) {
-            let stEl = document.createElement('style');
-            stEl.innerHTML = style;
-            el.append(stEl);
-        }
+      
         let act = {};
         try{
             act = actions.call({componentObject, dom: ddom});

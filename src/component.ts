@@ -66,6 +66,7 @@ export class component {
             }
         }
     }
+ 
 
     bindByInteractions(meta: { change: object, domScope: object, readd?:boolean }) {
         let { change, domScope, readd } = meta;

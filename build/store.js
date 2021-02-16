@@ -40,7 +40,7 @@ export class meta {
             }
             if (msgChanged) {
                 (_f = this.events) === null || _f === void 0 ? void 0 : _f.dispatchEvent("_state", "/_state" + fieldPath + "/msg", "change", [{ op: "replace", path: "/_state" + fieldPath + "/msg", value: info.msg }], info);
-                (_g = this.events) === null || _g === void 0 ? void 0 : _g.dispatchEvent("_state", "/", "change", [{ op: "replace", path: "/_state" + fieldPath + "/msg", value: info.msg }], info);
+                (_g = this.events) === null || _g === void 0 ? void 0 : _g.dispatchEvent("_state", "/_state", "change", [{ op: "replace", path: "/_state" + fieldPath + "/msg", value: info.msg }], info);
             }
         }
     }

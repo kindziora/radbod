@@ -209,6 +209,12 @@ export class dom {
         ddom.name = name;
         $el.setAttribute("data-name", name);
 
+        if(componentObject.style) {
+            let stEl = document.createElement('style');
+            stEl.innerHTML = componentObject.style;
+            $el.append(stEl);
+        }
+
         console.log("CREATE COMPONENT:", name, s, componentObject.views, componentObject);
 
         let newcomponent = new component(ddom, s, componentObject.interactions.call({ componentObject, dom: ddom }));
@@ -324,7 +330,7 @@ export class dom {
 
         if (!$el?.hasAttribute("data-id")) {
            return this.loadElement($el, currentIndex);
-        } else if ( ($el?.getAttribute("data-id")?.indexOf(this.name) !== -1) || this.isElementComponent($el) ) {
+        } else if ( ($el?.getAttribute("data-id")?.indexOf(this.name) !== -1) || this.isElementComponent($el) || $el?.getAttribute("data-name")?.indexOf("/_state") !== -1) {
            return this.loadElement($el, currentIndex);
         }
         return this.kelementBy$el.get($el);
@@ -342,7 +348,7 @@ export class dom {
             if(l) loaded.push(l);
 
         } catch (e) {
-            console.log(e);
+            console.log("FIELD NOT LOADED ERROR:", e);
         }
         return loaded;
     }

@@ -61,7 +61,7 @@ export class meta {
             }
             if(msgChanged){
                 this.events?.dispatchEvent("_state", "/_state" + fieldPath + "/msg", "change", [{ op: "replace", path: "/_state" + fieldPath + "/msg", value: info.msg }], info);
-                this.events?.dispatchEvent("_state", "/", "change", [{ op: "replace", path: "/_state" + fieldPath + "/msg", value: info.msg }], info);
+                this.events?.dispatchEvent("_state", "/_state", "change", [{ op: "replace", path: "/_state" + fieldPath + "/msg", value: info.msg }], info);
             }
 
 

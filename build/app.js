@@ -57,13 +57,13 @@ export class app {
             el.innerHTML = views === null || views === void 0 ? void 0 : views[name];
         }
         el.setAttribute("data-name", name);
-        let ddom = new dom(el, injections, s, views, _t);
-        ddom.name = name;
-        if (style) {
+        if (componentObject === null || componentObject === void 0 ? void 0 : componentObject.style) {
             let stEl = document.createElement('style');
-            stEl.innerHTML = style;
+            stEl.innerHTML = componentObject.style;
             el.append(stEl);
         }
+        let ddom = new dom(el, injections, s, views, _t);
+        ddom.name = name;
         let act = {};
         try {
             act = actions.call({ componentObject, dom: ddom });
