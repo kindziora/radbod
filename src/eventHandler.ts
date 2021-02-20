@@ -62,7 +62,7 @@ export class eventHandler {
             return false;
         }
     }
-
+    
     dispatchEvent(component: string, id: any, name: string, args: any = null, returnValue: any = null, context?: object) {
 
         let eventMap = [];
@@ -73,7 +73,18 @@ export class eventHandler {
                 if (v.name === name) eventMap.push({ cb, context: v.context });
             }
         } else {
+            
             eventMap = this.event[id] && this.event[id][name] ? this.event[id][name] : [];
+
+            if(component != "_state"){
+                for(let i in this.event){
+                    if(id !=="/" && i!== id && id.indexOf(i) !== -1 && i.split("/").length > 2){
+                        if(this.event[i][name]){
+                            eventMap.push(...this.event[i][name]);
+                        }
+                    }
+                }
+            } 
         }
         if (eventMap) {
             let ret = null || returnValue;

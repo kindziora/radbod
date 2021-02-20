@@ -37,12 +37,12 @@ export class component {
     bindNonDomInteractions() {
         var _a, _b, _c;
         for (let path in this.interactions) {
-            //   if (typeof this.dom.elementByName[path] === "undefined") {
-            for (let event in this.interactions[path]) {
-                let name = this.store.unmaskComponentName(path, "/").split("/").shift();
-                (_a = this.store.events) === null || _a === void 0 ? void 0 : _a.add(path, event, (_c = (_b = this.interactions) === null || _b === void 0 ? void 0 : _b[path]) === null || _c === void 0 ? void 0 : _c[event], this);
+            if (typeof this.dom.elementByName[path] === "undefined") {
+                for (let event in this.interactions[path]) {
+                    let name = this.store.unmaskComponentName(path, "/").split("/").shift();
+                    (_a = this.store.events) === null || _a === void 0 ? void 0 : _a.add(path, event, (_c = (_b = this.interactions) === null || _b === void 0 ? void 0 : _b[path]) === null || _c === void 0 ? void 0 : _c[event], this);
+                }
             }
-            //   }
         }
     }
     bindByInteractions(meta) {

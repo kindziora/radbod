@@ -58,12 +58,12 @@ export class component {
 
     bindNonDomInteractions() {
         for (let path in this.interactions) {
-         //   if (typeof this.dom.elementByName[path] === "undefined") {
+            if (typeof this.dom.elementByName[path] === "undefined") {
                 for (let event in this.interactions[path]) {
                     let name:string = this.store.unmaskComponentName(path, "/").split("/").shift(); 
                     this.store.events?.add( path, event, this.interactions?.[path]?.[event], this);
                 }
-         //   }
+           }
         }
     }
  

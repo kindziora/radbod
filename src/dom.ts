@@ -275,7 +275,6 @@ export class dom {
 
         if (!this.kelementBy$el.get($el)) {
             this.counter++;
-
             let t_el: kelement = this.createElement($el, this.counter); //decorate and extend dom element
             this.detectType(t_el);
             this.addElement(t_el);
@@ -330,7 +329,10 @@ export class dom {
 
         if (!$el?.hasAttribute("data-id")) {
            return this.loadElement($el, currentIndex);
-        } else if ( ($el?.getAttribute("data-id")?.indexOf(this.name) !== -1) || this.isElementComponent($el) || $el?.getAttribute("data-name")?.indexOf("/_state") !== -1) {
+        } else if (
+         $el?.getAttribute("data-id")?.indexOf(this.name) !== -1
+         || this.isElementComponent($el)
+         || $el?.getAttribute("data-name")?.indexOf("/_state") !== -1 ) {
            return this.loadElement($el, currentIndex);
         }
         return this.kelementBy$el.get($el);

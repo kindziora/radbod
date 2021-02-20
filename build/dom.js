@@ -264,7 +264,9 @@ export class dom {
         if (!($el === null || $el === void 0 ? void 0 : $el.hasAttribute("data-id"))) {
             return this.loadElement($el, currentIndex);
         }
-        else if ((((_a = $el === null || $el === void 0 ? void 0 : $el.getAttribute("data-id")) === null || _a === void 0 ? void 0 : _a.indexOf(this.name)) !== -1) || this.isElementComponent($el) || ((_b = $el === null || $el === void 0 ? void 0 : $el.getAttribute("data-name")) === null || _b === void 0 ? void 0 : _b.indexOf("/_state")) !== -1) {
+        else if (((_a = $el === null || $el === void 0 ? void 0 : $el.getAttribute("data-id")) === null || _a === void 0 ? void 0 : _a.indexOf(this.name)) !== -1
+            || this.isElementComponent($el)
+            || ((_b = $el === null || $el === void 0 ? void 0 : $el.getAttribute("data-name")) === null || _b === void 0 ? void 0 : _b.indexOf("/_state")) !== -1) {
             return this.loadElement($el, currentIndex);
         }
         return this.kelementBy$el.get($el);

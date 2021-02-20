@@ -63,6 +63,15 @@ export class eventHandler {
         }
         else {
             eventMap = this.event[id] && this.event[id][name] ? this.event[id][name] : [];
+            if (component != "_state") {
+                for (let i in this.event) {
+                    if (id !== "/" && i !== id && id.indexOf(i) !== -1 && i.split("/").length > 2) {
+                        if (this.event[i][name]) {
+                            eventMap.push(...this.event[i][name]);
+                        }
+                    }
+                }
+            }
         }
         if (eventMap) {
             let ret = null || returnValue;
