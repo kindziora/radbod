@@ -226,6 +226,10 @@ export class dom {
             newcomponent.dom.setTemplate(componentObject?.views[name]);
         }
 
+        if(typeof componentObject?.mounted === "function" && componentObject?.views?.[name]){
+            componentObject?.mounted.call(newcomponent);
+        }
+
         return newcomponent;
     }
 

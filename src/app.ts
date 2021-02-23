@@ -45,6 +45,7 @@ export class app {
             );
 
             callback(stores, data, compo);
+
         }));
 
     }
@@ -81,7 +82,7 @@ export class app {
         } else {
             el.innerHTML = views?.[name];
         }
-
+        
         el.setAttribute("data-name", name);
         
         if(componentObject?.style) {
@@ -111,6 +112,10 @@ export class app {
             this.components[name].dom.setTemplate(views?.[name]);
         }
 
+        if(typeof componentObject?.mounted === "function" && typeof views?.[name] === "function"){
+            componentObject?.mounted.call(this.components[name]);
+        }
+
         return this.components[name];
     }
 
@@ -135,7 +140,7 @@ export class app {
 
         let callback = function (meta, dataH) {
             return (data) => {
-                cb(data);
+                cb(data, component);
                 meta.cnt++;
                 meta.loaded.push(component);
                 if (meta.cnt >= total) {
@@ -147,13 +152,7 @@ export class app {
         let result = component.data.call(this.dataH, callback(meta, this.dataH), {});
 
         if (!result || typeof result.then !== "function") {
-            meta.cnt++;
-            meta.loaded.push(component);
-        }
-
-        if (meta.cnt >= total) {
-            allready(this.dataH, meta);
-            return;
+            callback(meta, this.dataH)(result);
         }
 
         for (let i in component.components) {
@@ -174,8 +173,12 @@ export class app {
         let count = this.countForData(componentObject, 0); 
         let met = { cnt: 0, loaded: [] }; 
 
-        this.fetchData(componentObject, (data) => {
-             console.log("fetchData: ", componentObject.name, data);
+        this.fetchData(componentObject, (data, component) => {
+             console.log("fetchData: ", data.name, data);
+             
+             component?.loaded?.call(component, data);
+
+
         }, cb, count, met, this.dataH);
     }
 

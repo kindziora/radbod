@@ -79,6 +79,9 @@ export class app {
         else {
             this.components[name].dom.setTemplate(views === null || views === void 0 ? void 0 : views[name]);
         }
+        if (typeof (componentObject === null || componentObject === void 0 ? void 0 : componentObject.mounted) === "function" && typeof (views === null || views === void 0 ? void 0 : views[name]) === "function") {
+            componentObject === null || componentObject === void 0 ? void 0 : componentObject.mounted.call(this.components[name]);
+        }
         return this.components[name];
     }
     /**
@@ -97,7 +100,7 @@ export class app {
     fetchData(component, cb, allready, total, meta) {
         let callback = function (meta, dataH) {
             return (data) => {
-                cb(data);
+                cb(data, component);
                 meta.cnt++;
                 meta.loaded.push(component);
                 if (meta.cnt >= total) {
@@ -107,12 +110,7 @@ export class app {
         };
         let result = component.data.call(this.dataH, callback(meta, this.dataH), {});
         if (!result || typeof result.then !== "function") {
-            meta.cnt++;
-            meta.loaded.push(component);
-        }
-        if (meta.cnt >= total) {
-            allready(this.dataH, meta);
-            return;
+            callback(meta, this.dataH)(result);
         }
         for (let i in component.components) {
             this.fetchData(component.components[i], cb, allready, total, meta);
@@ -126,8 +124,10 @@ export class app {
     loadStores(componentObject, cb) {
         let count = this.countForData(componentObject, 0);
         let met = { cnt: 0, loaded: [] };
-        this.fetchData(componentObject, (data) => {
-            console.log("fetchData: ", componentObject.name, data);
+        this.fetchData(componentObject, (data, component) => {
+            var _a;
+            console.log("fetchData: ", data.name, data);
+            (_a = component === null || component === void 0 ? void 0 : component.loaded) === null || _a === void 0 ? void 0 : _a.call(component, data);
         }, cb, count, met, this.dataH);
     }
 }

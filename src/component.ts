@@ -97,6 +97,9 @@ export class component {
                     }
                 }  
             }
+
+            
+
         }
         
         function makeFunc(f, me, $el, event){ 

@@ -120,7 +120,7 @@ export class dom {
      * @param data
      */
     createComponent($el, fieldTypeName, data) {
-        var _a, _b, _c, _d;
+        var _a, _b, _c, _d, _e;
         let s;
         let componentObject = this.elementTypes[fieldTypeName];
         let name = fieldTypeName.split("-")[0];
@@ -178,6 +178,9 @@ export class dom {
         }
         else {
             newcomponent.dom.setTemplate(componentObject === null || componentObject === void 0 ? void 0 : componentObject.views[name]);
+        }
+        if (typeof (componentObject === null || componentObject === void 0 ? void 0 : componentObject.mounted) === "function" && ((_e = componentObject === null || componentObject === void 0 ? void 0 : componentObject.views) === null || _e === void 0 ? void 0 : _e[name])) {
+            componentObject === null || componentObject === void 0 ? void 0 : componentObject.mounted.call(newcomponent);
         }
         return newcomponent;
     }
