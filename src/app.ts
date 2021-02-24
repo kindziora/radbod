@@ -175,7 +175,7 @@ export class app {
 
         this.fetchData(componentObject, (data, component) => {
              console.log("fetchData: ", data.name, data);
-             
+             component.environment = this.environment;
              component?.loaded?.call(component, data);
 
 
