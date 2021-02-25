@@ -275,11 +275,14 @@ export class dom {
      * @param $el 
      * @param currentIndex 
      */
-    loadElement($el: Element, currentIndex?: number): kelement {
+    loadElement($el: Element, currentIndex?: number): kelement | null{
 
         if (!this.kelementBy$el.get($el)) {
             this.counter++;
+            this.kelementBy$el.set($el, "loading");
+
             let t_el: kelement = this.createElement($el, this.counter); //decorate and extend dom element
+             
             this.detectType(t_el);
             this.addElement(t_el);
 
@@ -294,8 +297,8 @@ export class dom {
             this.kelementBy$el.set($el, t_el);
             return t_el;
 
-        } else {
-            return this.kelementBy$el.get($el);
+        } else { 
+            return this.kelementBy$el.get($el) !== "loading" ? this.kelementBy$el.get($el) : null;
         }
 
     }

@@ -223,6 +223,7 @@ export class dom {
     loadElement($el, currentIndex) {
         if (!this.kelementBy$el.get($el)) {
             this.counter++;
+            this.kelementBy$el.set($el, "loading");
             let t_el = this.createElement($el, this.counter); //decorate and extend dom element
             this.detectType(t_el);
             this.addElement(t_el);
@@ -237,7 +238,7 @@ export class dom {
             return t_el;
         }
         else {
-            return this.kelementBy$el.get($el);
+            return this.kelementBy$el.get($el) !== "loading" ? this.kelementBy$el.get($el) : null;
         }
     }
     /**

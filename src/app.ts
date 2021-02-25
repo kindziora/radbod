@@ -43,11 +43,10 @@ export class app {
                 componentObject.translations(),
                 componentObject
             );
-
+             
             callback(stores, data, compo);
 
-        }));
-
+        })); 
     }
  
     /** 
@@ -177,8 +176,6 @@ export class app {
              console.log("fetchData: ", data.name, data);
              component.environment = this.environment;
              component?.loaded?.call(component, data);
-
-
         }, cb, count, met, this.dataH);
     }
 

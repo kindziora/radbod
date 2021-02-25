@@ -134,7 +134,6 @@ export class component {
                             let eventName = (mapEvent.length > 1 && fieldID === mapEvent[1]) ?  mapEvent[0] : event;
 
                             let func = makeFunc(this.dom.elementByName[path][field], this, $el, event);
-
                             $el.addEventListener(eventName, func);
                         }
                     }
