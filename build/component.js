@@ -20,7 +20,7 @@ export class component {
         return this.name;
     }
     setId(namesp, counter) {
-        let id = namesp || "e" + "-" + counter;
+        let id = namesp || "component" + "-" + counter;
         this.$el.setAttribute("data-id", id);
         this.id = id;
     }

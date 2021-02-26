@@ -275,14 +275,16 @@ export class dom {
      * @param $el 
      * @param currentIndex 
      */
-    loadElement($el: Element, currentIndex?: number): kelement | null{
+    loadElement($el: Element, currentIndex?: number): kelement | undefined{
 
-        if (!this.kelementBy$el.get($el)) {
-            this.counter++;
+        if (!this.kelementBy$el.get($el) && this._area.contains($el)) {
+            
             this.kelementBy$el.set($el, "loading");
 
-            let t_el: kelement = this.createElement($el, this.counter); //decorate and extend dom element
-             
+            console.log("LOAD " + this.id, $el);
+      
+            let t_el: kelement = this.createElement($el, currentIndex+1); //decorate and extend dom element
+
             this.detectType(t_el);
             this.addElement(t_el);
 
@@ -298,7 +300,11 @@ export class dom {
             return t_el;
 
         } else { 
-            return this.kelementBy$el.get($el) !== "loading" ? this.kelementBy$el.get($el) : null;
+            if(this.kelementBy$el.get($el) !== "loading"){
+                return this.kelementBy$el.get($el);
+            } else{
+                this.kelementBy$el.delete($el);
+            }
         }
 
     }
@@ -333,16 +339,15 @@ export class dom {
     }
 
     _load($el: Element, currentIndex: number): kelement {
+        
+       if (!$el?.hasAttribute("data-id") || $el?.getAttribute("data-id")?.indexOf(this.name) !== -1
+       || this.isElementComponent($el) 
+       || ($el.hasAttribute("data-name") && $el.getAttribute("data-name")?.indexOf("/_state") !== -1 )) {
+            this.counter++; 
+            
+            return this.loadElement($el, currentIndex);
+       }
 
-        if (!$el?.hasAttribute("data-id")) {
-           return this.loadElement($el, currentIndex);
-        } else if (
-         $el?.getAttribute("data-id")?.indexOf(this.name) !== -1
-         || this.isElementComponent($el)
-         || $el?.getAttribute("data-name")?.indexOf("/_state") !== -1 ) {
-           return this.loadElement($el, currentIndex);
-        }
-        return this.kelementBy$el.get($el);
     }
 
     loadElementsScoped($scope: Element) : kelement[]{
@@ -351,7 +356,7 @@ export class dom {
 
         try {
            
-            loaded = Array.from(element).map(($el: Element, currentIndex: number) => this._load($el, currentIndex)).filter(e=>e);
+            loaded = Array.from(element).map(($el: Element, currentIndex: number) => this._load($el, this.counter)).filter(e=>e);
 
             let l = this._load($scope, this.counter);
             if(l) loaded.push(l);

@@ -221,10 +221,10 @@ export class dom {
      * @param currentIndex
      */
     loadElement($el, currentIndex) {
-        if (!this.kelementBy$el.get($el)) {
-            this.counter++;
+        if (!this.kelementBy$el.get($el) && this._area.contains($el)) {
             this.kelementBy$el.set($el, "loading");
-            let t_el = this.createElement($el, this.counter); //decorate and extend dom element
+            console.log("LOAD " + this.id, $el);
+            let t_el = this.createElement($el, currentIndex + 1); //decorate and extend dom element
             this.detectType(t_el);
             this.addElement(t_el);
             if (t_el.getName()) {
@@ -238,7 +238,12 @@ export class dom {
             return t_el;
         }
         else {
-            return this.kelementBy$el.get($el) !== "loading" ? this.kelementBy$el.get($el) : null;
+            if (this.kelementBy$el.get($el) !== "loading") {
+                return this.kelementBy$el.get($el);
+            }
+            else {
+                this.kelementBy$el.delete($el);
+            }
         }
     }
     /**
@@ -265,21 +270,18 @@ export class dom {
     }
     _load($el, currentIndex) {
         var _a, _b;
-        if (!($el === null || $el === void 0 ? void 0 : $el.hasAttribute("data-id"))) {
-            return this.loadElement($el, currentIndex);
-        }
-        else if (((_a = $el === null || $el === void 0 ? void 0 : $el.getAttribute("data-id")) === null || _a === void 0 ? void 0 : _a.indexOf(this.name)) !== -1
+        if (!($el === null || $el === void 0 ? void 0 : $el.hasAttribute("data-id")) || ((_a = $el === null || $el === void 0 ? void 0 : $el.getAttribute("data-id")) === null || _a === void 0 ? void 0 : _a.indexOf(this.name)) !== -1
             || this.isElementComponent($el)
-            || ((_b = $el === null || $el === void 0 ? void 0 : $el.getAttribute("data-name")) === null || _b === void 0 ? void 0 : _b.indexOf("/_state")) !== -1) {
+            || ($el.hasAttribute("data-name") && ((_b = $el.getAttribute("data-name")) === null || _b === void 0 ? void 0 : _b.indexOf("/_state")) !== -1)) {
+            this.counter++;
             return this.loadElement($el, currentIndex);
         }
-        return this.kelementBy$el.get($el);
     }
     loadElementsScoped($scope) {
         let loaded = [];
         let element = $scope.querySelectorAll(this._identifier);
         try {
-            loaded = Array.from(element).map(($el, currentIndex) => this._load($el, currentIndex)).filter(e => e);
+            loaded = Array.from(element).map(($el, currentIndex) => this._load($el, this.counter)).filter(e => e);
             let l = this._load($scope, this.counter);
             if (l)
                 loaded.push(l);

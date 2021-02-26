@@ -94,11 +94,14 @@ export class kelement {
         if (this.template) {
             let stores = this.dom.store?.dataH?.store.toObject();
 
-            this.$el.innerHTML = (this.template.call(this, { change, ...stores, _t: this.dom._t }) + "").trim();
+            let newHTML = (this.template.call(this, { change, ...stores, _t: this.dom._t }) + "").trim();
 
-            if(this.$el.childElementCount > 0)
-                this.dom.store?.events?.dispatchEvent(this.dom.name, `/$${this.dom.name}`, "post_render", { change: change, domScope: this.$el });
-
+            if(this.$el.innerHTML !== newHTML){
+                this.$el.innerHTML = newHTML;
+                if(this.$el.childElementCount > 0)
+                    this.dom.store?.events?.dispatchEvent(this.dom.name, `/$${this.dom.name}`, "post_render", { change: change, domScope: this.$el });
+            }
+           
         } else {
             this.$el.innerHTML = change.value;
         }
