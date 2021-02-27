@@ -276,7 +276,7 @@ export class dom {
      * @param currentIndex 
      */
     loadElement($el: Element, currentIndex?: number): kelement | undefined{
-
+        
         if (!this.kelementBy$el.get($el) && this._area.contains($el)) {
             
             this.kelementBy$el.set($el, "loading");
@@ -300,7 +300,7 @@ export class dom {
             return t_el;
 
         } else { 
-            if(this.kelementBy$el.get($el) !== "loading"){
+            if(this.kelementBy$el.get($el) !== "loading" ){
                 return this.kelementBy$el.get($el);
             } else{
                 this.kelementBy$el.delete($el);

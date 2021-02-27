@@ -78,6 +78,16 @@ export class eventHandler {
             let special = name.indexOf("pre_") > -1 || name.indexOf("post_") > -1;
             if (!special)
                 ret = this.dispatchEvent(component, id, "pre_" + name, args, ret);
+            /**
+             * @TODO das binden von $el elementen auf event callbacks darf nicht auf elemente stattfinden die garnicht mehr existieren
+             * dadurch gibt es callbacks auf geisterlemente bzw. topmenu-component elemente die nichts da sind, oder macht das sind weil sie nur gerade nicht gezeigt werden?
+             * dann wäre es sinnvoll diese auch zu aktuallisieren... ansonsten müssen die raus
+             *
+             * @TODO ? nutzen der initial vorhandenen dom um kein re-render zu triggern innerhalb der app klasse
+             *
+             * @TODO garbage collection der $el elemente und handling neu schreiben und vereinheitlichen genauso eventhandling
+             *
+             */
             for (let i in eventMap) {
                 console.log(`%cFIRE ${(typeof id !== "string") ? "$EL" : "CUSTOM"} EVENT `, "color: red; font-size: 12px", component, id, name, i, eventMap[i].cb);
                 let mep = eventMap[i].cb.call(eventMap[i].context, args, ret);
