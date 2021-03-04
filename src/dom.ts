@@ -80,7 +80,7 @@ export class dom {
         this.element = {};
         this.elementByName = {};
         let storeObject = this.store.dataH?.store.toObject();
-        this._area.innerHTML = (this.template.call(this, { change: data, ...storeObject, _t: this._t }) +"").trim();
+        this._area.innerHTML = (this.template.call(this, { change: data, ...storeObject, _t: this._t }) + "").trim();
 
         this.kelementBy$el = new WeakMap();
 
@@ -96,9 +96,11 @@ export class dom {
      */
     public addTypes(types: { [index: string]: any }) {
         for (let i in types) {
-            types[i].prototype = "component";
-            this.elementTypes[i] = types[i];
-            this.componentList.push(i);
+            if (typeof this.elementTypes[i] === "undefined") {
+                types[i].prototype = "component";
+                this.elementTypes[i] = types[i];
+                this.componentList.push(i);
+            } 
         }
     }
 
@@ -157,9 +159,23 @@ export class dom {
      */
     createComponent($el: Element, fieldTypeName: string, data?: Object | store) {
         let s;
-        let componentObject: Object = this.elementTypes[fieldTypeName];
-        let name = fieldTypeName.split("-")[0];
+        let componentObject: Object = this.elementTypes[fieldTypeName]; 
 
+        let name = fieldTypeName.split("-")[0];
+        let internationalize = new i18n();
+        internationalize.addTranslation(componentObject.translations ? componentObject.translations() : {});
+
+        let _t = (text: string, lang?: string) => internationalize._t(text, lang);
+       
+        let storeObject = this.store.dataH?.store.toObject();
+
+        if (typeof componentObject.getName !== "undefined") {
+            if (componentObject?.views?.[name]) {
+                $el.innerHTML = (componentObject.views[name].call(componentObject, { change: { value: "" }, ...storeObject, _t }) + "").trim();
+            }
+            return componentObject;
+        }
+        
         if (data instanceof store) {
             s = data;
         } else if (typeof data !== "undefined") {
@@ -181,35 +197,26 @@ export class dom {
         if (typeof componentObject.validations !== "undefined")
             s.addValidations(componentObject.validations);
 
-        let storeObject = this.store.dataH?.store.toObject();
-
         let args = this.store.dataH?.store.keys();
 
-        let internationalize = new i18n();
-        internationalize.addTranslation(componentObject.translations ? componentObject.translations() : {});
-
-        let _t = (text: string, lang?: string) => internationalize._t(text, lang);
-
-
-        if (componentObject?.views?.[name]) {
-
-            $el.innerHTML = (componentObject.views[name].call(componentObject, { change: { value: "" }, ...storeObject, _t }) +"").trim();
+        if (componentObject?.views && typeof componentObject.views?.[name] === "function") {
+            $el.innerHTML = (componentObject.views[name].call(componentObject, { change: { value: "" }, ...storeObject, _t }) + "").trim();
         } else {
-            if (!componentObject.html) {
-                $el.innerHTML = (componentObject.views[name].call(componentObject, { change: { value: "" }, ...storeObject, _t }) + "").trim();
-            } else {
-                $el.innerHTML = componentObject.html.trim();
+            if(!componentObject.html) {
+                console.log("empty HTML", componentObject);
             }
-
-            // shadowRoot.innerHTML = componentObject.html.trim();
+            $el.innerHTML = componentObject.html.trim();
         }
 
+        let enrichedTypes = (componentObject?.components || {});//{ ...this.elementTypes, ...(componentObject?.components || {}) };
 
-        let ddom = new dom($el, componentObject.components || {}, s, componentObject.views, _t, this.counter);
+        console.log("enrichedTypes", enrichedTypes);
+
+        let ddom = new dom($el, enrichedTypes, s, componentObject.views, _t, this.counter);
         ddom.name = name;
         $el.setAttribute("data-name", name);
 
-        if(componentObject.style) {
+        if (componentObject.style) {
             let stEl = document.createElement('style');
             stEl.innerHTML = componentObject.style;
             $el.append(stEl);
@@ -226,7 +233,7 @@ export class dom {
             newcomponent.dom.setTemplate(componentObject?.views[name]);
         }
 
-        if(typeof componentObject?.mounted === "function" && componentObject?.views?.[name]){
+        if (typeof componentObject?.mounted === "function" && componentObject?.views?.[name]) {
             componentObject?.mounted.call(newcomponent);
         }
 
@@ -255,6 +262,11 @@ export class dom {
      * @param t_el 
      */
     detectType(t_el: kelement) {
+
+        if (!(t_el?.getName)) {
+            console.log("t_el", t_el);
+        }
+
         let last = t_el?.getName()?.split("/")?.pop();
 
         if (!isNaN(last) || t_el?.$el?.getAttribute('data-type') == "list-item") {
@@ -275,15 +287,15 @@ export class dom {
      * @param $el 
      * @param currentIndex 
      */
-    loadElement($el: Element, currentIndex?: number): kelement | undefined{
-        
-        if (!this.kelementBy$el.get($el) && this._area.contains($el)) {
-            
+    loadElement($el: Element, currentIndex?: number): kelement | undefined {
+
+        if (!this.kelementBy$el.get($el)) {
+
             this.kelementBy$el.set($el, "loading");
 
             console.log("LOAD " + this.id, $el);
-      
-            let t_el: kelement = this.createElement($el, currentIndex+1); //decorate and extend dom element
+
+            let t_el: kelement = this.createElement($el, currentIndex + 1); //decorate and extend dom element
 
             this.detectType(t_el);
             this.addElement(t_el);
@@ -299,10 +311,10 @@ export class dom {
             this.kelementBy$el.set($el, t_el);
             return t_el;
 
-        } else { 
-            if(this.kelementBy$el.get($el) !== "loading" ){
+        } else {
+            if (this.kelementBy$el.get($el) !== "loading") {
                 return this.kelementBy$el.get($el);
-            } else{
+            } else {
                 this.kelementBy$el.delete($el);
             }
         }
@@ -339,27 +351,31 @@ export class dom {
     }
 
     _load($el: Element, currentIndex: number): kelement {
-        
-       if (!$el?.hasAttribute("data-id") || $el?.getAttribute("data-id")?.indexOf(this.name) !== -1
-       || this.isElementComponent($el) 
-       || ($el.hasAttribute("data-name") && $el.getAttribute("data-name")?.indexOf("/_state") !== -1 )) {
-            this.counter++; 
-            
+
+        if (!$el?.hasAttribute("data-id") || $el?.getAttribute("data-id")?.indexOf(this.name) !== -1
+            || this.isElementComponent($el)
+            || ($el.hasAttribute("data-name") && $el.getAttribute("data-name")?.indexOf("/_state") !== -1)) {
+            this.counter++;
+
             return this.loadElement($el, currentIndex);
-       }
+        }
 
     }
 
-    loadElementsScoped($scope: Element) : kelement[]{
-        let loaded : kelement[] = [];
+    loadElementsScoped($scope: Element): kelement[] {
+        if (!this._area.contains($scope)) {
+            return [];
+        }
+
+        let loaded: kelement[] = [];
         let element: NodeListOf<Element> = $scope.querySelectorAll(this._identifier) as NodeListOf<Element>;
 
         try {
-           
-            loaded = Array.from(element).map(($el: Element, currentIndex: number) => this._load($el, this.counter)).filter(e=>e);
+
+            loaded = Array.from(element).map(($el: Element, currentIndex: number) => this._load($el, this.counter)).filter(e => e);
 
             let l = this._load($scope, this.counter);
-            if(l) loaded.push(l);
+            if (l) loaded.push(l);
 
         } catch (e) {
             console.log("FIELD NOT LOADED ERROR:", e);
@@ -368,7 +384,7 @@ export class dom {
     }
 
     loadElements() {
-        
+
         let element: NodeListOf<Element> = this._area.querySelectorAll(this._identifier) as NodeListOf<Element>;
 
         try {

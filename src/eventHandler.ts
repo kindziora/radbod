@@ -95,9 +95,7 @@ export class eventHandler {
                 ret = this.dispatchEvent(component, id, "pre_" + name, args, ret);
 
             /**
-             * @TODO das binden von $el elementen auf event callbacks darf nicht auf elemente stattfinden die garnicht mehr existieren
-             * dadurch gibt es callbacks auf geisterlemente bzw. topmenu-component elemente die nichts da sind, oder macht das sind weil sie nur gerade nicht gezeigt werden?
-             * dann wäre es sinnvoll diese auch zu aktuallisieren... ansonsten müssen die raus
+             * @TODO zwischen componenten geteilte componenten sollten existieren, wie abbilden?
              * 
              * @TODO ? nutzen der initial vorhandenen dom um kein re-render zu triggern innerhalb der app klasse
              * 

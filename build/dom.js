@@ -65,9 +65,11 @@ export class dom {
      */
     addTypes(types) {
         for (let i in types) {
-            types[i].prototype = "component";
-            this.elementTypes[i] = types[i];
-            this.componentList.push(i);
+            if (typeof this.elementTypes[i] === "undefined") {
+                types[i].prototype = "component";
+                this.elementTypes[i] = types[i];
+                this.componentList.push(i);
+            }
         }
     }
     setId() {
@@ -120,10 +122,20 @@ export class dom {
      * @param data
      */
     createComponent($el, fieldTypeName, data) {
-        var _a, _b, _c, _d, _e;
+        var _a, _b, _c, _d, _e, _f;
         let s;
         let componentObject = this.elementTypes[fieldTypeName];
         let name = fieldTypeName.split("-")[0];
+        let internationalize = new i18n();
+        internationalize.addTranslation(componentObject.translations ? componentObject.translations() : {});
+        let _t = (text, lang) => internationalize._t(text, lang);
+        let storeObject = (_a = this.store.dataH) === null || _a === void 0 ? void 0 : _a.store.toObject();
+        if (typeof componentObject.getName !== "undefined") {
+            if ((_b = componentObject === null || componentObject === void 0 ? void 0 : componentObject.views) === null || _b === void 0 ? void 0 : _b[name]) {
+                $el.innerHTML = (componentObject.views[name].call(componentObject, Object.assign(Object.assign({ change: { value: "" } }, storeObject), { _t })) + "").trim();
+            }
+            return componentObject;
+        }
         if (data instanceof store) {
             s = data;
         }
@@ -145,24 +157,19 @@ export class dom {
         }
         if (typeof componentObject.validations !== "undefined")
             s.addValidations(componentObject.validations);
-        let storeObject = (_a = this.store.dataH) === null || _a === void 0 ? void 0 : _a.store.toObject();
-        let args = (_b = this.store.dataH) === null || _b === void 0 ? void 0 : _b.store.keys();
-        let internationalize = new i18n();
-        internationalize.addTranslation(componentObject.translations ? componentObject.translations() : {});
-        let _t = (text, lang) => internationalize._t(text, lang);
-        if ((_c = componentObject === null || componentObject === void 0 ? void 0 : componentObject.views) === null || _c === void 0 ? void 0 : _c[name]) {
+        let args = (_c = this.store.dataH) === null || _c === void 0 ? void 0 : _c.store.keys();
+        if ((componentObject === null || componentObject === void 0 ? void 0 : componentObject.views) && typeof ((_d = componentObject.views) === null || _d === void 0 ? void 0 : _d[name]) === "function") {
             $el.innerHTML = (componentObject.views[name].call(componentObject, Object.assign(Object.assign({ change: { value: "" } }, storeObject), { _t })) + "").trim();
         }
         else {
             if (!componentObject.html) {
-                $el.innerHTML = (componentObject.views[name].call(componentObject, Object.assign(Object.assign({ change: { value: "" } }, storeObject), { _t })) + "").trim();
+                console.log("empty HTML", componentObject);
             }
-            else {
-                $el.innerHTML = componentObject.html.trim();
-            }
-            // shadowRoot.innerHTML = componentObject.html.trim();
+            $el.innerHTML = componentObject.html.trim();
         }
-        let ddom = new dom($el, componentObject.components || {}, s, componentObject.views, _t, this.counter);
+        let enrichedTypes = ((componentObject === null || componentObject === void 0 ? void 0 : componentObject.components) || {}); //{ ...this.elementTypes, ...(componentObject?.components || {}) };
+        console.log("enrichedTypes", enrichedTypes);
+        let ddom = new dom($el, enrichedTypes, s, componentObject.views, _t, this.counter);
         ddom.name = name;
         $el.setAttribute("data-name", name);
         if (componentObject.style) {
@@ -173,13 +180,13 @@ export class dom {
         console.log("CREATE COMPONENT:", name, s, componentObject.views, componentObject);
         let newcomponent = new component(ddom, s, componentObject.interactions.call({ componentObject, dom: ddom }));
         newcomponent.setId(name);
-        if (typeof ((_d = componentObject === null || componentObject === void 0 ? void 0 : componentObject.views) === null || _d === void 0 ? void 0 : _d[name]) !== "function") {
+        if (typeof ((_e = componentObject === null || componentObject === void 0 ? void 0 : componentObject.views) === null || _e === void 0 ? void 0 : _e[name]) !== "function") {
             newcomponent.dom.setTemplate(eval('(function (args) { let {change, ' + args + ', _t} = args; return `' + newcomponent.dom._area.innerHTML.trim() + '`})'));
         }
         else {
             newcomponent.dom.setTemplate(componentObject === null || componentObject === void 0 ? void 0 : componentObject.views[name]);
         }
-        if (typeof (componentObject === null || componentObject === void 0 ? void 0 : componentObject.mounted) === "function" && ((_e = componentObject === null || componentObject === void 0 ? void 0 : componentObject.views) === null || _e === void 0 ? void 0 : _e[name])) {
+        if (typeof (componentObject === null || componentObject === void 0 ? void 0 : componentObject.mounted) === "function" && ((_f = componentObject === null || componentObject === void 0 ? void 0 : componentObject.views) === null || _f === void 0 ? void 0 : _f[name])) {
             componentObject === null || componentObject === void 0 ? void 0 : componentObject.mounted.call(newcomponent);
         }
         return newcomponent;
@@ -204,6 +211,9 @@ export class dom {
      */
     detectType(t_el) {
         var _a, _b, _c, _d, _e;
+        if (!(t_el === null || t_el === void 0 ? void 0 : t_el.getName)) {
+            console.log("t_el", t_el);
+        }
         let last = (_b = (_a = t_el === null || t_el === void 0 ? void 0 : t_el.getName()) === null || _a === void 0 ? void 0 : _a.split("/")) === null || _b === void 0 ? void 0 : _b.pop();
         if (!isNaN(last) || ((_c = t_el === null || t_el === void 0 ? void 0 : t_el.$el) === null || _c === void 0 ? void 0 : _c.getAttribute('data-type')) == "list-item") {
             t_el.setIsListItem(true);
@@ -221,7 +231,7 @@ export class dom {
      * @param currentIndex
      */
     loadElement($el, currentIndex) {
-        if (!this.kelementBy$el.get($el) && this._area.contains($el)) {
+        if (!this.kelementBy$el.get($el)) {
             this.kelementBy$el.set($el, "loading");
             console.log("LOAD " + this.id, $el);
             let t_el = this.createElement($el, currentIndex + 1); //decorate and extend dom element
@@ -278,6 +288,9 @@ export class dom {
         }
     }
     loadElementsScoped($scope) {
+        if (!this._area.contains($scope)) {
+            return [];
+        }
         let loaded = [];
         let element = $scope.querySelectorAll(this._identifier);
         try {

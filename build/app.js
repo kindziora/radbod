@@ -21,11 +21,9 @@ export class app {
      * @param callback
      */
     mountComponent(name, componentObject, callback) {
-        console.log(`mount component: ${name}`, this.loadStores(componentObject, (stores, data) => {
-            let compo = this.createComponent(name, componentObject.views, componentObject.data.call(this.dataH, function (data) {
-                console.log(`DATA MAIN COMPONENT ${name}`, data);
-            }), componentObject.interactions, componentObject.components, componentObject.translations(), componentObject);
-            callback(stores, data, compo);
+        console.log(`mount component: ${name}`, this.loadStores(componentObject, (stores, meta, data) => {
+            let compo = this.createComponent(name, componentObject.views, data, componentObject.interactions, componentObject.components, typeof (componentObject === null || componentObject === void 0 ? void 0 : componentObject.translations) === "function" ? componentObject.translations() : componentObject === null || componentObject === void 0 ? void 0 : componentObject.translations, componentObject);
+            callback(stores, meta, compo);
         }));
     }
     /**
@@ -39,6 +37,8 @@ export class app {
     createComponent(name, views, data, actions, injections = {}, translations = {}, componentObject, style) {
         var _a, _b, _c, _d;
         let s;
+        let componentID = name.split("#").length > 1 ? name.split("#")[1] : name;
+        name = name.split("#").length > 1 ? name.split("#")[0] : name;
         if (data instanceof store) {
             s = data;
         }
@@ -62,6 +62,12 @@ export class app {
             stEl.innerHTML = componentObject.style;
             el.append(stEl);
         }
+        for (let name in injections) {
+            if (typeof injections[name] === "string") {
+                let nameID = injections[name].split("#").length > 0 ? injections[name].split("#")[1] : injections[name];
+                injections[name] = this.components[nameID];
+            }
+        }
         let ddom = new dom(el, injections, s, views, _t);
         ddom.name = name;
         let act = {};
@@ -71,25 +77,25 @@ export class app {
         catch (e) {
             console.log(e);
         }
-        this.components[name] = new component(ddom, s, act);
+        this.components[componentID] = new component(ddom, s, act);
         if (typeof (views === null || views === void 0 ? void 0 : views[name]) !== "function") {
             let args = (_d = (_c = this.dataH) === null || _c === void 0 ? void 0 : _c.store.keys()) === null || _d === void 0 ? void 0 : _d.join(',');
-            this.components[name].dom.setTemplate(eval('(function(args){ let {change, ' + args + ', _t} = args; return `' + this.components[name].dom._area.innerHTML + '`})'));
+            this.components[componentID].dom.setTemplate(eval('(function(args){ let {change, ' + args + ', _t} = args; return `' + this.components[componentID].dom._area.innerHTML + '`})'));
         }
         else {
-            this.components[name].dom.setTemplate(views === null || views === void 0 ? void 0 : views[name]);
+            this.components[componentID].dom.setTemplate(views === null || views === void 0 ? void 0 : views[name]);
         }
         if (typeof (componentObject === null || componentObject === void 0 ? void 0 : componentObject.mounted) === "function" && typeof (views === null || views === void 0 ? void 0 : views[name]) === "function") {
-            componentObject === null || componentObject === void 0 ? void 0 : componentObject.mounted.call(this.components[name]);
+            componentObject === null || componentObject === void 0 ? void 0 : componentObject.mounted.call(this.components[componentID]);
         }
-        return this.components[name];
+        return this.components[componentID];
     }
     /**
      *
-     * @param name
+     * @param componentID
      */
-    removeComponent(name) {
-        delete this.components[name];
+    removeComponent(componentID) {
+        delete this.components[componentID];
     }
     /**
      *
@@ -104,21 +110,32 @@ export class app {
                 meta.cnt++;
                 meta.loaded.push(component);
                 if (meta.cnt >= total) {
-                    allready(dataH, meta);
+                    allready(dataH, meta, data);
                 }
             };
         };
-        let result = component.data.call(this.dataH, callback(meta, this.dataH), {});
-        if (!result || typeof result.then !== "function") {
-            callback(meta, this.dataH)(result);
+        if (typeof component === "string") {
+            let nameID = component.split("#").length > 0 ? component.split("#")[1] : component;
+            component = this.components[nameID];
+            //what now?
         }
-        for (let i in component.components) {
-            this.fetchData(component.components[i], cb, allready, total, meta);
+        else {
+            if (component.data) {
+                let result = component.data.call(this.dataH, callback(meta, this.dataH), {});
+                if (!result || typeof result.then !== "function") {
+                    callback(meta, this.dataH)(result);
+                }
+                for (let i in component.components) {
+                    this.fetchData(component.components[i], cb, allready, total, meta);
+                }
+            }
         }
     }
     countForData(component, cnt) {
-        for (let i in component.components)
-            cnt = this.countForData(component.components[i], cnt);
+        for (let i in component.components) {
+            if (typeof component.components[i] !== "string")
+                cnt = this.countForData(component.components[i], cnt);
+        }
         return ++cnt;
     }
     loadStores(componentObject, cb) {
