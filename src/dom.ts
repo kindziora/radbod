@@ -87,7 +87,7 @@ export class dom {
         this.loadElements();
 
         this.store.events?.dispatchEvent(this.name, `/$${this.name}`, "post_render", { change: data, domScope: this.$el, readd: true }, storeObject);
-
+        return this._area;
     }
 
     /**
@@ -153,15 +153,22 @@ export class dom {
 
     /**
      * 
+     * @TODO aufteilen von abhängigkeiten, createCOmponentFrom PlainHTML | createComponentFrom Views
+     * @TODO überschneidende logik von createComponent aus app.ts und dom.ts in den construktor von component.ts
+     * @TODO ermöglichen von server rendered und lazy rendered componenten + laden deren stores
+     * @TODO aufräumen von build, browser und server side rendering codes
+     * @TODO KOA anstatt express server implementieren
+     * @TODO asynchrone / await componenten + stores
+     * 
+     * 
      * @param $el 
      * @param fieldTypeName 
-     * @param data 
      */
-    createComponent($el: Element, fieldTypeName: string, data?: Object | store) {
-        let s;
+    createComponent($el: Element, fieldTypeName: string) {
         let componentObject: Object = this.elementTypes[fieldTypeName]; 
 
         let name = fieldTypeName.split("-")[0];
+        
         let internationalize = new i18n();
         internationalize.addTranslation(componentObject.translations ? componentObject.translations() : {});
 
@@ -169,30 +176,12 @@ export class dom {
        
         let storeObject = this.store.dataH?.store.toObject();
 
-        if (typeof componentObject.getName !== "undefined") {
-            if (componentObject?.views?.[name]) {
-                $el.innerHTML = (componentObject.views[name].call(componentObject, { change: { value: "" }, ...storeObject, _t }) + "").trim();
-            }
+        if (typeof componentObject.getName !== "undefined") {  
+            $el.innerHTML = "";
+            $el.appendChild(componentObject.dom.$el); 
             return componentObject;
         }
-        
-        if (data instanceof store) {
-            s = data;
-        } else if (typeof data !== "undefined") {
-            s = this.store.dataH.createStore(name, data);
-        } else {
-            if (this.store.dataH.store[name]) {
-                s = this.store.dataH.store[name];
-            } else {
-                s = componentObject.data.call(this.store.dataH);
-            }
-
-            if (s instanceof store) {
-
-            } else {
-                s = this.store.dataH.createStore(name, s || {});
-            }
-        }
+        let s = this.store.dataH?.createStore(name, componentObject?.data?.call(this.store.dataH, ((data)=>{})) );
 
         if (typeof componentObject.validations !== "undefined")
             s.addValidations(componentObject.validations);
@@ -395,8 +384,6 @@ export class dom {
 
     }
 
-
-
     _removeElement(el: kelement) {
 
         delete this.element[<string>el.id];
@@ -465,8 +452,7 @@ export class dom {
         let onlyListContainer: Array<kelement> = [];
         let elementsDetailedMatch: Array<kelement> = this.getBestMatchingElements(path);
         let ArrayParentPath: string = this.getArrayParentPath(path);
-
-
+        
         if (ArrayParentPath !== path) { //get array container
             onlyListContainer = this.getBestMatchingElements(ArrayParentPath).filter(function (item) {
                 return item.constructor.name === "elist";

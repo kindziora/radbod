@@ -186,11 +186,8 @@ export class component {
     render(changes: Array<op>) {
         console.log("COMPONENT UPDATE ??? BECAUSE NO FIELD TO MATCH");
        
-       // this.dom.render(changes);
-     //   let storeObject = this.store.dataH?.store.toObject();
-       // this.store.events?.dispatchEvent(this.name, this.name, "post_render", { change: changes[0], domScope: this.$el }, storeObject);
+        return this.dom.render(changes);
 
-       // this.bindEvents();
     }
 
 }

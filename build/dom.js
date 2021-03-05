@@ -11,7 +11,6 @@ import { select } from './dom/list/select.js';
 import { listItem } from './dom/list/listItem.js';
 import { textarea } from './dom/element/textarea.js';
 import { component } from "./component.js";
-import { store } from './store.js';
 import { i18n } from './i18n.js';
 export class dom {
     constructor(area, types, s, views, _t, counter = 0) {
@@ -58,6 +57,7 @@ export class dom {
         this.kelementBy$el = new WeakMap();
         this.loadElements();
         (_b = this.store.events) === null || _b === void 0 ? void 0 : _b.dispatchEvent(this.name, `/$${this.name}`, "post_render", { change: data, domScope: this.$el, readd: true }, storeObject);
+        return this._area;
     }
     /**
      *
@@ -117,13 +117,19 @@ export class dom {
     }
     /**
      *
+     * @TODO aufteilen von abhängigkeiten, createCOmponentFrom PlainHTML | createComponentFrom Views
+     * @TODO überschneidende logik von createComponent aus app.ts und dom.ts in den construktor von component.ts
+     * @TODO ermöglichen von server rendered und lazy rendered componenten + laden deren stores
+     * @TODO aufräumen von build, browser und server side rendering codes
+     * @TODO KOA anstatt express server implementieren
+     * @TODO asynchrone / await componenten + stores
+     *
+     *
      * @param $el
      * @param fieldTypeName
-     * @param data
      */
-    createComponent($el, fieldTypeName, data) {
-        var _a, _b, _c, _d, _e, _f;
-        let s;
+    createComponent($el, fieldTypeName) {
+        var _a, _b, _c, _d, _e, _f, _g;
         let componentObject = this.elementTypes[fieldTypeName];
         let name = fieldTypeName.split("-")[0];
         let internationalize = new i18n();
@@ -131,34 +137,15 @@ export class dom {
         let _t = (text, lang) => internationalize._t(text, lang);
         let storeObject = (_a = this.store.dataH) === null || _a === void 0 ? void 0 : _a.store.toObject();
         if (typeof componentObject.getName !== "undefined") {
-            if ((_b = componentObject === null || componentObject === void 0 ? void 0 : componentObject.views) === null || _b === void 0 ? void 0 : _b[name]) {
-                $el.innerHTML = (componentObject.views[name].call(componentObject, Object.assign(Object.assign({ change: { value: "" } }, storeObject), { _t })) + "").trim();
-            }
+            $el.innerHTML = "";
+            $el.appendChild(componentObject.dom.$el);
             return componentObject;
         }
-        if (data instanceof store) {
-            s = data;
-        }
-        else if (typeof data !== "undefined") {
-            s = this.store.dataH.createStore(name, data);
-        }
-        else {
-            if (this.store.dataH.store[name]) {
-                s = this.store.dataH.store[name];
-            }
-            else {
-                s = componentObject.data.call(this.store.dataH);
-            }
-            if (s instanceof store) {
-            }
-            else {
-                s = this.store.dataH.createStore(name, s || {});
-            }
-        }
+        let s = (_b = this.store.dataH) === null || _b === void 0 ? void 0 : _b.createStore(name, (_c = componentObject === null || componentObject === void 0 ? void 0 : componentObject.data) === null || _c === void 0 ? void 0 : _c.call(this.store.dataH, ((data) => { })));
         if (typeof componentObject.validations !== "undefined")
             s.addValidations(componentObject.validations);
-        let args = (_c = this.store.dataH) === null || _c === void 0 ? void 0 : _c.store.keys();
-        if ((componentObject === null || componentObject === void 0 ? void 0 : componentObject.views) && typeof ((_d = componentObject.views) === null || _d === void 0 ? void 0 : _d[name]) === "function") {
+        let args = (_d = this.store.dataH) === null || _d === void 0 ? void 0 : _d.store.keys();
+        if ((componentObject === null || componentObject === void 0 ? void 0 : componentObject.views) && typeof ((_e = componentObject.views) === null || _e === void 0 ? void 0 : _e[name]) === "function") {
             $el.innerHTML = (componentObject.views[name].call(componentObject, Object.assign(Object.assign({ change: { value: "" } }, storeObject), { _t })) + "").trim();
         }
         else {
@@ -180,13 +167,13 @@ export class dom {
         console.log("CREATE COMPONENT:", name, s, componentObject.views, componentObject);
         let newcomponent = new component(ddom, s, componentObject.interactions.call({ componentObject, dom: ddom }));
         newcomponent.setId(name);
-        if (typeof ((_e = componentObject === null || componentObject === void 0 ? void 0 : componentObject.views) === null || _e === void 0 ? void 0 : _e[name]) !== "function") {
+        if (typeof ((_f = componentObject === null || componentObject === void 0 ? void 0 : componentObject.views) === null || _f === void 0 ? void 0 : _f[name]) !== "function") {
             newcomponent.dom.setTemplate(eval('(function (args) { let {change, ' + args + ', _t} = args; return `' + newcomponent.dom._area.innerHTML.trim() + '`})'));
         }
         else {
             newcomponent.dom.setTemplate(componentObject === null || componentObject === void 0 ? void 0 : componentObject.views[name]);
         }
-        if (typeof (componentObject === null || componentObject === void 0 ? void 0 : componentObject.mounted) === "function" && ((_f = componentObject === null || componentObject === void 0 ? void 0 : componentObject.views) === null || _f === void 0 ? void 0 : _f[name])) {
+        if (typeof (componentObject === null || componentObject === void 0 ? void 0 : componentObject.mounted) === "function" && ((_g = componentObject === null || componentObject === void 0 ? void 0 : componentObject.views) === null || _g === void 0 ? void 0 : _g[name])) {
             componentObject === null || componentObject === void 0 ? void 0 : componentObject.mounted.call(newcomponent);
         }
         return newcomponent;

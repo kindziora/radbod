@@ -38,9 +38,21 @@ export class dataHandler {
      */
     createStore(component, data) {
         var _a;
-        this.store[component] = new store(this.events, this, component, data);
-        this.store[component].setDb((_a = this === null || this === void 0 ? void 0 : this.environment) === null || _a === void 0 ? void 0 : _a.data_loader);
-        return this.store[component];
+        if (this.store[component]) {
+            return this.store[component];
+        }
+        else {
+            this.store[component] = new store(this.events, this, component, data);
+            this.store[component].setDb((_a = this === null || this === void 0 ? void 0 : this.environment) === null || _a === void 0 ? void 0 : _a.data_loader);
+            return this.store[component];
+        }
+    }
+    /**
+     *
+     * @param component
+     */
+    destroyStore(component) {
+        delete this.store[component];
     }
     getStore(component) {
         return this.store[component];
