@@ -4,15 +4,16 @@ export class component {
      * @param dom
      * @param store
      */
-    constructor(dom, store, acts) {
+    constructor(dom, interactions) {
         var _a;
         this.name = "";
         this.interactions = {};
         this.dom = dom;
-        this.store = store;
-        this.interactions = acts;
+        this.store = dom.store;
+        this.interactions = interactions;
         this.name = this.dom.name;
         this.$el = dom._area;
+        this.setId(this.name, this.dom.counter++);
         this.bindEvents();
         (_a = this.store.events) === null || _a === void 0 ? void 0 : _a.add(`/$${this.name}`, "post_render", this.bindByInteractions, this);
     }

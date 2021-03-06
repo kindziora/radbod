@@ -38,7 +38,8 @@ export class dataHandler {
      */
     createStore(component, data) {
         var _a;
-        if (this.store[component]) {
+        if (this.store[component] && data instanceof store) {
+            this.store[component] = data;
             return this.store[component];
         }
         else {

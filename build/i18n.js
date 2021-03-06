@@ -8,6 +8,7 @@ export class i18n {
      * @param {*} translationData
      */
     addTranslation(translationData) {
+        translationData = translationData != null && translationData.constructor.name === "Object" ? translationData : {};
         this.translation = mergeDeep(this.translation, translationData);
     }
     _t(text, language = "en_EN") {

@@ -267,6 +267,8 @@ export class store {
 
     addValidations(validations: { [index: string]: Object }) {
 
+        validations = validations != null && validations.constructor.name === "Object" ? validations : {};
+
         this._validations = Object.assign(this._validations, validations);
 
         return this;

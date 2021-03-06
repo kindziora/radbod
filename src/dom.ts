@@ -21,7 +21,7 @@ import { i18n } from './i18n.js';
 export class dom {
     public _area: HTMLElement = {} as HTMLElement;
     private _identifier: string = ':scope *';
-    public componentList: Array<string> = [];
+    public componentList: { [index: string]: any } = {};
     public element: { [index: string]: kelement } = {};
     public elementByName: { [index: string]: Array<kelement> } = {};
 
@@ -38,16 +38,18 @@ export class dom {
     public store: store;
     public $el: HTMLElement;
 
+    public translation: i18n;
     public _t: Function;
 
     public kelementBy$el: WeakMap<HTMLElement, kelement>;
 
-    constructor(area: HTMLElement, types: { [index: string]: any }, s: store, views: { [index: string]: Function }, _t: Function, counter: number = 0) {
+    constructor(area: HTMLElement, types: { [index: string]: any }, s: store, views: { [index: string]: Function }, translation: i18n, counter: number = 0) {
 
         this._area = area as HTMLElement;
         this.$el = this._area;
         this.views = views;
-        this._t = _t;
+        this.translation = translation;
+        this._t = (text: string, lang?: string) => this.translation._t(text, lang);
         this.kelementBy$el = new WeakMap();
 
         if (area.hasAttribute('data-name')) {
@@ -99,8 +101,8 @@ export class dom {
             if (typeof this.elementTypes[i] === "undefined") {
                 types[i].prototype = "component";
                 this.elementTypes[i] = types[i];
-                this.componentList.push(i);
-            } 
+                this.componentList[i] = types[i];
+            }
         }
     }
 
@@ -151,9 +153,40 @@ export class dom {
         el.$el?.insertAdjacentHTML(where, html);
     }
 
+    isPlainComponentObject(componentObject: Object | component): boolean {
+        return typeof componentObject.getName === "undefined";
+    }
+
+    isElementComponent($el: Element): boolean {
+        return this.elementTypes[this.mapField(<string>$el.tagName.toLowerCase(), $el)].prototype === "component";
+    }
+
+    addStyle(style: string): boolean {
+        if (style) {
+            let stEl = document.createElement('style');
+            stEl.innerHTML = style;
+            this.$el.append(stEl);
+            return true;
+        }
+        return false;
+    }
+
+    isBuildStagePlainHTML(componentObject: Object):boolean{
+
+        if (componentObject.views) {
+            if(typeof componentObject.views[name] === "function"){
+                return false;
+            }
+            return true;
+        } else {
+            return true;
+        }
+
+    }
+
     /**
      * 
-     * @TODO aufteilen von abhängigkeiten, createCOmponentFrom PlainHTML | createComponentFrom Views
+     * @TODO aufteilen von abhängigkeiten, createComponentFrom PlainHTML | createComponentFrom Views
      * @TODO überschneidende logik von createComponent aus app.ts und dom.ts in den construktor von component.ts
      * @TODO ermöglichen von server rendered und lazy rendered componenten + laden deren stores
      * @TODO aufräumen von build, browser und server side rendering codes
@@ -164,61 +197,61 @@ export class dom {
      * @param $el 
      * @param fieldTypeName 
      */
-    createComponent($el: Element, fieldTypeName: string) {
-        let componentObject: Object = this.elementTypes[fieldTypeName]; 
+    createComponent(name: string, $el: Element, componentObject: Object) {
 
-        let name = fieldTypeName.split("-")[0];
-        
-        let internationalize = new i18n();
-        internationalize.addTranslation(componentObject.translations ? componentObject.translations() : {});
-
-        let _t = (text: string, lang?: string) => internationalize._t(text, lang);
-       
-        let storeObject = this.store.dataH?.store.toObject();
-
-        if (typeof componentObject.getName !== "undefined") {  
+        if (!this.isPlainComponentObject(componentObject)) {
+            // is sharedComponent don't create just return
             $el.innerHTML = "";
-            $el.appendChild(componentObject.dom.$el); 
+            console.log(componentObject);
+            $el.appendChild(componentObject.dom.$el);
             return componentObject;
         }
-        let s = this.store.dataH?.createStore(name, componentObject?.data?.call(this.store.dataH, ((data)=>{})) );
 
-        if (typeof componentObject.validations !== "undefined")
-            s.addValidations(componentObject.validations);
+        let s: store = this.store.dataH.createStore(name, componentObject?.data?.call(this.store.dataH, function (data) {
+            console.log(`Fetched data from Store ${name} loading from component`, data);
+        }));
+
+        this.translation.addTranslation(typeof componentObject.translations ==="function"?componentObject.translations.call():componentObject.translations);
+
+        s.addValidations(componentObject.validations);
+
+        let storesObject = this.store.dataH?.store.toObject();
 
         let args = this.store.dataH?.store.keys();
 
-        if (componentObject?.views && typeof componentObject.views?.[name] === "function") {
-            $el.innerHTML = (componentObject.views[name].call(componentObject, { change: { value: "" }, ...storeObject, _t }) + "").trim();
-        } else {
-            if(!componentObject.html) {
-                console.log("empty HTML", componentObject);
-            }
+        if(this.isBuildStagePlainHTML(componentObject)) {
             $el.innerHTML = componentObject.html.trim();
+        }else{ 
+            //render from prebuilt Templates
+            $el.innerHTML = (componentObject.views[name].call(componentObject, { change: { value: "" }, ...storesObject, _t: this._t }) + "").trim();
+        }
+        
+        for(let name in componentObject.components){
+            if( typeof componentObject.components[name] === "string" ){
+                let nameID = componentObject.components[name].split("#").length > 0 ? componentObject.components[name].split("#")[1]: componentObject.components[name];
+                componentObject.components[name] = this.componentList[nameID];
+            }
         }
 
-        let enrichedTypes = (componentObject?.components || {});//{ ...this.elementTypes, ...(componentObject?.components || {}) };
+        let enrichedTypes = (componentObject?.components || {});//{ ...this.componentList, ...(componentObject?.components || {}) };
 
         console.log("enrichedTypes", enrichedTypes);
 
-        let ddom = new dom($el, enrichedTypes, s, componentObject.views, _t, this.counter);
+        let ddom = new dom($el, enrichedTypes, s, componentObject?.views, this.translation, this.counter);
+
         ddom.name = name;
+
         $el.setAttribute("data-name", name);
 
-        if (componentObject.style) {
-            let stEl = document.createElement('style');
-            stEl.innerHTML = componentObject.style;
-            $el.append(stEl);
-        }
+        ddom.addStyle(componentObject?.style);
 
         console.log("CREATE COMPONENT:", name, s, componentObject.views, componentObject);
 
-        let newcomponent = new component(ddom, s, componentObject.interactions.call({ componentObject, dom: ddom }));
-        newcomponent.setId(name);
-
-        if (typeof componentObject?.views?.[name] !== "function") {
+        let newcomponent = new component(ddom, componentObject?.interactions?.call({ componentObject, dom: ddom }));
+        
+        if(this.isBuildStagePlainHTML(componentObject)) {
             newcomponent.dom.setTemplate(eval('(function (args) { let {change, ' + args + ', _t} = args; return `' + newcomponent.dom._area.innerHTML.trim() + '`})'));
-        } else {
+        }else{
             newcomponent.dom.setTemplate(componentObject?.views[name]);
         }
 
@@ -239,13 +272,10 @@ export class dom {
         let fieldTypeName: string = this.mapField(<string>$el.tagName.toLowerCase(), $el);
 
         return this.elementTypes[fieldTypeName].prototype === "component" ?
-            this.createComponent($el, fieldTypeName) :
+            this.createComponent(fieldTypeName.split("-")[0], $el, this.elementTypes[fieldTypeName]) :
             new this.elementTypes[fieldTypeName]($el, this._area, currentIndex, this, this.views, this._t);
     }
 
-    isElementComponent($el: Element): boolean {
-        return this.elementTypes[this.mapField(<string>$el.tagName.toLowerCase(), $el)].prototype === "component";
-    }
     /**
      * 
      * @param t_el 
@@ -452,7 +482,7 @@ export class dom {
         let onlyListContainer: Array<kelement> = [];
         let elementsDetailedMatch: Array<kelement> = this.getBestMatchingElements(path);
         let ArrayParentPath: string = this.getArrayParentPath(path);
-        
+
         if (ArrayParentPath !== path) { //get array container
             onlyListContainer = this.getBestMatchingElements(ArrayParentPath).filter(function (item) {
                 return item.constructor.name === "elist";

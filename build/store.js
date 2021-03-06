@@ -195,6 +195,7 @@ export class store {
         return this;
     }
     addValidations(validations) {
+        validations = validations != null && validations.constructor.name === "Object" ? validations : {};
         this._validations = Object.assign(this._validations, validations);
         return this;
     }

@@ -56,9 +56,10 @@ export class dataHandler {
      * @param component 
      * @param data 
      */
-    createStore(component: string, data: store | object) {
+    createStore(component: string, data: store | object): store {
 
-        if (this.store[component]) {
+        if (this.store[component] && data instanceof store) {
+            this.store[component] = data;
             return this.store[component];
         } else {
             this.store[component] = new store(this.events, this, component, data);
@@ -67,12 +68,12 @@ export class dataHandler {
         }
 
     }
-    
+
     /**
      * 
      * @param component 
      */
-    destroyStore(component: string){
+    destroyStore(component: string) {
         delete this.store[component];
     }
 
