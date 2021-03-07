@@ -163,15 +163,27 @@ export class dom {
             $el.appendChild(componentObject.dom.$el);
             return componentObject;
         }
-        let s = this.store.dataH.createStore(name, (_a = componentObject === null || componentObject === void 0 ? void 0 : componentObject.data) === null || _a === void 0 ? void 0 : _a.call(this.store.dataH, function (data) {
-            console.log(`Fetched data from Store ${name} loading from component`, data);
-        }));
+        let s;
+        try {
+            s = (_a = componentObject === null || componentObject === void 0 ? void 0 : componentObject.data) === null || _a === void 0 ? void 0 : _a.call(this.store.dataH, function (data) {
+                console.log(`Fetched data from Store ${name} loading from component`, data);
+            });
+        }
+        catch (e) {
+            s = this.store.dataH.store[name];
+            console.log(e);
+        }
+        if (!s.addValidations) {
+            s = this.store.dataH.store[name];
+        }
         this.translation.addTranslation(typeof componentObject.translations === "function" ? componentObject.translations.call() : componentObject.translations);
         s.addValidations(componentObject.validations);
         let storesObject = (_b = this.store.dataH) === null || _b === void 0 ? void 0 : _b.store.toObject();
         let args = (_c = this.store.dataH) === null || _c === void 0 ? void 0 : _c.store.keys();
         if (this.isBuildStagePlainHTML(componentObject)) {
-            $el.innerHTML = componentObject.html.trim();
+            if (componentObject.html) {
+                $el.innerHTML = componentObject.html.trim();
+            }
         }
         else {
             //render from prebuilt Templates
@@ -190,7 +202,15 @@ export class dom {
         $el.setAttribute("data-name", name);
         ddom.addStyle(componentObject === null || componentObject === void 0 ? void 0 : componentObject.style);
         console.log("CREATE COMPONENT:", name, s, componentObject.views, componentObject);
-        let newcomponent = new component(ddom, (_d = componentObject === null || componentObject === void 0 ? void 0 : componentObject.interactions) === null || _d === void 0 ? void 0 : _d.call({ componentObject, dom: ddom }));
+        let iactions;
+        try {
+            iactions = (_d = componentObject === null || componentObject === void 0 ? void 0 : componentObject.interactions) === null || _d === void 0 ? void 0 : _d.call({ componentObject, dom: ddom });
+        }
+        catch (e) {
+            console.log(e);
+            iactions = {};
+        }
+        let newcomponent = new component(ddom, iactions);
         if (this.isBuildStagePlainHTML(componentObject)) {
             newcomponent.dom.setTemplate(eval('(function (args) { let {change, ' + args + ', _t} = args; return `' + newcomponent.dom._area.innerHTML.trim() + '`})'));
         }

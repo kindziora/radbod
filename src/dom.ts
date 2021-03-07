@@ -16,6 +16,7 @@ import { textarea } from './dom/element/textarea.js';
 import { component } from "./component.js";
 import { store, op } from './store.js';
 import { i18n } from './i18n.js';
+import { actions } from "./actions.js";
 
 
 export class dom {
@@ -171,10 +172,10 @@ export class dom {
         return false;
     }
 
-    isBuildStagePlainHTML(componentObject: Object):boolean{
+    isBuildStagePlainHTML(componentObject: Object): boolean {
 
         if (componentObject.views) {
-            if(typeof componentObject.views[name] === "function"){
+            if (typeof componentObject.views[name] === "function") {
                 return false;
             }
             return true;
@@ -207,28 +208,40 @@ export class dom {
             return componentObject;
         }
 
-        let s: store = this.store.dataH.createStore(name, componentObject?.data?.call(this.store.dataH, function (data) {
-            console.log(`Fetched data from Store ${name} loading from component`, data);
-        }));
+        let s: store;
+        try {
+            s = componentObject?.data?.call(this.store.dataH, function (data) {
+                console.log(`Fetched data from Store ${name} loading from component`, data);
+            }); 
+        } catch (e) {
+            s = this.store.dataH.store[name];
+            console.log(e);  
+        }
 
-        this.translation.addTranslation(typeof componentObject.translations ==="function"?componentObject.translations.call():componentObject.translations);
-
+        if(!s.addValidations){
+            s = this.store.dataH.store[name];
+        }
+    
+        this.translation.addTranslation(typeof componentObject.translations === "function" ? componentObject.translations.call() : componentObject.translations);
+ 
         s.addValidations(componentObject.validations);
 
         let storesObject = this.store.dataH?.store.toObject();
 
         let args = this.store.dataH?.store.keys();
 
-        if(this.isBuildStagePlainHTML(componentObject)) {
-            $el.innerHTML = componentObject.html.trim();
-        }else{ 
+        if (this.isBuildStagePlainHTML(componentObject)) {
+            if (componentObject.html) { 
+                $el.innerHTML = componentObject.html.trim();
+            } 
+        } else {
             //render from prebuilt Templates
             $el.innerHTML = (componentObject.views[name].call(componentObject, { change: { value: "" }, ...storesObject, _t: this._t }) + "").trim();
         }
-        
-        for(let name in componentObject.components){
-            if( typeof componentObject.components[name] === "string" ){
-                let nameID = componentObject.components[name].split("#").length > 0 ? componentObject.components[name].split("#")[1]: componentObject.components[name];
+
+        for (let name in componentObject.components) {
+            if (typeof componentObject.components[name] === "string") {
+                let nameID = componentObject.components[name].split("#").length > 0 ? componentObject.components[name].split("#")[1] : componentObject.components[name];
                 componentObject.components[name] = this.componentList[nameID];
             }
         }
@@ -246,12 +259,20 @@ export class dom {
         ddom.addStyle(componentObject?.style);
 
         console.log("CREATE COMPONENT:", name, s, componentObject.views, componentObject);
-
-        let newcomponent = new component(ddom, componentObject?.interactions?.call({ componentObject, dom: ddom }));
         
-        if(this.isBuildStagePlainHTML(componentObject)) {
+        let iactions : actions;
+        try{
+            iactions = componentObject?.interactions?.call({ componentObject, dom: ddom });
+        }catch(e){
+            console.log(e);
+            iactions = {};
+        } 
+
+        let newcomponent = new component(ddom, iactions);
+
+        if (this.isBuildStagePlainHTML(componentObject)) {
             newcomponent.dom.setTemplate(eval('(function (args) { let {change, ' + args + ', _t} = args; return `' + newcomponent.dom._area.innerHTML.trim() + '`})'));
-        }else{
+        } else {
             newcomponent.dom.setTemplate(componentObject?.views[name]);
         }
 

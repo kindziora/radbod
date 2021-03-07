@@ -35,7 +35,7 @@ export class app {
         console.log(`mount component: ${name}`, this.loadStores(componentObject, (stores, meta, data) => {
 
             let compo = this.createComponent(name,
-                (typeof data ==="undefined") ? stores.createStore(name, {}) : data,
+                data,
                 componentObject
             );
 
@@ -56,6 +56,10 @@ export class app {
 
         let componentID: string = name.split("#").length > 1 ? name.split("#")[1] : name;
         name = name.split("#").length > 1 ? name.split("#")[0] : name;
+
+        data = (typeof data === "undefined" || typeof data.then === "function" ) ? this.dataH.createStore(name, {}) : data;
+
+        if(!(data instanceof store)) data = this.dataH.createStore(name, data);
 
         let el = document.createElement("component");
      
@@ -115,15 +119,18 @@ export class app {
             //what now?
         }else{
             if(component.data) { 
-                let result = component.data.call(this.dataH, callback(meta, this.dataH), {});
+                let result;
                 
-                if (!result || typeof result.then !== "function") {
-                    callback(meta, this.dataH)(result);
-                }
-        
-                for (let i in component.components) {
-                    this.fetchData(component.components[i], cb, allready, total, meta);
-                }
+                    result = component.data.call(this.dataH, callback(meta, this.dataH), {});
+                    if (!result || typeof result.then !== "function") {
+                        callback(meta, this.dataH)(result);
+                    }
+            
+                    for (let i in component.components) {
+                        this.fetchData(component.components[i], cb, allready, total, meta);
+                    }
+                 
+              
             }
            
         }

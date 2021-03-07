@@ -1,6 +1,7 @@
 import { dom } from './dom.js';
 import { eventHandler } from './eventHandler.js';
 import { dataHandler } from './dataHandler.js';
+import { store } from './store.js';
 import { i18n } from './i18n.js';
 export class app {
     constructor(environment) {
@@ -21,7 +22,7 @@ export class app {
      */
     mountComponent(name, componentObject, callback) {
         console.log(`mount component: ${name}`, this.loadStores(componentObject, (stores, meta, data) => {
-            let compo = this.createComponent(name, (typeof data === "undefined") ? stores.createStore(name, {}) : data, componentObject);
+            let compo = this.createComponent(name, data, componentObject);
             callback(stores, meta, compo);
         }));
     }
@@ -36,6 +37,9 @@ export class app {
     createComponent(name, data, componentObject) {
         let componentID = name.split("#").length > 1 ? name.split("#")[1] : name;
         name = name.split("#").length > 1 ? name.split("#")[0] : name;
+        data = (typeof data === "undefined" || typeof data.then === "function") ? this.dataH.createStore(name, {}) : data;
+        if (!(data instanceof store))
+            data = this.dataH.createStore(name, data);
         let el = document.createElement("component");
         let internationalize = new i18n();
         internationalize.addTranslation(componentObject.translations);
@@ -82,7 +86,8 @@ export class app {
         }
         else {
             if (component.data) {
-                let result = component.data.call(this.dataH, callback(meta, this.dataH), {});
+                let result;
+                result = component.data.call(this.dataH, callback(meta, this.dataH), {});
                 if (!result || typeof result.then !== "function") {
                     callback(meta, this.dataH)(result);
                 }
