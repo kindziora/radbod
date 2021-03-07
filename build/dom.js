@@ -158,9 +158,12 @@ export class dom {
         var _a, _b, _c, _d, _e;
         if (!this.isPlainComponentObject(componentObject)) {
             // is sharedComponent don't create just return
-            $el.innerHTML = "";
-            console.log(componentObject);
-            $el.appendChild(componentObject.dom.$el);
+            if (!$el.firstChild) {
+                $el.appendChild(componentObject.dom.$el);
+            }
+            else {
+                $el.innerHTML = "";
+            }
             return componentObject;
         }
         let s = this.store.dataH.store[name];
@@ -202,7 +205,6 @@ export class dom {
         let ddom = new dom($el, enrichedTypes, s, componentObject === null || componentObject === void 0 ? void 0 : componentObject.views, this.translation, this.counter);
         ddom.name = name;
         $el.setAttribute("data-name", name);
-        ddom.addStyle(componentObject === null || componentObject === void 0 ? void 0 : componentObject.style);
         console.log("CREATE COMPONENT:", name, s, componentObject.views, componentObject);
         let iactions;
         try {
@@ -218,6 +220,7 @@ export class dom {
         }
         else {
             newcomponent.dom.setTemplate(componentObject === null || componentObject === void 0 ? void 0 : componentObject.views[name]);
+            ddom.addStyle(componentObject === null || componentObject === void 0 ? void 0 : componentObject.style);
         }
         if (typeof (componentObject === null || componentObject === void 0 ? void 0 : componentObject.mounted) === "function" && ((_e = componentObject === null || componentObject === void 0 ? void 0 : componentObject.views) === null || _e === void 0 ? void 0 : _e[name])) {
             componentObject === null || componentObject === void 0 ? void 0 : componentObject.mounted.call(newcomponent);

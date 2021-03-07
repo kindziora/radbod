@@ -202,9 +202,12 @@ export class dom {
 
         if (!this.isPlainComponentObject(componentObject)) {
             // is sharedComponent don't create just return
-            $el.innerHTML = "";
-            console.log(componentObject);
-            $el.appendChild(componentObject.dom.$el);
+            if(!$el.firstChild){
+                $el.appendChild(componentObject.dom.$el);
+            }else{
+                $el.innerHTML = "";     
+            }
+            
             return componentObject;
         }
 
@@ -256,9 +259,7 @@ export class dom {
 
         ddom.name = name;
 
-        $el.setAttribute("data-name", name);
-
-        ddom.addStyle(componentObject?.style);
+        $el.setAttribute("data-name", name); 
 
         console.log("CREATE COMPONENT:", name, s, componentObject.views, componentObject);
 
@@ -276,6 +277,7 @@ export class dom {
             newcomponent.dom.setTemplate(eval('(function (args) { let {change, ' + args + ', _t} = args; return `' + newcomponent.dom._area.innerHTML.trim() + '`})'));
         } else {
             newcomponent.dom.setTemplate(componentObject?.views[name]);
+            ddom.addStyle(componentObject?.style);
         }
 
         if (typeof componentObject?.mounted === "function" && componentObject?.views?.[name]) {

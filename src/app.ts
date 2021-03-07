@@ -60,9 +60,7 @@ export class app {
         data = (typeof data === "undefined" || typeof data.then === "function" ) ? this.dataH.createStore(name, {}) : data;
 
         if(!(data instanceof store)) data = this.dataH.createStore(name, data);
-
         let el = document.createElement("component");
-     
         let internationalize = new i18n();
         internationalize.addTranslation(componentObject.translations);
 
