@@ -130,7 +130,7 @@ export class dom {
         }
         return false;
     }
-    isBuildStagePlainHTML(componentObject) {
+    isBuildStagePlainHTML(componentObject, name) {
         if (componentObject.views) {
             if (typeof componentObject.views[name] === "function") {
                 return false;
@@ -163,15 +163,17 @@ export class dom {
             $el.appendChild(componentObject.dom.$el);
             return componentObject;
         }
-        let s;
-        try {
-            s = (_a = componentObject === null || componentObject === void 0 ? void 0 : componentObject.data) === null || _a === void 0 ? void 0 : _a.call(this.store.dataH, function (data) {
-                console.log(`Fetched data from Store ${name} loading from component`, data);
-            });
-        }
-        catch (e) {
-            s = this.store.dataH.store[name];
-            console.log(e);
+        let s = this.store.dataH.store[name];
+        if (!s) {
+            try {
+                s = (_a = componentObject === null || componentObject === void 0 ? void 0 : componentObject.data) === null || _a === void 0 ? void 0 : _a.call(this.store.dataH, function (data) {
+                    console.log(`Fetched data from Store ${name} loading from component`, data);
+                });
+            }
+            catch (e) {
+                s = this.store.dataH.store[name];
+                console.log(e);
+            }
         }
         if (!s.addValidations) {
             s = this.store.dataH.store[name];
@@ -180,7 +182,7 @@ export class dom {
         s.addValidations(componentObject.validations);
         let storesObject = (_b = this.store.dataH) === null || _b === void 0 ? void 0 : _b.store.toObject();
         let args = (_c = this.store.dataH) === null || _c === void 0 ? void 0 : _c.store.keys();
-        if (this.isBuildStagePlainHTML(componentObject)) {
+        if (this.isBuildStagePlainHTML(componentObject, name)) {
             if (componentObject.html) {
                 $el.innerHTML = componentObject.html.trim();
             }
@@ -211,7 +213,7 @@ export class dom {
             iactions = {};
         }
         let newcomponent = new component(ddom, iactions);
-        if (this.isBuildStagePlainHTML(componentObject)) {
+        if (this.isBuildStagePlainHTML(componentObject, name)) {
             newcomponent.dom.setTemplate(eval('(function (args) { let {change, ' + args + ', _t} = args; return `' + newcomponent.dom._area.innerHTML.trim() + '`})'));
         }
         else {

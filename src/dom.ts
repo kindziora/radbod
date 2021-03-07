@@ -172,7 +172,7 @@ export class dom {
         return false;
     }
 
-    isBuildStagePlainHTML(componentObject: Object): boolean {
+    isBuildStagePlainHTML(componentObject: Object, name:string): boolean {
 
         if (componentObject.views) {
             if (typeof componentObject.views[name] === "function") {
@@ -208,15 +208,17 @@ export class dom {
             return componentObject;
         }
 
-        let s: store;
-        try {
-            s = componentObject?.data?.call(this.store.dataH, function (data) {
-                console.log(`Fetched data from Store ${name} loading from component`, data);
-            }); 
-        } catch (e) {
-            s = this.store.dataH.store[name];
-            console.log(e);  
-        }
+        let s: store = this.store.dataH.store[name];
+        if(!s) {
+            try {
+                s = componentObject?.data?.call(this.store.dataH, function (data) {
+                    console.log(`Fetched data from Store ${name} loading from component`, data);
+                }); 
+            } catch (e) {
+                s = this.store.dataH.store[name];
+                console.log(e);  
+            }
+        } 
 
         if(!s.addValidations){
             s = this.store.dataH.store[name];
@@ -230,7 +232,7 @@ export class dom {
 
         let args = this.store.dataH?.store.keys();
 
-        if (this.isBuildStagePlainHTML(componentObject)) {
+        if (this.isBuildStagePlainHTML(componentObject, name)) {
             if (componentObject.html) { 
                 $el.innerHTML = componentObject.html.trim();
             } 
@@ -259,7 +261,7 @@ export class dom {
         ddom.addStyle(componentObject?.style);
 
         console.log("CREATE COMPONENT:", name, s, componentObject.views, componentObject);
-        
+
         let iactions : actions;
         try{
             iactions = componentObject?.interactions?.call({ componentObject, dom: ddom });
@@ -270,7 +272,7 @@ export class dom {
 
         let newcomponent = new component(ddom, iactions);
 
-        if (this.isBuildStagePlainHTML(componentObject)) {
+        if (this.isBuildStagePlainHTML(componentObject, name)) {
             newcomponent.dom.setTemplate(eval('(function (args) { let {change, ' + args + ', _t} = args; return `' + newcomponent.dom._area.innerHTML.trim() + '`})'));
         } else {
             newcomponent.dom.setTemplate(componentObject?.views[name]);
