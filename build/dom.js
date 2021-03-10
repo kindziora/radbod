@@ -142,9 +142,6 @@ export class dom {
         }
     }
     /**
-     *
-     * @TODO aufteilen von abhängigkeiten, createComponentFrom PlainHTML | createComponentFrom Views
-     * @TODO überschneidende logik von createComponent aus app.ts und dom.ts in den construktor von component.ts
      * @TODO ermöglichen von server rendered und lazy rendered componenten + laden deren stores
      * @TODO aufräumen von build, browser und server side rendering codes
      * @TODO KOA anstatt express server implementieren
@@ -216,6 +213,7 @@ export class dom {
         }
         let newcomponent = new component(ddom, iactions);
         if (this.isBuildStagePlainHTML(componentObject, name)) {
+            ddom.addStyle(componentObject === null || componentObject === void 0 ? void 0 : componentObject.style);
             newcomponent.dom.setTemplate(eval('(function (args) { let {change, ' + args + ', _t} = args; return `' + newcomponent.dom._area.innerHTML.trim() + '`})'));
         }
         else {
