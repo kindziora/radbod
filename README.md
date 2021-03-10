@@ -1,4 +1,4 @@
-# radbod
+![Radbod Logo](https://raw.githubusercontent.com/kindziora/radbod/master/logo.png?token=AADL3M6H3J2GJAY6HPB3EN3AKHPN2 "Radbod Logo")
 
 Minimalstic ES2015 MVVM Framework with zero dependencies. Just ~20KB.
 
