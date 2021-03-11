@@ -37,10 +37,10 @@ expects a Route:
 
 load:
 
-`path/to/project/layout/base.html`
-`path/to/project/sites/user/userprofile.html`
-`path/to/project/sites/user/userprofile.css -->inlined`
-`path/to/project/sites/user/userprofile.js -->inlined`
+`path/to/project/layout/base.html` 
+`path/to/project/sites/user/userprofile.html` 
+`path/to/project/sites/user/userprofile.css -->inlined` 
+`path/to/project/sites/user/userprofile.js -->inlined` 
 
 returns:
 
