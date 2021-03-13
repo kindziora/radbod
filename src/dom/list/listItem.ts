@@ -11,7 +11,7 @@ export class listItem extends kelement {
                 
                 let para:HTMLElement = document.createElement("DIV"); 
                 
-                para.innerHTML = (this.getListContainer()?.template.call(this, { change, ...stores, _t: this.dom._t }) + "").trim();
+                para.innerHTML = (this.getListContainer()?.template.call(this, { change, ...stores, _t: this.dom._t, env: this.dom.store?.dataH.environment }) + "").trim();
 
                 //what about outerHTML?
                 if(!para?.firstChild){ 
@@ -23,7 +23,7 @@ export class listItem extends kelement {
                 }
 
             }else{
-                this.$el.innerHTML = (this.template.call(this, { change, ...stores, _t: this.dom._t }) + "").trim();
+                this.$el.innerHTML = (this.template.call(this, { change, ...stores, _t: this.dom._t, env: this.dom.store?.dataH.environment }) + "").trim();
                 this.dom.store?.events?.dispatchEvent(this.dom.name, `/$${this.dom.name}`, "post_render", { change: change, domScope: this.$el });
             }
 

@@ -49,14 +49,14 @@ export class dom {
      * @param data
      */
     render(data) {
-        var _a, _b;
+        var _a, _b, _c;
         this.element = {};
         this.elementByName = {};
         let storeObject = (_a = this.store.dataH) === null || _a === void 0 ? void 0 : _a.store.toObject();
-        this._area.innerHTML = (this.template.call(this, Object.assign(Object.assign({ change: data }, storeObject), { _t: this._t })) + "").trim();
+        this._area.innerHTML = (this.template.call(this, Object.assign(Object.assign({ change: data }, storeObject), { _t: this._t, env: (_b = this.store) === null || _b === void 0 ? void 0 : _b.dataH.environment })) + "").trim();
         this.kelementBy$el = new WeakMap();
         this.loadElements();
-        (_b = this.store.events) === null || _b === void 0 ? void 0 : _b.dispatchEvent(this.name, `/$${this.name}`, "post_render", { change: data, domScope: this.$el, readd: true }, storeObject);
+        (_c = this.store.events) === null || _c === void 0 ? void 0 : _c.dispatchEvent(this.name, `/$${this.name}`, "post_render", { change: data, domScope: this.$el, readd: true }, storeObject);
         return this._area;
     }
     /**
@@ -152,7 +152,7 @@ export class dom {
      * @param fieldTypeName
      */
     createComponent(name, $el, componentObject) {
-        var _a, _b, _c, _d, _e;
+        var _a, _b, _c, _d, _e, _f;
         if (!this.isPlainComponentObject(componentObject)) {
             // is sharedComponent don't create just return
             if (!$el.firstChild) {
@@ -189,7 +189,7 @@ export class dom {
         }
         else {
             //render from prebuilt Templates
-            $el.innerHTML = (componentObject.views[name].call(componentObject, Object.assign(Object.assign({ change: { value: "" } }, storesObject), { _t: this._t })) + "").trim();
+            $el.innerHTML = (componentObject.views[name].call(componentObject, Object.assign(Object.assign({ change: { value: "" } }, storesObject), { _t: this._t, env: (_d = this.store) === null || _d === void 0 ? void 0 : _d.dataH.environment })) + "").trim();
         }
         for (let name in componentObject.components) {
             if (typeof componentObject.components[name] === "string") {
@@ -205,7 +205,7 @@ export class dom {
         console.log("CREATE COMPONENT:", name, s, componentObject.views, componentObject);
         let iactions;
         try {
-            iactions = (_d = componentObject === null || componentObject === void 0 ? void 0 : componentObject.interactions) === null || _d === void 0 ? void 0 : _d.call({ componentObject, dom: ddom });
+            iactions = (_e = componentObject === null || componentObject === void 0 ? void 0 : componentObject.interactions) === null || _e === void 0 ? void 0 : _e.call({ componentObject, dom: ddom });
         }
         catch (e) {
             console.log(e);
@@ -214,13 +214,13 @@ export class dom {
         let newcomponent = new component(ddom, iactions);
         if (this.isBuildStagePlainHTML(componentObject, name)) {
             ddom.addStyle(componentObject === null || componentObject === void 0 ? void 0 : componentObject.style);
-            newcomponent.dom.setTemplate(eval('(function (args) { let {change, ' + args + ', _t} = args; return `' + newcomponent.dom._area.innerHTML.trim() + '`})'));
+            newcomponent.dom.setTemplate(eval('(function (args) { let {change, ' + args + ', _t, env} = args; return `' + newcomponent.dom._area.innerHTML.trim() + '`})'));
         }
         else {
             newcomponent.dom.setTemplate(componentObject === null || componentObject === void 0 ? void 0 : componentObject.views[name]);
             ddom.addStyle(componentObject === null || componentObject === void 0 ? void 0 : componentObject.style);
         }
-        if (typeof (componentObject === null || componentObject === void 0 ? void 0 : componentObject.mounted) === "function" && ((_e = componentObject === null || componentObject === void 0 ? void 0 : componentObject.views) === null || _e === void 0 ? void 0 : _e[name])) {
+        if (typeof (componentObject === null || componentObject === void 0 ? void 0 : componentObject.mounted) === "function" && ((_f = componentObject === null || componentObject === void 0 ? void 0 : componentObject.views) === null || _f === void 0 ? void 0 : _f[name])) {
             componentObject === null || componentObject === void 0 ? void 0 : componentObject.mounted.call(newcomponent);
         }
         return newcomponent;

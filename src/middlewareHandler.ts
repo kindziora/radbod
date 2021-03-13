@@ -1,6 +1,9 @@
 export class Middleware {
 
+    private value: any = {};
+
     constructor(obj?: any) {
+
         let extras = []
         const stack = []
         const run = async (...args) => {
@@ -40,6 +43,11 @@ export class Middleware {
 
 
 export class middlewareHandler {
+    private environment: Object;
+
+    construct(environment: Object) {
+        this.environment = environment;
+    }
 
     private middleware: { [index: string]: Object } = {
         preView: Middleware,
@@ -48,7 +56,7 @@ export class middlewareHandler {
     };
 
     addMiddleware(type: string): Middleware {
-        this.middleware[type] = new Middleware();
+        this.middleware[type] = new Middleware(this.environment);
         return this.middleware[type];
     }
 
@@ -60,9 +68,17 @@ export class middlewareHandler {
         return this.middleware[type];
     }
 
+    getValue (type: string){
+        this.middleware[type].value
+    }
+
+    setValue(type: string, value:any) {
+        this.middleware[type].value = value;
+    }
     async run(type: string, args: any) {
         try {
-            return await this.middleware[type].run.apply(null, args);
+            this.setValue(type, await this.middleware[type].run.apply(this.environment, args);
+            return this.getValue(type);
         } catch (err) {
             console.log('err', err.toString())
         }

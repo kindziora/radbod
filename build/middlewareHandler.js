@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 export class Middleware {
     constructor(obj) {
+        this.value = {};
         let extras = [];
         const stack = [];
         const run = (...args) => __awaiter(this, void 0, void 0, function* () {
@@ -53,8 +54,11 @@ export class middlewareHandler {
             preRouting: Middleware
         };
     }
+    construct(environment) {
+        this.environment = environment;
+    }
     addMiddleware(type) {
-        this.middleware[type] = new Middleware();
+        this.middleware[type] = new Middleware(this.environment);
         return this.middleware[type];
     }
     removeMiddleware(type) {
@@ -63,10 +67,17 @@ export class middlewareHandler {
     getMiddleware(type) {
         return this.middleware[type];
     }
+    getValue(type) {
+        this.middleware[type].value;
+    }
+    setValue(type, value) {
+        this.middleware[type].value = value;
+    }
     run(type, args) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                return yield this.middleware[type].run.apply(null, args);
+                this.setValue(type, yield this.middleware[type].run.apply(this.environment, args));
+                return this.getValue(type);
             }
             catch (err) {
                 console.log('err', err.toString());

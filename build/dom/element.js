@@ -18,7 +18,6 @@ export class kelement {
         else {
             this.id = this.$el.getAttribute('data-id');
         }
-        let args = (_b = (_a = this.dom.store) === null || _a === void 0 ? void 0 : _a.dataH) === null || _b === void 0 ? void 0 : _b.store.keys();
         if (views === null || views === void 0 ? void 0 : views[this.$el.getAttribute('data-view')]) {
             this.setTemplate(views === null || views === void 0 ? void 0 : views[this.$el.getAttribute('data-view')]);
             if (this.$el.hasAttribute('data-name')) {
@@ -31,7 +30,13 @@ export class kelement {
         else {
             if (!(views === null || views === void 0 ? void 0 : views[this.id])) {
                 if (this.$el.innerHTML.trim() !== "") {
-                    this.setTemplate(eval('(function (args) { let {change, ' + args + ', _t} = args; return `' + ((_c = this.$el.innerHTML) === null || _c === void 0 ? void 0 : _c.trim()) + '`})'));
+                    let stores = (_b = (_a = this.dom.store) === null || _a === void 0 ? void 0 : _a.dataH) === null || _b === void 0 ? void 0 : _b.store.keys();
+                    try {
+                        this.setTemplate(eval('(function (args) { let {change, ' + stores + ', _t, env} = args; return `' + ((_c = this.$el.innerHTML) === null || _c === void 0 ? void 0 : _c.trim()) + '`})'));
+                    }
+                    catch (e) {
+                        console.log("ERRORXX", e);
+                    }
                 }
             }
             else {
@@ -70,14 +75,14 @@ export class kelement {
      * @param data
      */
     render(change) {
-        var _a, _b, _c, _d;
+        var _a, _b, _c, _d, _e;
         if (this.template) {
             let stores = (_b = (_a = this.dom.store) === null || _a === void 0 ? void 0 : _a.dataH) === null || _b === void 0 ? void 0 : _b.store.toObject();
-            let newHTML = (this.template.call(this, Object.assign(Object.assign({ change }, stores), { _t: this.dom._t })) + "").trim();
+            let newHTML = (this.template.call(this, Object.assign(Object.assign({ change }, stores), { _t: this.dom._t, env: (_c = this.dom.store) === null || _c === void 0 ? void 0 : _c.dataH.environment })) + "").trim();
             if (this.$el.innerHTML !== newHTML) {
                 this.$el.innerHTML = newHTML;
                 if (this.$el.childElementCount > 0)
-                    (_d = (_c = this.dom.store) === null || _c === void 0 ? void 0 : _c.events) === null || _d === void 0 ? void 0 : _d.dispatchEvent(this.dom.name, `/$${this.dom.name}`, "post_render", { change: change, domScope: this.$el });
+                    (_e = (_d = this.dom.store) === null || _d === void 0 ? void 0 : _d.events) === null || _e === void 0 ? void 0 : _e.dispatchEvent(this.dom.name, `/$${this.dom.name}`, "post_render", { change: change, domScope: this.$el });
             }
         }
         else {

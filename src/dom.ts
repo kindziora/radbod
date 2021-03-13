@@ -84,7 +84,8 @@ export class dom {
         this.element = {};
         this.elementByName = {};
         let storeObject = this.store.dataH?.store.toObject();
-        this._area.innerHTML = (this.template.call(this, { change: data, ...storeObject, _t: this._t }) + "").trim();
+        
+        this._area.innerHTML = (this.template.call(this, { change: data, ...storeObject, _t: this._t, env: this.store?.dataH.environment }) + "").trim();
 
         this.kelementBy$el = new WeakMap();
 
@@ -239,7 +240,7 @@ export class dom {
             } 
         } else {
             //render from prebuilt Templates
-            $el.innerHTML = (componentObject.views[name].call(componentObject, { change: { value: "" }, ...storesObject, _t: this._t }) + "").trim();
+            $el.innerHTML = (componentObject.views[name].call(componentObject, { change: { value: "" }, ...storesObject, _t: this._t, env: this.store?.dataH.environment }) + "").trim();
         }
 
         for (let name in componentObject.components) {
@@ -273,7 +274,7 @@ export class dom {
 
         if (this.isBuildStagePlainHTML(componentObject, name)) {
             ddom.addStyle(componentObject?.style);
-            newcomponent.dom.setTemplate(eval('(function (args) { let {change, ' + args + ', _t} = args; return `' + newcomponent.dom._area.innerHTML.trim() + '`})'));
+            newcomponent.dom.setTemplate(eval('(function (args) { let {change, ' + args + ', _t, env} = args; return `' + newcomponent.dom._area.innerHTML.trim() + '`})'));
         } else {
             newcomponent.dom.setTemplate(componentObject?.views[name]);
             ddom.addStyle(componentObject?.style);

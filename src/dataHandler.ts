@@ -1,6 +1,5 @@
 import { store } from './store.js';
-
-
+import { middlewareHandler } from './middlewareHandler.js';
 import { i18n } from './i18n.js';
 
 export type op = { op: string, path: string, value: any };
@@ -15,17 +14,18 @@ import { eventHandler } from './eventHandler.js';
 
 export class dataHandler {
     public internationalize: i18n;
-    
+    public middlewareHandler : middlewareHandler;
+
     public store: { [index: string]: store } = {};
     private events: eventHandler;
     public pxy: { [index: string]: ProxyConstructor } = {};
-    private environment: Object;
+    public environment: Object;
 
     constructor(eventH: eventHandler, environment: Object) {
         this.events = eventH;
         this.environment = environment;
         this.internationalize = new i18n();
-        
+
         this.store.toObject = () => {
             let arr = {};
             for (let i in this.store) {
@@ -54,6 +54,9 @@ export class dataHandler {
             return arr.sort();
         };
 
+
+        this.middlewareHandler = new middlewareHandler(environment);
+        this.middlewareHandler.addMiddleware("preView");
     }
 
     /**

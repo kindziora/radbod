@@ -28,7 +28,6 @@ export class kelement {
         } else {
             this.id = this.$el.getAttribute('data-id');
         }
-        let args = this.dom.store?.dataH?.store.keys();
 
         if (views?.[this.$el.getAttribute('data-view')]) {
             this.setTemplate(views?.[this.$el.getAttribute('data-view')]);
@@ -39,15 +38,24 @@ export class kelement {
                     this.render({ op: "add", path: this.$el.getAttribute('data-name'), value: c });
                 }
             }
- 
+
         } else {
             if (!views?.[this.id]) {
                 if (this.$el.innerHTML.trim() !== "") {
-                    this.setTemplate(eval('(function (args) { let {change, ' + args + ', _t} = args; return `' + this.$el.innerHTML?.trim() + '`})'));
+                    
+                    let stores = this.dom.store?.dataH?.store.keys();
+
+                    try { 
+                        this.setTemplate(eval('(function (args) { let {change, ' + stores + ', _t, env} = args; return `' + this.$el.innerHTML?.trim() + '`})'));
+ 
+                    } catch (e) {
+                        console.log("ERRORXX", e);
+                    }
+
                 }
             } else {
                 this.setTemplate(views?.[this.id]);
-            }
+             }
         }
 
         if (!this.$el.hasAttribute("data-view")) {
@@ -55,7 +63,7 @@ export class kelement {
         }
 
     }
-
+    
     public getValue() {
         return this.$el.value;
     }
@@ -93,15 +101,16 @@ export class kelement {
     render(change: op) {
         if (this.template) {
             let stores = this.dom.store?.dataH?.store.toObject();
+ 
+            let newHTML = (this.template.call(this, { change, ...stores, _t: this.dom._t, env: this.dom.store?.dataH.environment}) + "").trim();
 
-            let newHTML = (this.template.call(this, { change, ...stores, _t: this.dom._t }) + "").trim();
-
-            if(this.$el.innerHTML !== newHTML){
+            if (this.$el.innerHTML !== newHTML) {
                 this.$el.innerHTML = newHTML;
-                if(this.$el.childElementCount > 0)
+                if (this.$el.childElementCount > 0)
                     this.dom.store?.events?.dispatchEvent(this.dom.name, `/$${this.dom.name}`, "post_render", { change: change, domScope: this.$el });
             }
-           
+
+
         } else {
             this.$el.innerHTML = change.value;
         }

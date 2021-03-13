@@ -1,4 +1,5 @@
 import { store } from './store.js';
+import { middlewareHandler } from './middlewareHandler.js';
 import { i18n } from './i18n.js';
 export class dataHandler {
     constructor(eventH, environment) {
@@ -32,6 +33,8 @@ export class dataHandler {
             }
             return arr.sort();
         };
+        this.middlewareHandler = new middlewareHandler(environment);
+        this.middlewareHandler.addMiddleware("preView");
     }
     /**
      *
