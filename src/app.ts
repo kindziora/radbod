@@ -44,6 +44,13 @@ export class app {
         }));
     }
 
+    setLanguage(languageCode: String) {
+        this.dataH.internationalize.setLanguage(languageCode);
+    }
+
+    getLanguage(languageCode: String): string {
+       return this.dataH.internationalize.getLanguage();
+    }
     /** 
     * 
     * @param name 
@@ -57,27 +64,29 @@ export class app {
         let componentID: string = name.split("#").length > 1 ? name.split("#")[1] : name;
         name = name.split("#").length > 1 ? name.split("#")[0] : name;
 
-        data = (typeof data === "undefined" || typeof data.then === "function" ) ? this.dataH.createStore(name, {}) : data;
+        data = (typeof data === "undefined" || typeof data.then === "function") ? this.dataH.createStore(name, {}) : data;
 
-        if(!(data instanceof store)) data = this.dataH.createStore(name, data);
+        if (!(data instanceof store)) data = this.dataH.createStore(name, data);
         let el = document.createElement("component");
-        let internationalize = new i18n();
-        internationalize.addTranslation(componentObject.translations);
+
+        this.dataH.internationalize.addTranslation(typeof componentObject.translations === "function" ? componentObject.translations.call() : componentObject.translations);
+
+        this.dataH.internationalize.setLanguage(componentObject?.language);
 
         el.setAttribute("data-name", name);
 
-        for(let name in componentObject.components){
-            if( typeof componentObject.components[name] === "string" ){
-                let nameID = componentObject.components[name].split("#").length > 0 ? componentObject.components[name].split("#")[1]: componentObject.components[name];
+        for (let name in componentObject.components) {
+            if (typeof componentObject.components[name] === "string") {
+                let nameID = componentObject.components[name].split("#").length > 0 ? componentObject.components[name].split("#")[1] : componentObject.components[name];
                 componentObject.components[name] = this.components[nameID];
             }
         }
 
-        let ddom = new dom(el, componentObject.components, data, componentObject?.views, internationalize);
+        let ddom = new dom(el, componentObject.components, data, componentObject?.views, this.dataH.internationalize);
         ddom.name = name;
-         
+
         this.components[componentID] = ddom.createComponent(name, el, componentObject);
-        
+
         return this.components[componentID];
     }
 
@@ -105,39 +114,38 @@ export class app {
                 cb(data, component);
                 meta.cnt++;
                 meta.loaded.push(component);
-                if (meta.cnt >= total) { 
+                if (meta.cnt >= total) {
                     allready(dataH, meta, data);
                 }
             }
         };
 
-        if( typeof component === "string" ){
-            let nameID = component.split("#").length > 0 ? component.split("#")[1]: component;
+        if (typeof component === "string") {
+            let nameID = component.split("#").length > 0 ? component.split("#")[1] : component;
             component = this.components[nameID];
             //what now?
-        }else{
-            if(component.data) { 
+        } else {
+            if (component.data) {
                 let result;
-                
-                    result = component.data.call(this.dataH, callback(meta, this.dataH), {});
-                    if (!result || typeof result.then !== "function") {
-                        callback(meta, this.dataH)(result);
-                    }
-            
-                    for (let i in component.components) {
-                        this.fetchData(component.components[i], cb, allready, total, meta);
-                    }
-                 
-              
+
+                result = component.data.call(this.dataH, callback(meta, this.dataH), {});
+                if (!result || typeof result.then !== "function") {
+                    callback(meta, this.dataH)(result);
+                }
+
+                for (let i in component.components) {
+                    this.fetchData(component.components[i], cb, allready, total, meta);
+                }
+
             }
-           
+
         }
-        
+
     }
 
     private countForData(component: object, cnt: number) {
-        for (let i in component.components){
-            if(typeof component.components[i] !=="string")
+        for (let i in component.components) {
+            if (typeof component.components[i] !== "string")
                 cnt = this.countForData(component.components[i], cnt);
         }
         return ++cnt;

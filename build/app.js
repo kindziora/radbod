@@ -2,7 +2,6 @@ import { dom } from './dom.js';
 import { eventHandler } from './eventHandler.js';
 import { dataHandler } from './dataHandler.js';
 import { store } from './store.js';
-import { i18n } from './i18n.js';
 export class app {
     constructor(environment) {
         this.components = {};
@@ -26,6 +25,12 @@ export class app {
             callback(stores, meta, compo);
         }));
     }
+    setLanguage(languageCode) {
+        this.dataH.internationalize.setLanguage(languageCode);
+    }
+    getLanguage(languageCode) {
+        return this.dataH.internationalize.getLanguage();
+    }
     /**
     *
     * @param name
@@ -41,8 +46,8 @@ export class app {
         if (!(data instanceof store))
             data = this.dataH.createStore(name, data);
         let el = document.createElement("component");
-        let internationalize = new i18n();
-        internationalize.addTranslation(componentObject.translations);
+        this.dataH.internationalize.addTranslation(typeof componentObject.translations === "function" ? componentObject.translations.call() : componentObject.translations);
+        this.dataH.internationalize.setLanguage(componentObject === null || componentObject === void 0 ? void 0 : componentObject.language);
         el.setAttribute("data-name", name);
         for (let name in componentObject.components) {
             if (typeof componentObject.components[name] === "string") {
@@ -50,7 +55,7 @@ export class app {
                 componentObject.components[name] = this.components[nameID];
             }
         }
-        let ddom = new dom(el, componentObject.components, data, componentObject === null || componentObject === void 0 ? void 0 : componentObject.views, internationalize);
+        let ddom = new dom(el, componentObject.components, data, componentObject === null || componentObject === void 0 ? void 0 : componentObject.views, this.dataH.internationalize);
         ddom.name = name;
         this.components[componentID] = ddom.createComponent(name, el, componentObject);
         return this.components[componentID];

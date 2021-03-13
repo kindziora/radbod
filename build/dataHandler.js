@@ -1,10 +1,12 @@
 import { store } from './store.js';
+import { i18n } from './i18n.js';
 export class dataHandler {
     constructor(eventH, environment) {
         this.store = {};
         this.pxy = {};
         this.events = eventH;
         this.environment = environment;
+        this.internationalize = new i18n();
         this.store.toObject = () => {
             let arr = {};
             for (let i in this.store) {

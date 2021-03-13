@@ -50,6 +50,7 @@ export class dom {
         this.$el = this._area;
         this.views = views;
         this.translation = translation;
+
         this._t = (text: string, lang?: string) => this.translation._t(text, lang);
         this.kelementBy$el = new WeakMap();
 
@@ -225,7 +226,7 @@ export class dom {
         }
     
         this.translation.addTranslation(typeof componentObject.translations === "function" ? componentObject.translations.call() : componentObject.translations);
- 
+        
         s.addValidations(componentObject.validations);
 
         let storesObject = this.store.dataH?.store.toObject();
