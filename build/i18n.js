@@ -18,7 +18,8 @@ export class i18n {
      * @param language
      * @returns
      */
-    _t(text, language = "en_EN") {
+    _t(text, language) {
+        language = language ? language : this.language;
         if (this && typeof this.translation[language] !== "undefined" && typeof this.translation[language][text] !== "undefined") {
             return this.translation[language][text];
         }
