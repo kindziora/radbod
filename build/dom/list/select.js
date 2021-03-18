@@ -16,4 +16,8 @@ export class select extends elist {
         // this.$el.outerHTML = `<select data-type="list" data-name="${change.path}">${change.value.map(this.renderItem).join('')}</select>`;
         //return this.$el.outerHTML;
     }
+    getValue() {
+        const selected = this.$el.querySelectorAll(':scope option:checked');
+        return Array.from(selected).map(el => el.value);
+    }
 }
