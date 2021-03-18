@@ -173,7 +173,7 @@ export class component {
                         if(val)
                             return el.update([{ op: "add", path: itemPath, value: val }]);
                     }
-                } else {
+                } else { 
                     return el.update([change]);
                 }
             });

@@ -55,8 +55,8 @@ export class elist extends kelement {
  */
     add(change: op): kelement | null {
         let where: InsertPosition = "afterbegin";
-        let pointer = change.path?.split("/")?.pop();
-
+        let pointer : number | string| undefined = change.path?.split("/")?.pop();
+        
         if (!isNaN(pointer)) {
             let items = this.getListItems();
             let pos: number = parseInt(pointer);
