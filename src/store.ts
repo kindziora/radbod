@@ -29,8 +29,13 @@ export class meta {
         this.events = eventH;
     }
 
+
+    getStates() {
+        return this._state;
+    }
+
     getMeta(fieldPath: string): _metaData {
-        return this._meta[this.normalizeFieldpath(fieldPath)]??{ validationMode: validationMode.all, validators :{}};
+        return this._meta[this.normalizeFieldpath(fieldPath)] ?? { validationMode: validationMode.all, validators: {} };
     }
 
     setMeta(fieldPath: string, value: _metaData) {
@@ -39,11 +44,11 @@ export class meta {
         this._meta[this.normalizeFieldpath(fieldPath)] = value;
     }
 
-    normalizeFieldpath(fieldPath:string){
+    normalizeFieldpath(fieldPath: string) {
         return fieldPath.replace("/_state", "");
     }
     getState(fieldPath: string): state {
-        return this._state[this.normalizeFieldpath(fieldPath)]??{ isValid: true, msg: [] };
+        return this._state[this.normalizeFieldpath(fieldPath)] ?? { isValid: true, msg: [] };
     }
 
     setState(fieldPath: string, info: state) {
@@ -54,12 +59,12 @@ export class meta {
         if (validChanged || msgChanged) {
             this._state[fieldPath] = info;
             this.events?.dispatchEvent("_state", "/_state" + fieldPath, "change", [{ op: "replace", path: "/_state" + fieldPath, value: info }], info);
-            
-            if(validChanged){
+
+            if (validChanged) {
                 this.events?.dispatchEvent("_state", "/_state" + fieldPath + "/isValid", "change", [{ op: "replace", path: "/_state" + fieldPath + "/isValid", value: info.isValid }], info);
                 this.events?.dispatchEvent("_state", "/", "change", [{ op: "replace", path: "/_state" + fieldPath + "/isValid", value: info.isValid }], info);
             }
-            if(msgChanged){
+            if (msgChanged) {
                 this.events?.dispatchEvent("_state", "/_state" + fieldPath + "/msg", "change", [{ op: "replace", path: "/_state" + fieldPath + "/msg", value: info.msg }], info);
                 this.events?.dispatchEvent("_state", "/_state", "change", [{ op: "replace", path: "/_state" + fieldPath + "/msg", value: info.msg }], info);
             }
@@ -99,7 +104,7 @@ export class store {
 
     accessByPath(path: string) {
 
-        if(path.indexOf("_state") !==-1) {
+        if (path.indexOf("_state") !== -1) {
             return this._meta.getState(path);
         }
 
@@ -107,14 +112,40 @@ export class store {
         return properties.reduce((prev: any, curr: any) => prev && prev[curr], this.dataH.pxy)
     }
 
-    getMetaState():meta{
+    getMetaState(): meta {
         return this._meta;
     }
 
+    /**
+     * 
+     * @returns 
+     */
+    validateAllFields(): { [index: string]: state } {
+        return this.validateFields(Object.keys(this._meta.getStates()));
+    }
+
+    /**
+     * 
+     * @param fields 
+     * @returns 
+     */
+    validateFields(fields: string[] = []): { [index: string]: state } {
+        for (let i in fields) {
+            this.validateField(fields[i], typeof this.accessByPath(fields[i]) !== "undefined" ? this.accessByPath(fields[i]) : "")
+        }
+        return this._meta.getStates();
+    }
+
+    /**
+     * 
+     * @param fieldPath 
+     * @param value 
+     * @returns 
+     */
     validateField(fieldPath: string, value: any): state {
         let metaData: _metaData = this._meta.getMeta(fieldPath);
         let stateData: state = { isValid: true, msg: [] };
-          
+
         if (metaData?.validators) {
             for (let v in metaData.validators) {
                 let result: state = metaData.validators[v](value);
@@ -122,20 +153,20 @@ export class store {
                     stateData.msg.push(result.msg);
                     stateData.isValid = false;
                 }
-            } 
+            }
         }
 
         this._meta.setState(fieldPath, stateData);
 
-       return stateData;
+        return stateData;
     }
 
     createStore(component: string, data: Object) {
 
         let createProxy = (data: Object, parentPath: string = `/$${component}`) => {
             const handler = {
-                get: (oTarget:any, key:string): any => {
-                    if( typeof oTarget[key] === 'function') return oTarget[key];
+                get: (oTarget: any, key: string): any => {
+                    if (typeof oTarget[key] === 'function') return oTarget[key];
 
                     if (typeof oTarget[key] === 'object' && oTarget[key] !== null) {
 
@@ -157,44 +188,44 @@ export class store {
                      */
 
                 },
-                set: (oTarget:any, sKey:string, vValue:any) => {
+                set: (oTarget: any, sKey: string, vValue: any) => {
                     let op: string = typeof oTarget[sKey] === "undefined" ? "add" : "replace";
                     let diff: op = { op, path: parentPath + "/" + sKey, value: vValue };
- 
+
                     /**
                      * @todo set value and use this.pxy[px] for $ connected values 
                      */
-                    let result:state = this.validateField(diff.path, vValue);
+                    let result: state = this.validateField(diff.path, vValue);
                     if (oTarget[sKey] !== vValue) {
-                        if(result.isValid) {
+                        if (result.isValid) {
                             oTarget[sKey] = vValue;
                             let tmpChain = this.changeStore(component, diff);
-                        }else{
-                          /*  return false; */
+                        } else {
+                            /*  return false; */
                         }
-                         
+
                     }
-                    
+
                     return true;
                 },
-                deleteProperty: (oTarget:any, sKey:string) => {
+                deleteProperty: (oTarget: any, sKey: string) => {
                     console.log("delete", oTarget[sKey]);
 
-                    let result:state = this.validateField(parentPath + "/" + sKey, null);
-                    if(result.isValid) {
+                    let result: state = this.validateField(parentPath + "/" + sKey, null);
+                    if (result.isValid) {
                         delete oTarget[sKey];
                         this.changeStore(component, { op: "remove", path: parentPath + "/" + sKey, value: undefined });
-                    }else{
-                      /*  return false; */
+                    } else {
+                        /*  return false; */
                     }
-                    
+
                     return true;
                 },
-                defineProperty: (oTarget:any, sKey:string, oDesc:any) => {
+                defineProperty: (oTarget: any, sKey: string, oDesc: any) => {
                     console.log("DEFINE", oTarget[sKey]);
 
-                    if (oDesc && "value" in oDesc) { 
-                        oTarget[sKey] = oDesc.value; 
+                    if (oDesc && "value" in oDesc) {
+                        oTarget[sKey] = oDesc.value;
                     }
 
                     return oTarget;
@@ -233,7 +264,7 @@ export class store {
         let ret = null;
         this.patchQueue.push(change);
 
-        if(this.patchQueue.length > 100) this.patchQueue.shift();
+        if (this.patchQueue.length > 100) this.patchQueue.shift();
 
         let retChange = this.events?.dispatchEvent(component, "/" + `$${component}`, "change", [change], this.data);
         //console.log(component, "/", "change", change);
@@ -275,7 +306,7 @@ export class store {
     }
 
     getValidations() {
-       return this._validations;
+        return this._validations;
     }
 
     load(selector: Object, cb: Function) {

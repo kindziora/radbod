@@ -10,6 +10,9 @@ export class meta {
         this._state = {};
         this.events = eventH;
     }
+    getStates() {
+        return this._state;
+    }
     getMeta(fieldPath) {
         var _a;
         return (_a = this._meta[this.normalizeFieldpath(fieldPath)]) !== null && _a !== void 0 ? _a : { validationMode: validationMode.all, validators: {} };
@@ -69,6 +72,30 @@ export class store {
     getMetaState() {
         return this._meta;
     }
+    /**
+     *
+     * @returns
+     */
+    validateAllFields() {
+        return this.validateFields(Object.keys(this._meta.getStates()));
+    }
+    /**
+     *
+     * @param fields
+     * @returns
+     */
+    validateFields(fields = []) {
+        for (let i in fields) {
+            this.validateField(fields[i], typeof this.accessByPath(fields[i]) !== "undefined" ? this.accessByPath(fields[i]) : "");
+        }
+        return this._meta.getStates();
+    }
+    /**
+     *
+     * @param fieldPath
+     * @param value
+     * @returns
+     */
     validateField(fieldPath, value) {
         let metaData = this._meta.getMeta(fieldPath);
         let stateData = { isValid: true, msg: [] };
