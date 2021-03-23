@@ -84,7 +84,7 @@ export class dom {
         this.element = {};
         this.elementByName = {};
         let storeObject = this.store.dataH?.store.toObject();
-        
+
         this._area.innerHTML = (this.template.call(this, { change: data, ...storeObject, _t: this._t, env: this.store?.dataH.environment }) + "").trim();
 
         this.kelementBy$el = new WeakMap();
@@ -174,7 +174,7 @@ export class dom {
         return false;
     }
 
-    isBuildStagePlainHTML(componentObject: Object, name:string): boolean {
+    isBuildStagePlainHTML(componentObject: Object, name: string): boolean {
 
         if (componentObject.views) {
             if (typeof componentObject.views[name] === "function") {
@@ -201,33 +201,33 @@ export class dom {
 
         if (!this.isPlainComponentObject(componentObject)) {
             // is sharedComponent don't create just return
-            if(!$el.firstChild){
+            if (!$el.firstChild) {
                 $el.appendChild(componentObject.dom.$el);
-            }else{
-                $el.innerHTML = "";     
+            } else {
+                $el.innerHTML = "";
             }
-            
+
             return componentObject;
         }
 
         let s: store = this.store.dataH.store[name];
-        if(!s) {
+        if (!s) {
             try {
                 s = componentObject?.data?.call(this.store.dataH, function (data) {
                     console.log(`Fetched data from Store ${name} loading from component`, data);
-                }); 
+                });
             } catch (e) {
                 s = this.store.dataH.store[name];
-                console.log(e);  
+                console.log(e);
             }
-        } 
+        }
 
-        if(!s.addValidations){
+        if (!s.addValidations) {
             s = this.store.dataH.store[name];
         }
-    
+
         this.translation.addTranslation(typeof componentObject.translations === "function" ? componentObject.translations.call() : componentObject.translations);
-        
+
         s.addValidations(componentObject.validations);
 
         let storesObject = this.store.dataH?.store.toObject();
@@ -235,9 +235,9 @@ export class dom {
         let args = this.store.dataH?.store.keys();
 
         if (this.isBuildStagePlainHTML(componentObject, name)) {
-            if (componentObject.html) { 
+            if (componentObject.html) {
                 $el.innerHTML = componentObject.html.trim();
-            } 
+            }
         } else {
             //render from prebuilt Templates
             $el.innerHTML = (componentObject.views[name].call(componentObject, { change: { value: "" }, ...storesObject, _t: this._t, env: this.store?.dataH.environment }) + "").trim();
@@ -258,17 +258,17 @@ export class dom {
 
         ddom.name = name;
 
-        $el.setAttribute("data-name", name); 
+        $el.setAttribute("data-name", name);
 
         console.log("CREATE COMPONENT:", name, s, componentObject.views, componentObject);
 
-        let iactions : actions;
-        try{
+        let iactions: actions;
+        try {
             iactions = componentObject?.interactions?.call({ componentObject, dom: ddom });
-        }catch(e){
+        } catch (e) {
             console.log(e);
             iactions = {};
-        } 
+        }
 
         let newcomponent = new component(ddom, iactions);
 
@@ -287,6 +287,37 @@ export class dom {
         return newcomponent;
     }
 
+    private addValidators($el: Element) {
+
+        if ($el.hasAttribute("data-validations") && $el.hasAttribute("data-name")) {
+
+            let fieldPath: string = $el.getAttribute("data-name");
+
+            let validators = $el.getAttribute("data-validations").split(",");
+
+            let metaManager = this.store.getMetaState();
+            let meta = metaManager.getMeta(fieldPath);
+            let validations = this.store.getValidations();
+
+            for (let i of validators) {
+                if (typeof validations[i] === "function") {
+                    meta.validators[i] = validations[i];
+                } else {
+
+                    console.error({
+                        name: "ValidationException",
+                        message: `Validator named "${i}" was not loaded for DataStore "${this.store.name}" `,
+                        toString: function () {
+                            return this.name + ": " + this.message;
+                        }
+                    });
+                    
+                }
+            }
+            metaManager.setMeta(fieldPath, meta);
+        }
+    }
+
 
     /**
      * 
@@ -295,6 +326,8 @@ export class dom {
      */
     private createElement($el: Element, currentIndex: number): kelement {
         let fieldTypeName: string = this.mapField(<string>$el.tagName.toLowerCase(), $el);
+
+        this.addValidators($el);
 
         return this.elementTypes[fieldTypeName].prototype === "component" ?
             this.createComponent(fieldTypeName.split("-")[0], $el, this.elementTypes[fieldTypeName]) :

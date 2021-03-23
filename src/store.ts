@@ -121,7 +121,7 @@ export class store {
      * @returns 
      */
     validateAllFields(): { [index: string]: state } {
-        return this.validateFields(Object.keys(this._meta.getStates()));
+        return this.validateFields(Object.keys(this.getMetaState().getStates()));
     }
 
     /**
@@ -130,10 +130,12 @@ export class store {
      * @returns 
      */
     validateFields(fields: string[] = []): { [index: string]: state } {
+        let states : { [index: string]: state } = [];
         for (let i in fields) {
-            this.validateField(fields[i], typeof this.accessByPath(fields[i]) !== "undefined" ? this.accessByPath(fields[i]) : "")
+            let val = typeof this.accessByPath(fields[i]) !== "undefined" ? this.accessByPath(fields[i]) : "";
+            states[fields[i]] = this.validateField(fields[i], val);
         }
-        return this._meta.getStates();
+        return states;
     }
 
     /**
@@ -143,7 +145,7 @@ export class store {
      * @returns 
      */
     validateField(fieldPath: string, value: any): state {
-        let metaData: _metaData = this._meta.getMeta(fieldPath);
+        let metaData: _metaData = this.getMetaState().getMeta(fieldPath);
         let stateData: state = { isValid: true, msg: [] };
 
         if (metaData?.validators) {
@@ -232,10 +234,7 @@ export class store {
                 }
 
             };
-            //create meta here and set prefix path
-
-            this._meta = new meta(this.events);
-
+            
             return new Proxy(data, handler);
         }
 
@@ -246,6 +245,9 @@ export class store {
             data = {};
         }
 
+        //create meta here and set prefix path
+        
+        this._meta = new meta(this.events);
         //  if(typeof this.dataH.pxy[`$${component}`] === "undefined"){
         this.dataH.pxy[`$${component}`] = this._data = createProxy(data); //fjp.default.deepClone(data);
         // }else{

@@ -225,6 +225,30 @@ export class dom {
         }
         return newcomponent;
     }
+    addValidators($el) {
+        if ($el.hasAttribute("data-validations") && $el.hasAttribute("data-name")) {
+            let fieldPath = $el.getAttribute("data-name");
+            let validators = $el.getAttribute("data-validations").split(",");
+            let metaManager = this.store.getMetaState();
+            let meta = metaManager.getMeta(fieldPath);
+            let validations = this.store.getValidations();
+            for (let i of validators) {
+                if (typeof validations[i] === "function") {
+                    meta.validators[i] = validations[i];
+                }
+                else {
+                    console.error({
+                        name: "ValidationException",
+                        message: `Validator named "${i}" was not loaded for DataStore "${this.store.name}" `,
+                        toString: function () {
+                            return this.name + ": " + this.message;
+                        }
+                    });
+                }
+            }
+            metaManager.setMeta(fieldPath, meta);
+        }
+    }
     /**
      *
      * @param $el
@@ -232,6 +256,7 @@ export class dom {
      */
     createElement($el, currentIndex) {
         let fieldTypeName = this.mapField($el.tagName.toLowerCase(), $el);
+        this.addValidators($el);
         return this.elementTypes[fieldTypeName].prototype === "component" ?
             this.createComponent(fieldTypeName.split("-")[0], $el, this.elementTypes[fieldTypeName]) :
             new this.elementTypes[fieldTypeName]($el, this._area, currentIndex, this, this.views, this._t);

@@ -77,7 +77,7 @@ export class store {
      * @returns
      */
     validateAllFields() {
-        return this.validateFields(Object.keys(this._meta.getStates()));
+        return this.validateFields(Object.keys(this.getMetaState().getStates()));
     }
     /**
      *
@@ -85,10 +85,12 @@ export class store {
      * @returns
      */
     validateFields(fields = []) {
+        let states = [];
         for (let i in fields) {
-            this.validateField(fields[i], typeof this.accessByPath(fields[i]) !== "undefined" ? this.accessByPath(fields[i]) : "");
+            let val = typeof this.accessByPath(fields[i]) !== "undefined" ? this.accessByPath(fields[i]) : "";
+            states[fields[i]] = this.validateField(fields[i], val);
         }
-        return this._meta.getStates();
+        return states;
     }
     /**
      *
@@ -97,7 +99,7 @@ export class store {
      * @returns
      */
     validateField(fieldPath, value) {
-        let metaData = this._meta.getMeta(fieldPath);
+        let metaData = this.getMetaState().getMeta(fieldPath);
         let stateData = { isValid: true, msg: [] };
         if (metaData === null || metaData === void 0 ? void 0 : metaData.validators) {
             for (let v in metaData.validators) {
@@ -171,14 +173,14 @@ export class store {
                     return oTarget;
                 }
             };
-            //create meta here and set prefix path
-            this._meta = new meta(this.events);
             return new Proxy(data, handler);
         };
         if (typeof data !== "object") {
             console.log("store data is not an object", typeof data, data);
             data = {};
         }
+        //create meta here and set prefix path
+        this._meta = new meta(this.events);
         //  if(typeof this.dataH.pxy[`$${component}`] === "undefined"){
         this.dataH.pxy[`$${component}`] = this._data = createProxy(data); //fjp.default.deepClone(data);
         // }else{
