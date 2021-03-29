@@ -44,12 +44,12 @@ export class kelement {
                 if (this.$el.innerHTML.trim() !== "") {
                     
                     let stores = this.dom.store?.dataH?.store.keys();
-
+                    let FNC_STRING: string = '(function (args) { let {change, ' + stores + ', _t, env} = args; return `' + this.$el.innerHTML?.trim() + '`})';
                     try { 
-                        this.setTemplate(eval('(function (args) { let {change, ' + stores + ', _t, env} = args; return `' + this.$el.innerHTML?.trim() + '`})'));
+                        this.setTemplate(eval(FNC_STRING));
  
                     } catch (e) {
-                        console.log("ERRORXX", e);
+                        console.log("ERRORXX", e, FNC_STRING);
                     }
 
                 }

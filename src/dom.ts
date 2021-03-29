@@ -464,12 +464,15 @@ export class dom {
 
         let element: NodeListOf<Element> = this._area.querySelectorAll(this._identifier) as NodeListOf<Element>;
 
-        try {
-            element.forEach(($el: Element, currentIndex: number) => this._load($el, currentIndex));
-        } catch (e) {
-            console.log(e);
-        }
-
+      
+        element.forEach(($el: Element, currentIndex: number) => {
+            try {
+                this._load($el, currentIndex);
+            } catch (e) {
+                console.log(e);
+            }
+        });
+      
     }
 
     _removeElement(el: kelement) {

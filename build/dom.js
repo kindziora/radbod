@@ -362,12 +362,14 @@ export class dom {
     }
     loadElements() {
         let element = this._area.querySelectorAll(this._identifier);
-        try {
-            element.forEach(($el, currentIndex) => this._load($el, currentIndex));
-        }
-        catch (e) {
-            console.log(e);
-        }
+        element.forEach(($el, currentIndex) => {
+            try {
+                this._load($el, currentIndex);
+            }
+            catch (e) {
+                console.log(e);
+            }
+        });
     }
     _removeElement(el) {
         delete this.element[el.id];

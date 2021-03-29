@@ -31,11 +31,12 @@ export class kelement {
             if (!(views === null || views === void 0 ? void 0 : views[this.id])) {
                 if (this.$el.innerHTML.trim() !== "") {
                     let stores = (_b = (_a = this.dom.store) === null || _a === void 0 ? void 0 : _a.dataH) === null || _b === void 0 ? void 0 : _b.store.keys();
+                    let FNC_STRING = '(function (args) { let {change, ' + stores + ', _t, env} = args; return `' + ((_c = this.$el.innerHTML) === null || _c === void 0 ? void 0 : _c.trim()) + '`})';
                     try {
-                        this.setTemplate(eval('(function (args) { let {change, ' + stores + ', _t, env} = args; return `' + ((_c = this.$el.innerHTML) === null || _c === void 0 ? void 0 : _c.trim()) + '`})'));
+                        this.setTemplate(eval(FNC_STRING));
                     }
                     catch (e) {
-                        console.log("ERRORXX", e);
+                        console.log("ERRORXX", e, FNC_STRING);
                     }
                 }
             }
