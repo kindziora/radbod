@@ -137,20 +137,7 @@ export class store {
         }
         return states;
     }
-
-    /**
-     * 
-     * @param fields 
-     * @returns 
-     */
-     validateFieldsByVal(fields: {} = {}): { [index: string]: state } {
-        let states : { [index: string]: state } = {};
-        for (let i in fields) { 
-            states[fields[i]] = this.validateField(fields[i].name, val.value);
-        }
-        return states;
-    }
-
+    
     /**
      * 
      * @param fieldPath 

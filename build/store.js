@@ -94,18 +94,6 @@ export class store {
     }
     /**
      *
-     * @param fields
-     * @returns
-     */
-    validateFieldsByVal(fields = {}) {
-        let states = {};
-        for (let i in fields) {
-            states[fields[i]] = this.validateField(fields[i].name, val.value);
-        }
-        return states;
-    }
-    /**
-     *
      * @param fieldPath
      * @param value
      * @returns
