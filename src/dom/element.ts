@@ -68,6 +68,12 @@ export class kelement {
         return this.$el.value;
     }
 
+    public validate(){
+        if(this.$el.hasAttribute('data-name')){
+            return this.dom.store.validateField(this.getName(), this.getValue());
+        }
+    }
+
     public getName() {
         return this.$el.getAttribute('data-name');
     }

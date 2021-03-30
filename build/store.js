@@ -94,6 +94,18 @@ export class store {
     }
     /**
      *
+     * @param fields
+     * @returns
+     */
+    validateFieldsByVal(fields = {}) {
+        let states = {};
+        for (let i in fields) {
+            states[fields[i]] = this.validateField(fields[i].name, val.value);
+        }
+        return states;
+    }
+    /**
+     *
      * @param fieldPath
      * @param value
      * @returns
@@ -142,9 +154,16 @@ export class store {
                      * @todo set value and use this.pxy[px] for $ connected values
                      */
                     let result = this.validateField(diff.path, vValue);
-                    if (oTarget[sKey] !== vValue) {
+                    if (typeof vValue === 'object') {
+                        if (diff.path.charAt(0) === "$") { //reference
+                            diff.path = sKey;
+                        }
+                    }
+                    if (oTarget[sKey] !== vValue || (typeof vValue === 'object' && this.dataH.pxy[diff.path] !== vValue)) {
                         if (result.isValid) {
                             oTarget[sKey] = vValue;
+                            if (typeof vValue === 'object')
+                                this.dataH.pxy[diff.path] = vValue;
                             let tmpChain = this.changeStore(component, diff);
                         }
                         else {
