@@ -151,7 +151,7 @@ export class store {
                     let op = typeof oTarget[sKey] === "undefined" ? "add" : "replace";
                     let diff = { op, path: parentPath + "/" + sKey, value: vValue };
                     /**
-                     * @todo set value and use this.pxy[px] for $ connected values
+                     * @todo TESTSTAGE set value and use this.pxy[px] for $ connected values
                      */
                     let result = this.validateField(diff.path, vValue);
                     if (typeof vValue === 'object') {
