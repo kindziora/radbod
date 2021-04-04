@@ -53,6 +53,9 @@ export class app {
             if (typeof componentObject.components[name] === "string") {
                 let nameID = componentObject.components[name].split("#").length > 0 ? componentObject.components[name].split("#")[1] : componentObject.components[name];
                 componentObject.components[name] = this.components[nameID];
+                for (let i in this.sharedComponents) {
+                    componentObject.components[i] = this.sharedComponents[i];
+                }
             }
         }
         let ddom = new dom(el, componentObject.components, data, componentObject === null || componentObject === void 0 ? void 0 : componentObject.views, this.dataH.internationalize);
@@ -93,8 +96,16 @@ export class app {
             if (component.data) {
                 let result;
                 result = component.data.call(this.dataH, callback(meta, this.dataH), {});
-                if (!result || typeof result.then !== "function") {
+                if (!result || typeof result.then !== "function" || (result instanceof store)) {
                     callback(meta, this.dataH)(result);
+                }
+                else {
+                    if (result && typeof result.then === "function") {
+                        let dataH = this.dataH;
+                        result.then(function (data) {
+                            callback(meta, dataH)(data);
+                        });
+                    }
                 }
                 for (let i in component.components) {
                     this.fetchData(component.components[i], cb, allready, total, meta);
@@ -114,7 +125,7 @@ export class app {
         let met = { cnt: 0, loaded: [] };
         this.fetchData(componentObject, (data, component) => {
             var _a;
-            console.log("fetchData: ", data.name, data);
+            console.log("fetchData: ", component, data, componentObject);
             component.environment = this.environment;
             (_a = component === null || component === void 0 ? void 0 : component.loaded) === null || _a === void 0 ? void 0 : _a.call(component, data);
         }, cb, count, met, this.dataH);

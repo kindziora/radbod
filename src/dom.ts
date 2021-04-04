@@ -246,12 +246,17 @@ export class dom {
         for (let name in componentObject.components) {
             if (typeof componentObject.components[name] === "string") {
                 let nameID = componentObject.components[name].split("#").length > 0 ? componentObject.components[name].split("#")[1] : componentObject.components[name];
-                componentObject.components[name] = this.componentList[nameID];
+                
+                if(this.componentList[nameID]) {
+                    componentObject.components[name] = this.componentList[nameID];
+                } else{
+                    componentObject.components[name] = this.componentList[componentObject.components[name]];
+                }
             }
         }
 
-        let enrichedTypes = (componentObject?.components || {});//{ ...this.componentList, ...(componentObject?.components || {}) };
-
+        let enrichedTypes = (componentObject?.components || {}); //{ ...this.componentList, ...(componentObject?.components || {}) }; //
+ 
         console.log("enrichedTypes", enrichedTypes);
 
         let ddom = new dom($el, enrichedTypes, s, componentObject?.views, this.translation, this.counter);

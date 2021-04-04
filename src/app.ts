@@ -79,6 +79,10 @@ export class app {
             if (typeof componentObject.components[name] === "string") {
                 let nameID = componentObject.components[name].split("#").length > 0 ? componentObject.components[name].split("#")[1] : componentObject.components[name];
                 componentObject.components[name] = this.components[nameID];
+
+                for(let i in this.sharedComponents) {
+                    componentObject.components[i] = this.sharedComponents[i];
+                }
             }
         }
 
@@ -129,8 +133,16 @@ export class app {
                 let result;
 
                 result = component.data.call(this.dataH, callback(meta, this.dataH), {});
-                if (!result || typeof result.then !== "function") {
+                if (!result || typeof result.then !== "function" || (result instanceof store)) {
                     callback(meta, this.dataH)(result);
+                }else{
+                    if(result &&  typeof result.then === "function"){
+                        let dataH = this.dataH;
+                        result.then(function(data){ 
+                      
+                            callback(meta, dataH)(data);
+                        });
+                    }
                 }
 
                 for (let i in component.components) {
@@ -157,7 +169,9 @@ export class app {
         let met = { cnt: 0, loaded: [] };
 
         this.fetchData(componentObject, (data, component) => {
-            console.log("fetchData: ", data.name, data);
+            console.log("fetchData: ", component, data, componentObject);
+           
+
             component.environment = this.environment;
             component?.loaded?.call(component, data);
         }, cb, count, met, this.dataH);

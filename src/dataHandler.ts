@@ -20,11 +20,14 @@ export class dataHandler {
     private events: eventHandler;
     public pxy: { [index: string]: ProxyConstructor } = {};
     public environment: Object;
+    private _storage: Object;
 
     constructor(eventH: eventHandler, environment: Object) {
         this.events = eventH;
         this.environment = environment;
         this.internationalize = new i18n();
+       
+        this.setDb(this?.environment?.data_loader);
 
         this.store.toObject = () => {
             let arr = {};
@@ -59,6 +62,14 @@ export class dataHandler {
         this.middlewareHandler.addMiddleware("preView");
     }
 
+    db() {
+        return this._storage;
+    }
+
+    setDb(db: object) {
+        return this._storage = db;
+    }
+
     /**
      * 
      * @param component 
@@ -68,10 +79,11 @@ export class dataHandler {
 
         if (this.store[component] && data instanceof store) {
             this.store[component] = data;
+            this.store[component].setDb(this?.db());
             return this.store[component];
         } else {
             this.store[component] = new store(this.events, this, component, data);
-            this.store[component].setDb(this?.environment?.data_loader);
+            this.store[component].setDb(this?.db());
             return this.store[component];
         }
 

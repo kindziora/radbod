@@ -50,6 +50,7 @@ export class meta {
 }
 export class store {
     constructor(eventH, dataH, component, data) {
+        var _a;
         this._data = {};
         this.patchQueue = [];
         this._validations = {};
@@ -58,6 +59,7 @@ export class store {
         this.component = component;
         this.name = component;
         this.createStore(component, data);
+        this.setDb((_a = this.dataH) === null || _a === void 0 ? void 0 : _a.environment);
     }
     unmaskComponentName(component, char = "$") {
         return component.charAt(0) === char ? component.substr(1) : component;
@@ -224,7 +226,15 @@ export class store {
         return this._storage;
     }
     setDb(db) {
-        return this._storage = db;
+        this._storage = new Proxy(db, {
+            get: (target, name) => {
+                if (target[name] && typeof target[name] === "function") {
+                    console.log(target[name].toString());
+                    return () => target[name].call(...arguments, this);
+                }
+            }
+        });
+        return this;
     }
     setValidations(validations) {
         this._validations = validations;
@@ -238,18 +248,4 @@ export class store {
     getValidations() {
         return this._validations;
     }
-    load(selector, cb) {
-        if (this.db()) {
-            return new Promise((resolve, reject) => this.db().find(selector, (data) => {
-                if (typeof data === "object")
-                    this.createStore(this.name, data);
-                resolve(data);
-                cb.call(this.dataH, data);
-            }));
-        }
-        else {
-            return this.data;
-        }
-    }
 }
-store.prototype.find = store.prototype.load;

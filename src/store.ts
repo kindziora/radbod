@@ -96,6 +96,7 @@ export class store {
         this.component = component;
         this.name = component;
         this.createStore(component, data);
+        this.setDb(this.dataH?.environment);
     }
 
     unmaskComponentName(component: string, char: string = "$") {
@@ -295,12 +296,24 @@ export class store {
         return this._data;
     }
 
-    db() {
+    db() {  
         return this._storage;
     }
 
-    setDb(db: object) {
-        return this._storage = db;
+    setDb(db: object) { 
+ 
+        this._storage = new Proxy(db, {
+          get:(target, name) => {
+            if(target[name] && typeof target[name] ==="function") {
+                console.log( target[name].toString());
+                return () => target[name].call(...arguments, this);
+            }
+            
+          }
+        });
+
+        
+        return this;
     }
 
     setValidations(validations: { [index: string]: Object }) {
@@ -320,26 +333,5 @@ export class store {
     getValidations() {
         return this._validations;
     }
-
-    load(selector: Object, cb: Function) {
-        if (this.db()) {
-            return new Promise((resolve, reject) => this.db().find(selector, (data) => {
-
-                if (typeof data === "object")
-                    this.createStore(this.name, data);
-
-                resolve(data);
-                cb.call(this.dataH, data);
-
-            }));
-        } else {
-            return this.data;
-        }
-    }
-
+  
 }
-export interface store {
-    find: typeof store.prototype.load;
-}
-
-store.prototype.find = store.prototype.load;
