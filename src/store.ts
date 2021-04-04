@@ -305,9 +305,19 @@ export class store {
         this._storage = new Proxy(db, {
           get:(target, name) => {
             if(target[name] && typeof target[name] ==="function") {
-                console.log( target[name].toString());
-                return () => target[name].call(...arguments, this);
+ 
+                 return new Proxy(target[name], {
+                    apply: (targetFnc, thisArg, argumentsList) =>{
+                     
+                      return targetFnc.apply(thisArg, [...argumentsList,this]);
+                    }
+                  });
+
+
+                // return () => target[name].call(...arguments, this);
             }
+
+           return target[name];
             
           }
         });
