@@ -31,7 +31,7 @@
   "homepage": "https://github.com/kindziora/kjs#readme",
   "devDependencies": {
     "systemjs": "^6.1.7",
-    "typescript": "^3.7.4",
+    "typescript": "^3.9.9",
     "webpack": "^4.41.5",
     "webpack-cli": "^3.3.10",
     "yandex-translate-async": "^1.1.2"
