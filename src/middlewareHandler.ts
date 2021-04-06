@@ -77,7 +77,7 @@ export class middlewareHandler {
     }
     async run(type: string, args: any) {
         try {
-            this.setValue(type, await this.middleware[type].run.apply(this.environment, args);
+            this.setValue(type, await this.middleware[type].run.apply(this.environment, args));
             return this.getValue(type);
         } catch (err) {
             console.log('err', err.toString())
