@@ -51,14 +51,13 @@ export class app {
     getLanguage(languageCode: String): string {
        return this.dataH.internationalize.getLanguage();
     }
-    /** 
-    * 
-    * @param name 
-    * @param html 
-    * @param data 
-    * @param actions 
-    * @param injections 
-    */
+    /**
+     * 
+     * @param name 
+     * @param data 
+     * @param componentObject  
+     * @returns 
+     */
     createComponent(name: string, data: Object | store, componentObject: object) {
 
         let componentID: string = name.split("#").length > 1 ? name.split("#")[1] : name;
@@ -78,11 +77,13 @@ export class app {
         for (let name in componentObject.components) {
             if (typeof componentObject.components[name] === "string") {
                 let nameID = componentObject.components[name].split("#").length > 0 ? componentObject.components[name].split("#")[1] : componentObject.components[name];
+                
                 componentObject.components[name] = this.components[nameID];
 
-                for(let i in this.sharedComponents) {
+                for(let i in this.sharedComponents) { 
                     componentObject.components[i] = this.sharedComponents[i];
                 }
+
             }
         }
 

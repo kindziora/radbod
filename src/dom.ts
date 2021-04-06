@@ -236,11 +236,19 @@ export class dom {
 
         if (this.isBuildStagePlainHTML(componentObject, name)) {
             if (componentObject.html) {
-                $el.innerHTML = componentObject.html.trim();
+                if(this.store.dataH.buildMode && componentObject.SSR === false) {
+                    $el.innerHTML = "loading";
+                }else{
+                    $el.innerHTML = componentObject.html.trim();
+                }
             }
         } else {
             //render from prebuilt Templates
-            $el.innerHTML = (componentObject.views[name].call(componentObject, { change: { value: "" }, ...storesObject, _t: this._t, env: this.store?.dataH.environment }) + "").trim();
+            if(this.store.dataH.buildMode && componentObject.SSR ===false) {
+                $el.innerHTML = "loading";
+            }else{
+                $el.innerHTML = (componentObject.views[name].call(componentObject, { change: { value: "" }, ...storesObject, _t: this._t, env: this.store?.dataH.environment }) + "").trim();
+            }
         }
 
         for (let name in componentObject.components) {

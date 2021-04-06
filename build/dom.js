@@ -184,12 +184,22 @@ export class dom {
         let args = (_c = this.store.dataH) === null || _c === void 0 ? void 0 : _c.store.keys();
         if (this.isBuildStagePlainHTML(componentObject, name)) {
             if (componentObject.html) {
-                $el.innerHTML = componentObject.html.trim();
+                if (this.store.dataH.buildMode && componentObject.SSR === false) {
+                    $el.innerHTML = "loading";
+                }
+                else {
+                    $el.innerHTML = componentObject.html.trim();
+                }
             }
         }
         else {
             //render from prebuilt Templates
-            $el.innerHTML = (componentObject.views[name].call(componentObject, Object.assign(Object.assign({ change: { value: "" } }, storesObject), { _t: this._t, env: (_d = this.store) === null || _d === void 0 ? void 0 : _d.dataH.environment })) + "").trim();
+            if (this.store.dataH.buildMode && componentObject.SSR === false) {
+                $el.innerHTML = "loading";
+            }
+            else {
+                $el.innerHTML = (componentObject.views[name].call(componentObject, Object.assign(Object.assign({ change: { value: "" } }, storesObject), { _t: this._t, env: (_d = this.store) === null || _d === void 0 ? void 0 : _d.dataH.environment })) + "").trim();
+            }
         }
         for (let name in componentObject.components) {
             if (typeof componentObject.components[name] === "string") {

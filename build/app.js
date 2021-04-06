@@ -32,13 +32,12 @@ export class app {
         return this.dataH.internationalize.getLanguage();
     }
     /**
-    *
-    * @param name
-    * @param html
-    * @param data
-    * @param actions
-    * @param injections
-    */
+     *
+     * @param name
+     * @param data
+     * @param componentObject
+     * @returns
+     */
     createComponent(name, data, componentObject) {
         let componentID = name.split("#").length > 1 ? name.split("#")[1] : name;
         name = name.split("#").length > 1 ? name.split("#")[0] : name;
