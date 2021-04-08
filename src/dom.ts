@@ -197,7 +197,7 @@ export class dom {
      * @param $el 
      * @param fieldTypeName 
      */
-    createComponent(name: string, $el: Element, componentObject: Object) {
+    createComponent(name: string, $el: Element, componentObject: Object, fromAppContext:boolean = false) {
 
         if (!this.isPlainComponentObject(componentObject)) {
             // is sharedComponent don't create just return
@@ -236,19 +236,17 @@ export class dom {
 
         if (this.isBuildStagePlainHTML(componentObject, name)) {
             if (componentObject.html) {
-                if(this.store.dataH.buildMode && componentObject.SSR === false) {
-                    $el.innerHTML = "loading";
+                if(this.store.dataH.buildMode && componentObject.SSR === false && fromAppContext) {
+                    $el.innerHTML = "";
                 }else{
                     $el.innerHTML = componentObject.html.trim();
                 }
             }
         } else {
             //render from prebuilt Templates
-            if(this.store.dataH.buildMode && componentObject.SSR ===false) {
-                $el.innerHTML = "loading";
-            }else{
+        
                 $el.innerHTML = (componentObject.views[name].call(componentObject, { change: { value: "" }, ...storesObject, _t: this._t, env: this.store?.dataH.environment }) + "").trim();
-            }
+            
         }
 
         for (let name in componentObject.components) {

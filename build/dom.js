@@ -151,7 +151,7 @@ export class dom {
      * @param $el
      * @param fieldTypeName
      */
-    createComponent(name, $el, componentObject) {
+    createComponent(name, $el, componentObject, fromAppContext = false) {
         var _a, _b, _c, _d, _e, _f;
         if (!this.isPlainComponentObject(componentObject)) {
             // is sharedComponent don't create just return
@@ -184,8 +184,8 @@ export class dom {
         let args = (_c = this.store.dataH) === null || _c === void 0 ? void 0 : _c.store.keys();
         if (this.isBuildStagePlainHTML(componentObject, name)) {
             if (componentObject.html) {
-                if (this.store.dataH.buildMode && componentObject.SSR === false) {
-                    $el.innerHTML = "loading";
+                if (this.store.dataH.buildMode && componentObject.SSR === false && fromAppContext) {
+                    $el.innerHTML = "";
                 }
                 else {
                     $el.innerHTML = componentObject.html.trim();
@@ -194,12 +194,7 @@ export class dom {
         }
         else {
             //render from prebuilt Templates
-            if (this.store.dataH.buildMode && componentObject.SSR === false) {
-                $el.innerHTML = "loading";
-            }
-            else {
-                $el.innerHTML = (componentObject.views[name].call(componentObject, Object.assign(Object.assign({ change: { value: "" } }, storesObject), { _t: this._t, env: (_d = this.store) === null || _d === void 0 ? void 0 : _d.dataH.environment })) + "").trim();
-            }
+            $el.innerHTML = (componentObject.views[name].call(componentObject, Object.assign(Object.assign({ change: { value: "" } }, storesObject), { _t: this._t, env: (_d = this.store) === null || _d === void 0 ? void 0 : _d.dataH.environment })) + "").trim();
         }
         for (let name in componentObject.components) {
             if (typeof componentObject.components[name] === "string") {
