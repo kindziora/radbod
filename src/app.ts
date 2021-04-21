@@ -32,10 +32,10 @@ export class app {
      */
     mountComponent(name: string, componentObject: Object, callback: Function) {
 
-        console.log(`mount component: ${name}`, this.loadStores(componentObject, (stores, meta, data) => {
+        console.log(`mount component: ${name}`, this.loadStores(componentObject, (stores, meta, cmp, data) => {
 
             let compo = this.createComponent(name,
-                data,
+                stores.store[name],
                 componentObject
             );
 
@@ -59,7 +59,7 @@ export class app {
      * @returns 
      */
     createComponent(name: string, data: Object | store, componentObject: object) {
-
+     
         let componentID: string = name.split("#").length > 1 ? name.split("#")[1] : name;
         name = name.split("#").length > 1 ? name.split("#")[0] : name;
 
@@ -89,7 +89,7 @@ export class app {
 
         let ddom = new dom(el, componentObject.components, data, componentObject?.views, this.dataH.internationalize);
         ddom.name = name;
-
+        ddom.sharedComponents = this.sharedComponents;
         this.components[componentID] = ddom.createComponent(name, el, componentObject);
 
         return this.components[componentID];
@@ -120,7 +120,7 @@ export class app {
                 meta.cnt++;
                 meta.loaded.push(component);
                 if (meta.cnt >= total) {
-                    allready(dataH, meta, data);
+                    allready(dataH, meta, component, data);
                 }
             }
         };
@@ -171,7 +171,10 @@ export class app {
 
         this.fetchData(componentObject, (data, component) => {
             console.log("fetchData: ", component, data, componentObject);
-           
+            
+            if(!(data instanceof store)) {
+                this.dataH.createStore(component.path.split("/").pop().split(".")[0], data);
+            }
 
             component.environment = this.environment;
             component?.loaded?.call(component, data);

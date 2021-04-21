@@ -28,6 +28,8 @@ export class dom {
 
     public elementTypes: { [index: string]: any } = { listItem, input, text, radio, checkbox, range, file, button, list: elist, select, textarea, kelement };
 
+    public sharedComponents: { [index: string]: component } = {};
+
     public counter: number = 0;
     public id: string = "c-0";
 
@@ -199,6 +201,8 @@ export class dom {
      */
     createComponent(name: string, $el: Element, componentObject: Object, fromAppContext:boolean = false) {
 
+ 
+ 
         if (!this.isPlainComponentObject(componentObject)) {
             // is sharedComponent don't create just return
             if (!$el.firstChild) {
@@ -258,6 +262,11 @@ export class dom {
                 } else{
                     componentObject.components[name] = this.componentList[componentObject.components[name]];
                 }
+
+                for(let i in this.sharedComponents) { 
+                    componentObject.components[i] = this.sharedComponents[i];
+                }
+
             }
         }
 
@@ -266,7 +275,7 @@ export class dom {
         console.log("enrichedTypes", enrichedTypes);
 
         let ddom = new dom($el, enrichedTypes, s, componentObject?.views, this.translation, this.counter);
-
+        ddom.sharedComponents = this.sharedComponents;
         ddom.name = name;
 
         $el.setAttribute("data-name", name);

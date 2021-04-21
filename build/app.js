@@ -20,8 +20,8 @@ export class app {
      * @param callback
      */
     mountComponent(name, componentObject, callback) {
-        console.log(`mount component: ${name}`, this.loadStores(componentObject, (stores, meta, data) => {
-            let compo = this.createComponent(name, data, componentObject);
+        console.log(`mount component: ${name}`, this.loadStores(componentObject, (stores, meta, cmp, data) => {
+            let compo = this.createComponent(name, stores.store[name], componentObject);
             callback(stores, meta, compo);
         }));
     }
@@ -59,6 +59,7 @@ export class app {
         }
         let ddom = new dom(el, componentObject.components, data, componentObject === null || componentObject === void 0 ? void 0 : componentObject.views, this.dataH.internationalize);
         ddom.name = name;
+        ddom.sharedComponents = this.sharedComponents;
         this.components[componentID] = ddom.createComponent(name, el, componentObject);
         return this.components[componentID];
     }
@@ -82,7 +83,7 @@ export class app {
                 meta.cnt++;
                 meta.loaded.push(component);
                 if (meta.cnt >= total) {
-                    allready(dataH, meta, data);
+                    allready(dataH, meta, component, data);
                 }
             };
         };
@@ -125,6 +126,9 @@ export class app {
         this.fetchData(componentObject, (data, component) => {
             var _a;
             console.log("fetchData: ", component, data, componentObject);
+            if (!(data instanceof store)) {
+                this.dataH.createStore(component.path.split("/").pop().split(".")[0], data);
+            }
             component.environment = this.environment;
             (_a = component === null || component === void 0 ? void 0 : component.loaded) === null || _a === void 0 ? void 0 : _a.call(component, data);
         }, cb, count, met, this.dataH);

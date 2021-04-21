@@ -19,6 +19,7 @@ export class dom {
         this.element = {};
         this.elementByName = {};
         this.elementTypes = { listItem, input, text, radio, checkbox, range, file, button, list: elist, select, textarea, kelement };
+        this.sharedComponents = {};
         this.counter = 0;
         this.id = "c-0";
         this.name = "c-x";
@@ -205,11 +206,15 @@ export class dom {
                 else {
                     componentObject.components[name] = this.componentList[componentObject.components[name]];
                 }
+                for (let i in this.sharedComponents) {
+                    componentObject.components[i] = this.sharedComponents[i];
+                }
             }
         }
         let enrichedTypes = ((componentObject === null || componentObject === void 0 ? void 0 : componentObject.components) || {}); //{ ...this.componentList, ...(componentObject?.components || {}) }; //
         console.log("enrichedTypes", enrichedTypes);
         let ddom = new dom($el, enrichedTypes, s, componentObject === null || componentObject === void 0 ? void 0 : componentObject.views, this.translation, this.counter);
+        ddom.sharedComponents = this.sharedComponents;
         ddom.name = name;
         $el.setAttribute("data-name", name);
         console.log("CREATE COMPONENT:", name, s, componentObject.views, componentObject);
