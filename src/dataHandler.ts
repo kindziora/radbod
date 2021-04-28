@@ -78,15 +78,17 @@ export class dataHandler {
     createStore(component: string, data: store | object): store {
 
         if (this.store[component] && data instanceof store) {
-            this.store[component] = data;
-            this.store[component].setDb(this?.db());
-            return this.store[component];
+            //this.store[component] = data;
+            //this.store[component].setDb(this?.db());
+            console.log("try to recreate ",this.store[component], "WITH ", data, " use assign");
         } else {
+          
             this.store[component] = new store(this.events, this, component, data);
+            this.store[component].schema = JSON.stringify(data);
             this.store[component].setDb(this?.db());
-            return this.store[component];
+            
         }
-
+        return this.store[component];
     }
 
     /**

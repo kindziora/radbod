@@ -34,8 +34,9 @@ export class app {
 
         console.log(`mount component: ${name}`, this.loadStores(componentObject, (stores, meta, cmp, data) => {
 
+            let componentID: string = name.split("#").length > 1 ? name.split("#")[1] : name;
             let compo = this.createComponent(name,
-                stores.store[name],
+                stores.store[componentID],
                 componentObject
             );
 
@@ -173,7 +174,7 @@ export class app {
             console.log("fetchData: ", component, data, componentObject);
             
             if(!(data instanceof store)) {
-                this.dataH.createStore(component.path.split("/").pop().split(".")[0], data);
+            //    this.dataH.createStore(component.path.split("/").pop().split(".")[0], data);
             }
 
             component.environment = this.environment;

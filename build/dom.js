@@ -238,6 +238,7 @@ export class dom {
         if (typeof (componentObject === null || componentObject === void 0 ? void 0 : componentObject.mounted) === "function" && ((_f = componentObject === null || componentObject === void 0 ? void 0 : componentObject.views) === null || _f === void 0 ? void 0 : _f[name])) {
             componentObject === null || componentObject === void 0 ? void 0 : componentObject.mounted.call(newcomponent);
         }
+        newcomponent.plainObject = componentObject;
         return newcomponent;
     }
     addValidators($el) {

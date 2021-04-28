@@ -1,3 +1,4 @@
+import { store } from './store.js';
 export class component {
     /**
      *
@@ -102,7 +103,7 @@ export class component {
                 }
             }
         }
-        return false;
+        return true;
     }
     /**
      *
@@ -140,5 +141,27 @@ export class component {
     render(changes) {
         console.log("COMPONENT UPDATE ??? BECAUSE NO FIELD TO MATCH");
         return this.dom.render(changes);
+    }
+    /**
+     *
+     * @param cb
+     */
+    loadStores(cb) {
+        let result = this.plainObject.data.call(this.store.dataH);
+        console.log(result);
+        for (let i in this.plainObject.components) {
+            let s = this.plainObject.components[i];
+            if (s instanceof store) {
+                result = s.plainObject.data.call(this.store.dataH);
+            }
+            else {
+            }
+            console.log(result);
+            //is promise
+            if (typeof result.then !== "undefined") {
+            }
+            else {
+            }
+        }
     }
 }

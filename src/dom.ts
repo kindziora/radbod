@@ -200,8 +200,6 @@ export class dom {
      * @param fieldTypeName 
      */
     createComponent(name: string, $el: Element, componentObject: Object, fromAppContext:boolean = false) {
-
- 
  
         if (!this.isPlainComponentObject(componentObject)) {
             // is sharedComponent don't create just return
@@ -303,6 +301,8 @@ export class dom {
         if (typeof componentObject?.mounted === "function" && componentObject?.views?.[name]) {
             componentObject?.mounted.call(newcomponent);
         }
+
+        newcomponent.plainObject = componentObject;
 
         return newcomponent;
     }

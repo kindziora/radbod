@@ -150,6 +150,10 @@ export class store {
                         }
                     }
                     if (oTarget[sKey] !== vValue || (typeof vValue === 'object' && this.dataH.pxy[diff.path] !== vValue)) {
+                        if (typeof vValue === 'object') {
+                            if (JSON.stringify(oTarget[sKey]) === JSON.stringify(vValue))
+                                return true;
+                        }
                         if (result.isValid) {
                             oTarget[sKey] = vValue;
                             if (typeof vValue === 'object')

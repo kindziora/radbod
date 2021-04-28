@@ -21,7 +21,8 @@ export class app {
      */
     mountComponent(name, componentObject, callback) {
         console.log(`mount component: ${name}`, this.loadStores(componentObject, (stores, meta, cmp, data) => {
-            let compo = this.createComponent(name, stores.store[name], componentObject);
+            let componentID = name.split("#").length > 1 ? name.split("#")[1] : name;
+            let compo = this.createComponent(name, stores.store[componentID], componentObject);
             callback(stores, meta, compo);
         }));
     }
@@ -127,7 +128,7 @@ export class app {
             var _a;
             console.log("fetchData: ", component, data, componentObject);
             if (!(data instanceof store)) {
-                this.dataH.createStore(component.path.split("/").pop().split(".")[0], data);
+                //    this.dataH.createStore(component.path.split("/").pop().split(".")[0], data);
             }
             component.environment = this.environment;
             (_a = component === null || component === void 0 ? void 0 : component.loaded) === null || _a === void 0 ? void 0 : _a.call(component, data);

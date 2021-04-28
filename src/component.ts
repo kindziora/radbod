@@ -12,6 +12,8 @@ export class component {
     public id: String;
     public $el: HTMLElement;
 
+    public plainObject : {};
+
     /**
      * 
      * @param dom 
@@ -141,7 +143,7 @@ export class component {
                 }
             }
         }
-        return false;
+        return true;
     }
 
 
@@ -188,6 +190,35 @@ export class component {
        
         return this.dom.render(changes);
 
+    }
+ 
+    /**
+     * 
+     * @param cb 
+     */
+    public loadStores(cb: Function) {
+
+        let result = this.plainObject.data.call(this.store.dataH);
+        console.log(result);
+        for(let i in this.plainObject.components){
+            let s = this.plainObject.components[i];
+
+            if(s instanceof store) {
+                result = s.plainObject.data.call(this.store.dataH);
+            }else{
+
+            }
+             
+            console.log(result);
+
+            //is promise
+            if(typeof result.then !=="undefined") {
+                
+            }else{
+                 
+            }
+
+        }    
     }
 
 }

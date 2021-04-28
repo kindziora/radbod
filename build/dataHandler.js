@@ -51,15 +51,16 @@ export class dataHandler {
      */
     createStore(component, data) {
         if (this.store[component] && data instanceof store) {
-            this.store[component] = data;
-            this.store[component].setDb(this === null || this === void 0 ? void 0 : this.db());
-            return this.store[component];
+            //this.store[component] = data;
+            //this.store[component].setDb(this?.db());
+            console.log("try to recreate ", this.store[component], "WITH ", data, " use assign");
         }
         else {
             this.store[component] = new store(this.events, this, component, data);
+            this.store[component].schema = JSON.stringify(data);
             this.store[component].setDb(this === null || this === void 0 ? void 0 : this.db());
-            return this.store[component];
         }
+        return this.store[component];
     }
     /**
      *

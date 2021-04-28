@@ -29,7 +29,6 @@ export class meta {
         this.events = eventH;
     }
 
-
     getStates() {
         return this._state;
     }
@@ -85,6 +84,8 @@ export class store {
     public name: string;
     private patchQueue: Array<op> = [];
 
+    public schema: string;
+    
     private _validations: { [index: string]: Object } = {};
     private _meta: meta;
 
@@ -208,6 +209,11 @@ export class store {
                     }
 
                     if (oTarget[sKey] !== vValue || (typeof vValue === 'object' && this.dataH.pxy[diff.path] !== vValue)) {
+
+                        if(typeof vValue === 'object'){
+                            if (JSON.stringify(oTarget[sKey]) === JSON.stringify(vValue)) return true;
+                        }
+
                         if (result.isValid) {
                             oTarget[sKey] = vValue;
                             if(typeof vValue === 'object')
