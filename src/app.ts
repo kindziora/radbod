@@ -36,7 +36,7 @@ export class app {
 
             let componentID: string = name.split("#").length > 1 ? name.split("#")[1] : name;
             let compo = this.createComponent(name,
-                stores.store[componentID],
+                data || stores.store[componentID],
                 componentObject
             );
 

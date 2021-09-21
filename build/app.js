@@ -22,7 +22,7 @@ export class app {
     mountComponent(name, componentObject, callback) {
         console.log(`mount component: ${name}`, this.loadStores(componentObject, (stores, meta, cmp, data) => {
             let componentID = name.split("#").length > 1 ? name.split("#")[1] : name;
-            let compo = this.createComponent(name, stores.store[componentID], componentObject);
+            let compo = this.createComponent(name, data || stores.store[componentID], componentObject);
             callback(stores, meta, compo);
         }));
     }
