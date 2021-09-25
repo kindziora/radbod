@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kindziora/kjs.git"
+    "url": "git+https://github.com/kindziora/radbod.git"
   },
   "keywords": [
     "next",
@@ -26,9 +26,9 @@
   "author": "alexander kindziora",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/kindziora/kjs/issues"
+    "url": "https://github.com/kindziora/radbod/issues"
   },
-  "homepage": "https://github.com/kindziora/kjs#readme",
+  "homepage": "https://github.com/kindziora/radbod#readme",
   "devDependencies": {
     "systemjs": "^6.1.7",
     "typescript": "^3.9.9",
