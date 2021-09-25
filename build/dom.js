@@ -66,10 +66,15 @@ export class dom {
      */
     addTypes(types) {
         for (let i in types) {
-            if (typeof this.elementTypes[i] === "undefined") {
-                types[i].prototype = "component";
-                this.elementTypes[i] = types[i];
-                this.componentList[i] = types[i];
+            try {
+                if (typeof this.elementTypes[i] === "undefined") {
+                    types[i].prototype = "component";
+                    this.elementTypes[i] = types[i];
+                    this.componentList[i] = types[i];
+                }
+            }
+            catch (e) {
+                console.error("addTypes error Element:", i, e);
             }
         }
     }
