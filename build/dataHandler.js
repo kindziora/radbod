@@ -2,14 +2,30 @@ import { store } from './store.js';
 import { middlewareHandler } from './middlewareHandler.js';
 import { i18n } from './i18n.js';
 export class dataHandler {
-    constructor(eventH, environment) {
-        var _a;
+    constructor(eventH, environment = {}) {
+        var _a, _b;
         this.store = {};
         this.pxy = {};
+        this._storage = {
+            data_loader: {
+                find(query, onResultCallback) {
+                    setTimeout(() => onResultCallback.call({ dataH: {} }, {
+                        name: "name",
+                        tab: "all",
+                        items: [{
+                                id: 0,
+                                label: "Testdaten1",
+                                checked: true
+                            }]
+                    }), 110);
+                }
+            }
+        };
         this.events = eventH;
         this.environment = environment;
         this.internationalize = new i18n();
-        this.setDb((_a = this === null || this === void 0 ? void 0 : this.environment) === null || _a === void 0 ? void 0 : _a.data_loader);
+        if ((_a = this === null || this === void 0 ? void 0 : this.environment) === null || _a === void 0 ? void 0 : _a.data_loader)
+            this.setDb((_b = this === null || this === void 0 ? void 0 : this.environment) === null || _b === void 0 ? void 0 : _b.data_loader);
         this.store.toObject = () => {
             let arr = {};
             for (let i in this.store) {
