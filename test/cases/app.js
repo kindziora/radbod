@@ -7,21 +7,11 @@ let x = new app();
 
 
 //generate view templates for all data-name fields by innerHTML and make them render functions
+ 
 
 let card =
     x.createComponent(
-        "card", {
-        card : (card) => `<section> 
-<h2>Contact information ${card.src}</h2>
-<div data-name="/$card/src" data-view="imgContainer"></div>
-<div data-name="/$card/alignment">
-    <ul>
-    ${card.alignment.map((e,i)=>`<li data-name="/$card/alignment/${i}">${e}</li>`)}
-    </ul>
-</div>
-</section>`,
-imgContainer : (change) => `<b>${change.value}</b>`
-},
+        "card",
         {
             "src": "Images/Sun.png",
             "hOffset": 250,
@@ -29,15 +19,29 @@ imgContainer : (change) => `<b>${change.value}</b>`
             "alignment": ["center", "left", "right"]
         },
         {
-            "/$user/username": {
-                "click#ersterUsername"(sender, dataStore) { //address specific element in dom
-                    console.log('CLICK', sender.field.getValue());
-                    dataStore.username = sender.field.getValue() + "sd";
-                }
-            }
-        }, {
+            views: ()=> ({
+                card: (card) => `<section> 
+                    <h2>Contact information ${card.src}</h2>
+                    <div data-name="/$card/src" data-view="imgContainer"></div>
+                    <div data-name="/$card/alignment">
+                        <ul>
+                        ${card.alignment.map((e, i) => `<li data-name="/$card/alignment/${i}">${e}</li>`)}
+                        </ul>
+                    </div>
+                    </section>`,
+                imgContainer: (change) => `<b>${change.value}</b>`
 
-    });
+            }),
+            interactions: () => ({
+                "/$user/username": {
+                    "click#ersterUsername"(sender, dataStore) { //address specific element in dom
+                        console.log('CLICK', sender.field.getValue());
+                        dataStore.username = sender.field.getValue() + "sd";
+                    }
+                }
+            })
+        }
+    );
 
 card.store.data.src = "xxxxx";
 

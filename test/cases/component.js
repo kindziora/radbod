@@ -63,7 +63,7 @@ let actions = {
 
 let userStore = dataH.createStore("user", user);
 let testDom = (new testDomHandler()).domHandler;
-let myComponent = new component(testDom, userStore, actions);
+let myComponent = new component(testDom, actions);
 let elements = testDom.getBestMatchingElements("/$user/userdata/username");
 
 console.log("value", elements[0].$el.value);
