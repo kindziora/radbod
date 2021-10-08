@@ -40,8 +40,11 @@ let card =
     );
 
 //card.store.data.src = "xxxxx";
+myAppX.mountComponent("card", card, (stores, data, component) => {
 
-console.log(card.dom._area);
+    console.log("READY",stores, data, component);
+
+});
 
 /**
 let user =
