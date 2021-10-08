@@ -3,23 +3,19 @@ browserEnv();
 
 import { app } from '../../build/app.js';
 
-let x = new app();
-
-
-//generate view templates for all data-name fields by innerHTML and make them render functions
- 
+let myAppX = new app();
 
 let card =
-    x.createComponent(
-        "card",
-        {
+    myAppX.createComponent(
+        "card", //NAME
+        { //DATA
             "src": "Images/Sun.png",
             "hOffset": 250,
             "vOffset": 250,
             "alignment": ["center", "left", "right"]
         },
-        {
-            views: ()=> ({
+        { //JS LOGIC
+            views: () => ({ //VIEWS
                 card: (card) => `<section> 
                     <h2>Contact information ${card.src}</h2>
                     <div data-name="/$card/src" data-view="imgContainer"></div>
@@ -32,7 +28,7 @@ let card =
                 imgContainer: (change) => `<b>${change.value}</b>`
 
             }),
-            interactions: () => ({
+            interactions: () => ({ // UI INTERACTIONS & EVENTS
                 "/$user/username": {
                     "click#ersterUsername"(sender, dataStore) { //address specific element in dom
                         console.log('CLICK', sender.field.getValue());
@@ -43,9 +39,9 @@ let card =
         }
     );
 
-card.store.data.src = "xxxxx";
+//card.store.data.src = "xxxxx";
 
-console.log(card.dom._area.outerHTML);
+console.log(card.dom._area);
 
 /**
 let user =
