@@ -14,20 +14,37 @@ import { eventHandler } from './eventHandler.js';
 
 export class dataHandler {
     public internationalize: i18n;
-    public middlewareHandler : middlewareHandler;
+    public middlewareHandler: middlewareHandler;
 
     public store: { [index: string]: store } = {};
     private events: eventHandler;
     public pxy: { [index: string]: ProxyConstructor } = {};
     public environment: Object;
-    private _storage: Object;
+    private _storage: Object = {
+        data_loader: {
+            find(query: Object, onResultCallback: Function) {
 
-    constructor(eventH: eventHandler, environment: Object) {
+                setTimeout(() => onResultCallback.call({ dataH: {} }, {
+                    name: "name",
+                    tab: "all",
+                    items: [{
+                        id: 0,
+                        label: "Testdaten1",
+                        checked: true
+                    }]
+                }), 110);
+
+            }
+        }
+    };
+
+    constructor(eventH: eventHandler, environment: Object = {}) {
         this.events = eventH;
         this.environment = environment;
         this.internationalize = new i18n();
-       
-        this.setDb(this?.environment?.data_loader);
+
+        if(this?.environment?.data_loader)
+            this.setDb(this?.environment?.data_loader);
 
         this.store.toObject = () => {
             let arr = {};
@@ -80,13 +97,13 @@ export class dataHandler {
         if (this.store[component] && data instanceof store) {
             //this.store[component] = data;
             //this.store[component].setDb(this?.db());
-            console.log("try to recreate ",this.store[component], "WITH ", data, " use assign");
+            console.log("try to recreate ", this.store[component], "WITH ", data, " use assign");
         } else {
-          
+
             this.store[component] = new store(this.events, this, component, data);
             this.store[component].schema = JSON.stringify(data);
             this.store[component].setDb(this?.db());
-            
+
         }
         return this.store[component];
     }
