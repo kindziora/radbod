@@ -320,6 +320,7 @@ export class dom {
             let validations = this.store.getValidations();
 
             for (let i of validators) {
+                i = i.trim();
                 if (typeof validations[i] === "function") {
                     meta.validators[i] = validations[i];
                 } else {

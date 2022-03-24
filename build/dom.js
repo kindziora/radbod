@@ -249,6 +249,7 @@ export class dom {
             let meta = metaManager.getMeta(fieldPath);
             let validations = this.store.getValidations();
             for (let i of validators) {
+                i = i.trim();
                 if (typeof validations[i] === "function") {
                     meta.validators[i] = validations[i];
                 }
